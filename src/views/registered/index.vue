@@ -21,6 +21,7 @@
         <i @click="EyeClose = !EyeClose" :class="EyeClose ? 'cubeic-eye-invisible' : 'cubeic-eye-visible'"></i>
       </div>
     </div>
+    <div class="login-btn"><span @click="$router.replace('/login')">返回登录</span></div>
     <div class="read-user-agreement">
       <cube-checkbox v-model.trim="checked">
         <span>已阅读并同意</span>
@@ -201,6 +202,14 @@ export default {
     }
   }
 }
+.login-btn{
+  text-align: right;
+  font-size: 13px;
+  margin: 10px;
+  span{
+    display: inline-block;
+  }
+}
 .read-user-agreement{
   display: flex;
   justify-content: center;
@@ -219,4 +228,5 @@ export default {
   border-radius: 22px;
   color: #ffffff;
 }
+
 </style>

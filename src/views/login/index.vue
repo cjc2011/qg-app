@@ -18,7 +18,7 @@
     <div class="action-bar">
       <div class="registered fl">
         <span>立即</span>
-        <span class="active">注册</span>
+        <span class="active" @click="jump">注册</span>
       </div>
       <div class="forget fr">忘记密码</div>
     </div>
@@ -60,6 +60,9 @@ export default {
     ...mapMutations({
       'setUserInfo': 'SET_USERINFO'
     }),
+    jump() {
+      this.$router.replace('/registered')
+    },
     login(){
       if (!rule.mobile(this.phone)) {
         return toast('请输入正确手机号')
@@ -82,6 +85,9 @@ export default {
       let data = this.wrapEncrypt(JSON.stringify(params))
       login({data}).then( res => {
         if (res.code == 0) {
+          toast('登录成功', 'txt', 1000).then( ()=> {
+            this.$router.replace('/')
+          })
           this.setUserInfo(res.data)
         } else {
           toast(`${res.info}`)
