@@ -1,0 +1,43 @@
+{
+  "name": "app-student",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "cube-ui": "~1.12.1",
+    "jsencrypt": "^3.0.0-rc.1",
+    "md5": "^2.2.1",
+    "normalize.css": "^8.0.1",
+    "qs": "^6.5.2",
+    "sha1": "^1.1.1",
+    "vue": "^2.5.17",
+    "vue-router": "^3.0.1",
+    "vuex": "^3.0.1"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.2.0",
+    "@vue/cli-service": "^3.2.0",
+    "node-sass": "^4.11.0",
+    "sass-loader": "^7.1.0",
+    "vue-cli-plugin-cube-ui": "^0.2.4",
+    "vue-template-compiler": "^2.5.17",
+    "webpack": "^4.27.1"
+  },
+  "transformModules": {
+    "cube-ui": {
+      "transform": "cube-ui/lib/${member}",
+      "kebabCase": true,
+      "style": {
+        "ignore": [
+          "create-api",
+          "better-scroll",
+          "locale"
+        ]
+      }
+    }
+  }
+}

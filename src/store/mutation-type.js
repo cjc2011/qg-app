@@ -1,0 +1,3 @@
+export const SET_PAGETITLE = 'SET_PAGETITLE'
+export const SET_PUBLICKEY = 'SET_PUBLICKEY'
+export const SET_USERINFO = 'SET_USERINFO'

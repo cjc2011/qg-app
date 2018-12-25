@@ -1,0 +1,57 @@
+<template>
+  <div class="top-bar">
+    <div class="logo">
+      <img class="logo-img" :src="Logo" alt="Logo">
+    </div>
+    <div class="search-box-wrapper" @click="$router.push('/search')">
+      <SearchBox />
+    </div>
+  </div>
+</template>
+
+<script>
+import SearchIcon from "^/images/serach-icon.png";
+import Logo from "^/images/logo.png";
+import SearchBox from '../search-box/index.vue'
+
+export default {
+  data() {
+    return {
+      Logo: Logo,
+      SearchIcon: SearchIcon
+    };
+  },
+  components: {
+    SearchBox
+  }
+};
+</script>
+
+<style lang="scss" scoped>
+.top-bar{
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 0 16px;
+  height: 50px;
+  display: flex;
+  line-height: 50px;
+  align-items: center;
+  background: #ffffff;
+  justify-content: space-between;
+  z-index: 10;
+  .logo{
+    width: 95px;
+    height: 38px;
+    margin-right: 15px;
+    line-height: 38px;
+    .logo-img{
+      width: 100%;
+      vertical-align: middle;
+    }
+  }
+
+}
+</style>
+
