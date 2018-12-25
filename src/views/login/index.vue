@@ -70,6 +70,10 @@ export default {
       }
       if (!this.password) {
         return toast('请输入密码')
+
+
+
+        
       }
       if (!this.onoff)  return 
       this.onoff = false
