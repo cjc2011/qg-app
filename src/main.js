@@ -15,9 +15,9 @@ router.beforeEach((to, from, next) => {
   store.commit('SET_PAGETITLE', title)
   if (to.path=='/login') {
     let userinfo = store.getters.userinfo
-    userinfo ? next('/') : next() 
+    userinfo ? next('/') : next()
   }
-  next() 
+  next();
 })
 
 new Vue({
