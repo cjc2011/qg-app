@@ -15,7 +15,17 @@ axios.interceptors.request.use(
     if (userInfo) {
       let { token } = userInfo
       let data = qs.parse(config.data);
-      let key =  store.getters.userinfo
+      let key =  store.getters.encryptionkey
+      let path = config.url.replace(config.baseURL, '')
+      if (isUpload(path)) {
+        let tem = {}
+        config.data.forEach( (val, key) => {
+          if (key != 'uploadFile') {
+            tem[key] = val
+          }
+        });
+        data = tem
+      }
       config.headers.common['sign'] = getStr(data, key, starttime, token)
       config.headers.common['token'] = String(token)
       config.headers.common['starttime'] = String(starttime)
@@ -69,9 +79,9 @@ let api = {
       })
     })
   },
-  post(url,params) {
+  post(url, params, dataType = 'json') {
     return new Promise( (resolve, reject) => {
-      axios.post(url, qs.stringify(params))
+      axios.post(url, dataType == 'json' ? qs.stringify(params) : params)
         .then( res => {
           resolve(res)
         })
@@ -80,6 +90,11 @@ let api = {
         })
     })
   }
+}
+
+function isUpload(path) {
+  let uploads = ['teacher/Uploadfile/Upload', 'teacher/Uploadfile/Uploadb']
+  return uploads.indexOf(path) > -1
 }
 
 export default api

@@ -2,9 +2,9 @@
   <div>
     <router-link tag="div" to="/userinfo" class="user-top expand">
       <div class="user-avatar">
-        <img src="https://wx.qlogo.cn/mmopen/PiajxSqBRaEK22Q42iaW7KTpTsDvpLfQ6C6jBtDp30qzpEiay4qQygTvBzr88ctv93RONvMofG0egK4MIMvlVqELw/0" alt="用户头像">
+        <img :src="userinfo.imageurl || DefaultAvatar" alt="用户头像">
       </div>
-      <p class="user-name">UED@163.COM</p>
+      <p class="user-name">{{userinfo.nickname}}</p>
       <span class="arrow-icon">
         <img :src="ArrowIcon" alt=">">
       </span>
@@ -29,11 +29,14 @@
 <script>
 import ArrowIcon from '^/images/arrow.png'
 import OrderIcon from '^/images/order-icon.png'
+import DefaultAvatar from '^/images/defaultAvatar.png'
 import FeedbackIcon from '^/images/feedback-icon.png'
 import SettingIcon from '^/images/setting-icon.png'
 import SaveIcon from '^/images/save-icon.png'
 import MessageIcon from '^/images/message-icon.png'
 import CourseIcon from '^/images/course-icon.png'
+
+import { mapGetters } from 'vuex'
  
 export default {
   data() {
@@ -45,6 +48,7 @@ export default {
       SaveIcon: SaveIcon,
       SettingIcon: SettingIcon,
       FeedbackIcon: FeedbackIcon,
+      DefaultAvatar: DefaultAvatar,
       menus: [
         {
           icon: OrderIcon,
@@ -73,6 +77,14 @@ export default {
         }
       ]
     }
+  },
+  computed: {
+    ...mapGetters([
+      'userinfo'
+    ])
+  },
+  created() {
+    console.log(this.userinfo)
   }
 }
 </script>

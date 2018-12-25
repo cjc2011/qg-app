@@ -15,3 +15,17 @@ export const register = params => api.post('student/Homepage/register.html', par
 export const login = params => api.post('index/Login/login', params)
 // 登出
 export const logout = params => api.post('index/Login/exitLogin', params)
+
+/**
+ * 个人中心
+ * 
+ */
+export const upload = params => api.post('teacher/Uploadfile/Upload', params, 'file')
+
+
+/**
+ * 机构首页
+ */
+
+//知识付费课程推荐
+export const getRecommendCourser = params => api.post('student/HomePage/getRecommendCourser', params)

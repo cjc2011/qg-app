@@ -58,7 +58,8 @@ export default {
   },
   methods: {
     ...mapMutations({
-      'setUserInfo': 'SET_USERINFO'
+      'setUserInfo': 'SET_USERINFO',
+      'setkey': 'SET_ENCRYPTIONKEY'
     }),
     jump() {
       this.$router.replace('/registered')
@@ -82,6 +83,7 @@ export default {
         "source": "app",
         "organid": 74
       }
+      this.setkey(key)
       let data = this.wrapEncrypt(JSON.stringify(params))
       login({data}).then( res => {
         if (res.code == 0) {

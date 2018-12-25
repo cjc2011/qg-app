@@ -11,7 +11,8 @@ function getItem(key) {
 const state = {
   title: '',
   publickey: getItem('publickey'),
-  userinfo: getItem('userinfo')
+  userinfo: getItem('userinfo'),
+  encryptionkey: getItem('encryptionkey')
 }
 
 

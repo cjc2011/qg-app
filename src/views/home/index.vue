@@ -26,6 +26,8 @@ import HomeBar from "%/home-bar"
 import Grid from '%/grid'
 import CourseItem from '%/course-item'
 
+import { getRecommendCourser } from '@/api'
+
 export default {
   data() {
     return {
@@ -45,6 +47,12 @@ export default {
         }
       ]
     }
+  },
+  created() {
+    getRecommendCourser({
+      organid: '74',
+      limit: 4
+    })
   },
   methods: {
     toast() {

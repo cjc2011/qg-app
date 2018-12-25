@@ -7,14 +7,15 @@
           <cube-upload
             class="upload"
             v-if="item.image"
-            action="//jsonplaceholder.typicode.com/photos/"
+            :auto="false"
+            action="/"
             :simultaneous-uploads="1"
             @files-added="filesAdded" >
             <div class="clear-fix">
               <cube-upload-file v-for="(file, i) in files" :file="file" :key="i"></cube-upload-file>
               <cube-upload-btn :multiple="false">
                 <div>
-                  <img class="user-avatar" :src="item.image" />
+                  <img class="user-avatar" :src="userinfo.imageurl || DefaultAvatar" />
                 </div>
               </cube-upload-btn>
             </div>
@@ -34,12 +35,16 @@
 
 <script>
 import ArrowIcon from '^/images/arrow.png'
+import DefaultAvatar from '^/images/defaultAvatar.png'
+import { mapGetters } from 'vuex'
+import { upload } from '@/api'
 
 export default {
   data() {
     return {
       ArrowIcon: ArrowIcon,
       files: [],
+      DefaultAvatar: DefaultAvatar,
       sexs: [
         {
           text: '男',
@@ -86,6 +91,11 @@ export default {
       ]
     }
   },
+  computed: {
+    ...mapGetters([
+      'userinfo'
+    ])
+  },
   methods: {
     jump(item) {
       item.type && this.$router.push({
@@ -124,8 +134,15 @@ export default {
       }
       this.datePicker.show()
     },
-    filesAdded() {
-
+    filesAdded(file) {
+      console.log(file[0], 'fiel')
+      let fromData = new FormData()
+      fromData.append('uploadFile', file[0])
+      fromData.append('allpathnode', '1,1,6')
+      upload(fromData).then( res=> {
+        console.log(res, 'res')
+      })
+      console.log(file[0], 'file')
     }
   }
 }

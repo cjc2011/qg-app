@@ -17,19 +17,35 @@
         <i class="cubeic-arrow"></i>
       </div>
     </div>
+    <div class="login-out" @click="out">退出</div>
   </div>
 </template>
 
 <script>
+import { logout } from '@/api'
+import { mapGetters } from 'vuex'
+
 export default {
-  
+  computed: {
+    ...mapGetters([
+      'userinfo'
+    ])
+  },
+  methods: {
+    out() {
+      logout({
+        "token": this.userinfo.token
+      }).then( res => {
+        console.log(res)
+      })
+    }
+  }
 }
 </script>
 
 <style lang="scss" scoped>
 .settings{
-  padding-top: 10px;
-  background: #F5F6FA;
+  border-top: 10px solid #F5F6FA;
 }
 .setting-item{
   display: flex;
@@ -46,5 +62,13 @@ export default {
       color: #666B76;
     }
   }
+}
+.login-out{
+  margin-top: 30px;
+  line-height: 40px;
+  font-size: 16px;
+  background: #0BCC96;
+  color: #ffffff;
+  border-radius: 4px;
 }
 </style>
