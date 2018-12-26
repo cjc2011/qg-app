@@ -1,56 +1,46 @@
 <template>
-  <div class="user-edit">
-    <div v-if="type == 'profile'" class="motto border-top-split expand">
-      <profile></profile>
+
+    <div class="border-top-split expand">
+        <div class="top-bar-action">
+            <span class="img-wrapper" @click="toSave">保存</span>
+        </div>
+        <cube-input v-model="nickname" :clearable="true" placeholder="昵称"></cube-input>
     </div>
-    <div v-if="type == 'nickname'" class="border-top-split expand">
-      <nickname></nickname>
-    </div>
-    <div v-if="type == 'mobile'" class="modify-phone">
-      <mobile></mobile>
-    </div>
-    <div v-if="type == 'password'" class="modify-password">
-      <password></password>
-    </div>
-  </div>
+
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapGetters } from 'vuex'
 import * as types from '@/store/mutation-type'
-import mobile from './mobile'
-import password from './password'
-import nickname from './nickname'
-import profile from './profile'
-const typeName = {
-  'nickname': '修改昵称',
-  'mobile': '修改手机号',
-  'password': '修改密码',
-  'profile': '修改个性签名'
-}
+import { updateStudentInfo } from '@/api'
+import { toast } from '../../cube-ui'
+
 export default {
-  data() {
-    return {
-      type: this.$route.params.type
-    }
-  },
-  components: {
-    mobile,
-    password,
-    nickname,
-    profile
-  },
-  methods: {
-    ...mapMutations({
-      'setTitle': types.SET_PAGETITLE
-    }),
-  },
-  beforeRouteEnter: (to, from, next) => {
-    let type = to.params.type
-    next(vm => {
-      vm.setTitle(typeName[type])
-    })
-  }
+    data() {
+        return {
+            nickname: '',
+        }
+    },
+    computed: {
+        ...mapGetters([
+            'userinfo'
+        ]),
+    },
+    created() {
+        this.nickname = this.userinfo.nickname
+    },
+    methods: {
+        toSave() {
+            updateStudentInfo({
+                nickname: this.nickname
+            }).then(res => {
+                if (res.code === 0) {
+                    this.$router.push('/userinfo')
+                }
+            })
+        }
+    },
+
 }
 </script>
 

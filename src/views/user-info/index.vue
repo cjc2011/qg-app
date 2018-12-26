@@ -4,30 +4,23 @@
       <div class="msg-item border-top-1px" @click="jump(item)" v-for="(item, index) in UserData" :key="index">
         <span class="msg-item__left">{{item.name}}</span>
         <div class="msg-item__content">
-          <cube-upload
-            class="upload"
-            v-if="item.image"
-            :auto="false"
-            action="/"
-            :simultaneous-uploads="1"
-            @files-added="filesAdded" >
+          <cube-upload class="upload" v-if="item.image" :auto="false" action="/" :simultaneous-uploads="1" @files-added="filesAdded">
             <div class="clear-fix">
               <cube-upload-file v-for="(file, i) in files" :file="file" :key="i"></cube-upload-file>
               <cube-upload-btn :multiple="false">
                 <div>
-                  <img class="user-avatar" :src="userinfo.imageurl || DefaultAvatar" />
+                  <img class="user-avatar" :src="item.imageurl || DefaultAvatar" />
                 </div>
               </cube-upload-btn>
             </div>
           </cube-upload>
           <p v-if="item.value" class="msg-item__text">{{item.value}}</p>
           <span class="arrow-icon">
-            <img :src="ArrowIcon" >
+            <img :src="ArrowIcon">
           </span>
         </div>
       </div>
-      <p class="motto">我想我还是不够成熟，没办法为自己那颗烦躁的心波澜不惊地
-掌舵我想我还是不够成熟，没办法为自......</p>
+      <p class="motto">{{this.profile}}</p>
       <!-- <cube-button >Date Picker</cube-button> -->
     </div>
   </div>
@@ -36,49 +29,55 @@
 <script>
 import ArrowIcon from '^/images/arrow.png'
 import DefaultAvatar from '^/images/defaultAvatar.png'
-import { mapGetters } from 'vuex'
-import { upload } from '@/api'
+import { mapGetters, mapMutations } from 'vuex'
+import { upload, getStudentInfo } from '@/api'
 
 export default {
   data() {
     return {
+      profile:'我想我还是不够成熟，没办法为自己那颗烦躁的心波澜不惊地 掌舵我想我还是不够成熟，没办法为自......',
       ArrowIcon: ArrowIcon,
       files: [],
       DefaultAvatar: DefaultAvatar,
-      sexs: [
-        {
-          text: '男',
-          value: '男'
-        },
-        {
-          text: '女',
-          value: '女'
-        }
+      sexs: [{
+        text: '未知',
+        value: '未知'
+      },
+      {
+        text: '男',
+        value: '男'
+      },
+      {
+        text: '女',
+        value: '女'
+      }
       ],
       UserData: [
         {
           name: '头像',
-          image: 'https://wx.qlogo.cn/mmopen/PiajxSqBRaEK22Q42iaW7KTpTsDvpLfQ6C6jBtDp30qzpEiay4qQygTvBzr88ctv93RONvMofG0egK4MIMvlVqELw/0'
+          image: 'https://wx.qlogo.cn/mmopen/PiajxSqBRaEK22Q42iaW7KTpTsDvpLfQ6C6jBtDp30qzpEiay4qQygTvBzr88ctv93RONvMofG0egK4MIMvlVqELw/0',
+          type: 'imageurl'
         },
         {
           name: '昵称',
-          value: 'Bulehead',
-          type: 'nikename'
+          value: '',
+          type: 'nickname'
         },
+        // 1 男 2 女 0 保密
         {
           name: '性别',
-          value: 'Bulehead',
-          action: 'sex'
+          value: '未知',
+          action: 'sex',
         },
         {
           name: '生日',
-          value: '1994-01-27',
-          action: 'date-picker'
+          value: '未知',
+          action: 'date-picker',
         },
         {
           name: '手机号',
-          value: '17701088888',
-          type: 'phone'
+          value: '',
+          type: 'mobile'
         },
         {
           name: '修改密码',
@@ -86,26 +85,49 @@ export default {
         },
         {
           name: '个性签名',
-          type: 'motto'
+          value: '',
+          type: 'profile'
         }
       ]
     }
   },
-  computed: {
-    ...mapGetters([
-      'userinfo'
-    ])
+  created() {
+    this.getData()
+
   },
   methods: {
+    ...mapMutations({
+      'setUserInfo': 'SET_USERINFO',
+    }),
+    getData() {
+      getStudentInfo().then(res => {
+        if (res.code == 0) {
+          this.setUserInfo(res.data)
+          this.UserData.map(e => {
+            for (let i in res.data) {
+              if (e.type == i) {
+                e.value = res.data[i]
+                if (e.type == 'profile') {
+                  this.profile = res.data[i]
+                }
+              }
+            }
+          })
+        } else {
+          toast(`${res.info}`)
+        }
+
+      })
+    },
     jump(item) {
       item.type && this.$router.push({
         path: `/useredit/${item.type}`
       })
-      switch(item.action) {
+      switch (item.action) {
         case 'date-picker':
           this.showDatePicker()
           break;
-        case 'sex':  
+        case 'sex':
           this.showPicker()
           break;
       }
@@ -113,7 +135,7 @@ export default {
     showPicker() {
       if (!this.picker) {
         this.picker = this.$createPicker({
-          title: 'Picker',
+          title: '性别',
           data: [this.sexs],
           onSelect: this.selectHandle,
           onCancel: this.cancelHandle
@@ -121,10 +143,13 @@ export default {
       }
       this.picker.show()
     },
+    selectHandle(selectedVal) {
+      this.UserData[2].value = selectedVal[0]
+    },
     showDatePicker() {
       if (!this.datePicker) {
         this.datePicker = this.$createDatePicker({
-          title: 'Date Picker',
+          title: '生日',
           min: new Date(2008, 7, 8),
           max: new Date(2020, 9, 20),
           value: new Date(),
@@ -139,7 +164,7 @@ export default {
       let fromData = new FormData()
       fromData.append('uploadFile', file[0])
       fromData.append('allpathnode', '1,1,6')
-      upload(fromData).then( res=> {
+      upload(fromData).then(res => {
         console.log(res, 'res')
       })
       console.log(file[0], 'file')
@@ -149,29 +174,29 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.content{
+.content {
   margin: 0 -16px;
-  .msg-item{
+  .msg-item {
     padding: 10px 16px;
     min-height: 44px;
     display: flex;
     box-sizing: border-box;
     align-items: center;
     justify-content: space-between;
-    &__left{
+    &__left {
       max-width: 80px;
       font-size: 15px;
-      color: #4B505A;
+      color: #4b505a;
     }
-    &__content{
+    &__content {
       flex: 1;
       text-align: right;
-      .upload{
+      .upload {
         display: inline-block;
         vertical-align: middle;
       }
     }
-    &__text{
+    &__text {
       display: inline-block;
       margin-right: 20px;
       color: #999999;
@@ -179,14 +204,14 @@ export default {
       vertical-align: middle;
     }
   }
-  .motto{
+  .motto {
     padding: 0 16px;
     text-align: left;
     color: #939997;
     font-size: 12px;
   }
 }
-.arrow-icon{
+.arrow-icon {
   display: inline-block;
   position: relative;
   width: 12px;
@@ -195,7 +220,7 @@ export default {
     vertical-align: middle;
   }
 }
-.user-avatar{
+.user-avatar {
   width: 56px;
   height: 56px;
   margin-right: 20px;

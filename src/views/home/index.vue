@@ -2,7 +2,7 @@
   <div class="home">
     <home-bar></home-bar>
     <div class="banner-wrapper">
-      <cube-slide :data="items"/>
+      <cube-slide :data="items" />
     </div>
     <div class="course-box">
       <div class="course-box__title">
@@ -25,7 +25,6 @@
 import HomeBar from "%/home-bar"
 import Grid from '%/grid'
 import CourseItem from '%/course-item'
-
 import { getRecommendCourser } from '@/api'
 
 export default {
@@ -72,34 +71,33 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.home{
-  position: relative;    
+.home {
+  position: relative;
 }
-.banner-wrapper{
+.banner-wrapper {
   height: 164px;
   border-radius: 6px;
   overflow: hidden;
 }
-.course-list-wrapper{
-  margin-top: 10px
+.course-list-wrapper {
+  margin-top: 10px;
 }
-.course-box{
-  &__title{
+.course-box {
+  &__title {
     margin: 10px 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
     line-height: 24px;
   }
-  &__name{
+  &__name {
     color: #323747;
     font-size: 14px;
   }
-  &__more{
+  &__more {
     padding-left: 20px;
-    color: #0BCC96;
+    color: #0bcc96;
     font-size: 12px;
   }
 }
-  
 </style>

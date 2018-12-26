@@ -7,13 +7,13 @@ import qs from 'qs'
 
 // 获取公钥
 export const getPublicKey = () => api.post('index/Login/getPublicKey')
-// 验证码
+    // 验证码
 export const sendMobileMsg = params => api.post('student/Homepage/sendMobileMsg', params)
-// 注册 
+    // 注册 
 export const register = params => api.post('student/Homepage/register.html', params)
-// 登录
+    // 登录
 export const login = params => api.post('index/Login/login', params)
-// 登出
+    // 登出
 export const logout = params => api.post('index/Login/exitLogin', params)
 
 /**
@@ -21,6 +21,14 @@ export const logout = params => api.post('index/Login/exitLogin', params)
  * 
  */
 export const upload = params => api.post('teacher/Uploadfile/Upload', params, 'file')
+    // 个人资料 - 个人信息
+export const getStudentInfo = params => api.post('student/User/getStudentInfo', params)
+    //  个人资料 - 修改手机号
+export const updateMobile = params => api.post('student/User/updateMobile', params)
+    // 个人资料 - 修改密码
+export const updateUserPass = params => api.post('student/User/updateUserPass', params)
+    // 个人资料 - 编辑资料
+export const updateStudentInfo = params => api.post('student/User/updateStudentInfo', params)
 
 
 /**

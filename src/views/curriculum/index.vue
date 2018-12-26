@@ -40,7 +40,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .tips{
   position: fixed;
   font-size: 14px;
