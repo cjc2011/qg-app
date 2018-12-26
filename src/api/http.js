@@ -7,12 +7,21 @@ import { toast } from '../cube-ui'
 // request
 axios.defaults.baseURL = 'http://www.wisdom.com/';
 
+// 免密登录
+const noHeaderPath = [
+  'index/Login/getPublicKey',
+  'student/Homepage/register',
+  'index/Login/login'
+]
+
 // 请求
 axios.interceptors.request.use(
     config => {
         let starttime = Date.parse(new Date());
         let userInfo = store.getters.userinfo
-        if (userInfo) {
+        let path = config.url.replace(config.baseURL, '')
+        let isSet = noHeaderPath.indexOf(path) > -1
+        if (userInfo && !isSet) {
             let { token } = userInfo
             let data = qs.parse(config.data);
             let key = store.getters.encryptionkey

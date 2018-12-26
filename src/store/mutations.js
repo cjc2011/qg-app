@@ -5,16 +5,19 @@ const mutations = {
     state.title = title
   },
   [types.SET_PUBLICKEY](state, key){
-    state.publickey = key
-    localStorage.setItem('publickey', key)
+    let val = key === null ? '' : key
+    state.publickey = val
+    localStorage.setItem('publickey', val)
   },
   [types.SET_USERINFO](state, obj){
+    let val = obj === null ? '' : JSON.stringify(obj)
     state.userinfo = obj
-    localStorage.setItem('userinfo', JSON.stringify(obj))
+    localStorage.setItem('userinfo', val)
   },
   [types.SET_ENCRYPTIONKEY](state, key){
-    state.encryptionkey = key
-    localStorage.setItem('encryptionkey', key)
+    let val = key === null ? '' : key
+    state.encryptionkey = val
+    localStorage.setItem('encryptionkey', val)
   }
 }
 

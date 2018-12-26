@@ -22,8 +22,9 @@
 </template>
 
 <script>
+import { toast } from '../../cube-ui'
 import { logout } from '@/api'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   computed: {
@@ -32,11 +33,21 @@ export default {
     ])
   },
   methods: {
+    ...mapMutations({
+      'setUserInfo': 'SET_USERINFO',
+      'setkey': 'SET_ENCRYPTIONKEY'
+    }),
     out() {
       logout({
         "token": this.userinfo.token
       }).then( res => {
-        console.log(res)
+        if (res.code == 0) {
+          this.setUserInfo(null)
+          this.setkey(null)
+          toast('退出登录成功').then( () => {
+            this.$router.replace('/login')
+          })
+        }
       })
     }
   }
