@@ -8,6 +8,7 @@ import UserHome from '../views/user-home/index.vue'
 import UserInfo from '../views/user-info/index.vue'
 import UserEdit from '../views/user-edit/index.vue'
 import Order from '../views/order/index.vue'
+import OrderInfo from '../views/orderinfo/index.vue'
 import Curriculum from '../views/curriculum/index.vue'
 import MyCurriculum from '../views/my-curriculum/index.vue'
 import Collection from '../views/collection/index.vue'
@@ -49,7 +50,8 @@ export default new Router({
       name: 'courseinfo',
       component: CourseInfo,
       meta: {
-        header: 'rewrite'
+        header: 'rewrite',
+        title: '教师详情'
       }
     },
     {
@@ -57,7 +59,8 @@ export default new Router({
       name: 'search',
       component: Search,
       meta: {
-        header: 'rewrite'
+        header: 'rewrite',
+        title: '搜索'
       }
     },
     {
@@ -93,6 +96,14 @@ export default new Router({
       }
     },
     {
+      path: '/orderinfo/:id',
+      name: 'orderinfo',
+      component: OrderInfo,
+      meta: {
+        title: '订单详情'
+      }
+    },
+    {
       path: '/curriculum',
       name: 'curriculum',
       component: Curriculum,
@@ -111,17 +122,26 @@ export default new Router({
     {
       path: '/mycourse',
       name: 'mycourse',
-      component: MyCourse
+      component: MyCourse,
+      meta: {
+        title: '我的课程'
+      }
     },
     {
       path: '/collection',
       name: 'collection',
-      component: Collection
+      component: Collection,
+      meta: {
+        title: '我的收藏'
+      }
     },
     {
       path: '/message',
       name: 'message',
-      component: Message
+      component: Message,
+      meta: {
+        title: '我的消息'
+      }
     },
     {
       path: '/login',
