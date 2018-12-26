@@ -38,6 +38,14 @@ export default new Router({
       }
     },
     {
+      path: '/official',
+      name: 'official',
+      component: Home,
+      meta: {
+        header: 'rewrite'
+      }
+    },
+    {
       path: '/course',
       name: 'course',
       component: Course,
