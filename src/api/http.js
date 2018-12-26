@@ -5,7 +5,7 @@ import { getStr } from '@/assets/js/util.js'
 import { toast } from '../cube-ui'
 
 // request
-axios.defaults.baseURL = 'http://test.wisdom.com/';
+axios.defaults.baseURL = 'http://www.wisdom.com/';
 
 // 请求
 axios.interceptors.request.use(
