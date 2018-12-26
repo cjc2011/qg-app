@@ -7,14 +7,14 @@
     <div class="course-box">
       <div class="course-box__title">
         <div class="course-box__name">智慧琴童</div>
-        <div class="course-box__more">更多</div>
+        <div class="course-box__more" @click="recommentMore">更多</div>
       </div>
       <Grid v-if="recommentCourseList.length" :courseData="recommentCourseList" @click="gridClick" />
     </div>
     <div class="course-box">
       <div class="course-box__title">
         <div class="course-box__name">钢琴培训</div>
-        <div class="course-box__more">更多</div>
+        <div class="course-box__more" @click="courseMore">更多</div>
       </div>
       <CourseItem />
     </div>
@@ -41,6 +41,7 @@ import HomeBar from "%/home-bar"
 import Grid from '%/grid'
 import CourseItem from '%/course-item'
 
+import { mapGetters } from 'vuex'
 import { getRecommendCourser, getSlideList, getRecommendTeacher } from '@/api'
 
 export default {
@@ -88,11 +89,43 @@ export default {
     }
   },
   created() {
+    this.id = this.$route.name == 'official' ? 1 : this.organid
     this.getSlide()
     this.getRecommentCourse()
     this.getTeacher()
   },
+  computed: {
+    ...mapGetters([
+      'organid'
+    ])
+  },
+  watch: {
+    '$route' (to, from) {
+      this.id = to.name == 'official' ? 1 : this.organid
+    }
+  },
   methods: {
+    courseMore() {
+      if ( this.$route.name == 'official') {
+        // this.$rout
+      }
+    },
+    recommentMore() {
+      let path = null
+      if ( this.$route.name == 'official') {
+        path = {
+          path: '/course',
+          query: {
+             organid: this.id
+          }
+        }
+      } else {
+        path = {
+          path: '/official'
+        }
+      }
+      this.$router.push(path)
+    },
     gridClick(course) {
       this.$router.push({
         path: `/courseinfo/${course.id}`
@@ -130,7 +163,7 @@ export default {
     },
     getTeacher() {
       getRecommendTeacher({
-        organid: 74,
+        organid: this.id,
         limit: 10
       }).then( res=> {
         // this.

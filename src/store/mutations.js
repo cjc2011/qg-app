@@ -18,6 +18,11 @@ const mutations = {
     let val = key === null ? '' : key
     state.encryptionkey = val
     localStorage.setItem('encryptionkey', val)
+  },
+  [types.SET_ORGANID](state, key) {
+    let val = key === null ? '' : key 
+    state.organid = val
+    localStorage.setItem('organid', val)
   }
 }
 
