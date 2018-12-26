@@ -50,8 +50,9 @@ export default {
       {
         text: '女',
         value: '女'
-      }
-      ],
+      }],
+      sexIndex: 0, // 性别 下拉框 默认选中
+      date: new Date(),// 生日 下拉框 默认选中
       UserData: [
         {
           name: '头像',
@@ -63,7 +64,6 @@ export default {
           value: '',
           type: 'nickname'
         },
-        // 1 男 2 女 0 保密
         {
           name: '性别',
           value: '',
@@ -116,9 +116,16 @@ export default {
                 }
               }
               if (e.action && e.action == 'date-picker') {
-                e.value = res.data['birth'] ? res.data['birth'] : '未知'
+                if (res.data['birth']) {
+                  e.value = res.data['birth']
+                  let date = res.data['birth'].split('-')
+                  this.date = new Date(date[0], date[1] - 1, date[2])
+                }else{
+                   e.value = '未知'
+                }
               }
               if (e.action && e.action == 'sex') {
+                this.sexIndex = +res.data['sex']
                 if (res.data['sex'] == 1) {
                   e.value = '男'
                 } else if (res.data['sex'] == 2) {
@@ -155,6 +162,7 @@ export default {
         this.picker = this.$createPicker({
           title: '性别',
           data: [this.sexs],
+          selectedIndex: [this.sexIndex],
           onSelect: this.selectHandle,
           onCancel: this.cancelHandle
         })
@@ -162,7 +170,6 @@ export default {
       this.picker.show()
     },
     selectHandle(selectedVal, selectedIndex) {
-      console.log(selectedVal)
       this.UserData[2].value = selectedVal[0]
       updateStudentInfo({
         sex: selectedIndex[0]
@@ -172,7 +179,7 @@ export default {
         }
       })
     },
-    selectHandle1(selectedVal, selectedIndex) {
+    selectHandle1(selectedVal, selectedIndex, selectedText) {
       this.UserData[4].value = selectedIndex[0] + '-' + selectedIndex[1] + '-' + selectedIndex[2]
       updateStudentInfo({
         birth: this.UserData[4].value
@@ -186,9 +193,7 @@ export default {
       if (!this.datePicker) {
         this.datePicker = this.$createDatePicker({
           title: '生日',
-          min: new Date(2008, 7, 8),
-          max: new Date(2020, 9, 20),
-          value: new Date(),
+          value: this.date,
           onSelect: this.selectHandle1,
           onCancel: this.cancelHandle
         })
