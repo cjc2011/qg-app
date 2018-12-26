@@ -14,7 +14,7 @@
               </cube-upload-btn>
             </div>
           </cube-upload>
-          <p v-if="item.value" class="msg-item__text">{{item.value}}</p>
+          <p v-if="item.value && item.type!= 'profile'" class="msg-item__text">{{item.value}}</p>
           <span class="arrow-icon">
             <img :src="ArrowIcon">
           </span>
@@ -30,12 +30,12 @@
 import ArrowIcon from '^/images/arrow.png'
 import DefaultAvatar from '^/images/defaultAvatar.png'
 import { mapGetters, mapMutations } from 'vuex'
-import { upload, getStudentInfo } from '@/api'
-
+import { upload, getStudentInfo, updateStudentInfo } from '@/api'
+import { toast } from '../../cube-ui'
 export default {
   data() {
     return {
-      profile:'我想我还是不够成熟，没办法为自己那颗烦躁的心波澜不惊地 掌舵我想我还是不够成熟，没办法为自......',
+      profile: '',
       ArrowIcon: ArrowIcon,
       files: [],
       DefaultAvatar: DefaultAvatar,
@@ -66,12 +66,12 @@ export default {
         // 1 男 2 女 0 保密
         {
           name: '性别',
-          value: '未知',
+          value: '',
           action: 'sex',
         },
         {
           name: '生日',
-          value: '未知',
+          value: '',
           action: 'date-picker',
         },
         {
@@ -93,7 +93,11 @@ export default {
   },
   created() {
     this.getData()
-
+  },
+  computed: {
+    ...mapGetters([
+      'userinfo'
+    ]),
   },
   methods: {
     ...mapMutations({
@@ -102,17 +106,31 @@ export default {
     getData() {
       getStudentInfo().then(res => {
         if (res.code == 0) {
-          this.setUserInfo(res.data)
-          this.UserData.map(e => {
-            for (let i in res.data) {
-              if (e.type == i) {
+          for (let i in res.data) {
+            this.userinfo[i] = res.data[i]
+            this.UserData.map(e => {
+              if (e.type && e.type == i) {
                 e.value = res.data[i]
                 if (e.type == 'profile') {
                   this.profile = res.data[i]
                 }
               }
-            }
-          })
+              if (e.action && e.action == 'date-picker') {
+                e.value = res.data['birth'] ? res.data['birth'] : '未知'
+              }
+              if (e.action && e.action == 'sex') {
+                if (res.data['sex'] == 1) {
+                  e.value = '男'
+                } else if (res.data['sex'] == 2) {
+                  e.value = '女'
+                } else {
+                  e.value = '未知'
+                }
+              }
+            })
+          }
+          this.setUserInfo(this.userinfo)
+
         } else {
           toast(`${res.info}`)
         }
@@ -143,8 +161,26 @@ export default {
       }
       this.picker.show()
     },
-    selectHandle(selectedVal) {
+    selectHandle(selectedVal, selectedIndex) {
+      console.log(selectedVal)
       this.UserData[2].value = selectedVal[0]
+      updateStudentInfo({
+        sex: selectedIndex[0]
+      }).then(res => {
+        if (res.code === 0) {
+
+        }
+      })
+    },
+    selectHandle1(selectedVal, selectedIndex) {
+      this.UserData[4].value = selectedIndex[0] + '-' + selectedIndex[1] + '-' + selectedIndex[2]
+      updateStudentInfo({
+        birth: this.UserData[4].value
+      }).then(res => {
+        if (res.code === 0) {
+
+        }
+      })
     },
     showDatePicker() {
       if (!this.datePicker) {
@@ -153,7 +189,7 @@ export default {
           min: new Date(2008, 7, 8),
           max: new Date(2020, 9, 20),
           value: new Date(),
-          onSelect: this.selectHandle,
+          onSelect: this.selectHandle1,
           onCancel: this.cancelHandle
         })
       }
@@ -209,6 +245,7 @@ export default {
     text-align: left;
     color: #939997;
     font-size: 12px;
+    line-height: 16px;
   }
 }
 .arrow-icon {
