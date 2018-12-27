@@ -98,8 +98,7 @@ export default {
     },
     teacherInfo(teacher) {
       this.$router.push({
-        path: `/teacherinfo/275`
-        // path: `/teacherinfo/${teacher.id}`
+        path: `/teacherinfo/${teacher.teacherid}`
       })
     },
     getSlide() {

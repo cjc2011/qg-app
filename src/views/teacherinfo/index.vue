@@ -28,7 +28,7 @@
             <span v-if="teacherInfoObj.province || teacherInfoObj.city">
               {{teacherInfoObj.province}} &nbsp; {{teacherInfoObj.city}}
             </span>
-            <span>未知</span>
+            <span v-else>未知</span>
           </span>
         </div>
       </div>
@@ -39,8 +39,8 @@
     </div>
     <div class="teacher-course">
       <div class="title">他的课程</div>
-      <div v-for="(item, index) in courseData" :key="index">
-        <CourseItem type="course-show" :data="item"/>
+      <div v-for="(item, index) in courseData" :key="index" @click="toMyEvaluate">
+        <CourseItem type="course-show" :data="item" />
       </div>
     </div>
   </div>
@@ -125,6 +125,12 @@ export default {
         if (res.code === 0) {
           this.is_collect = 0
         }
+      })
+    },
+    // 个人点评
+    toMyEvaluate() {
+      this.$router.push({
+        path: '/myevaluate/' + this.$route.params.id
       })
     }
   }
