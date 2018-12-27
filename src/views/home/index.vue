@@ -21,12 +21,12 @@
     <div class="teacher-carousel">
       <div class="title">名师推荐</div>
       <div class="teacher-wrapper">
-        <cube-slide :data="teachers"> 
+        <cube-slide :data="teachers" :showDots="false"> 
           <cube-slide-item v-for="(item, index) in teachers" :key="index">
             <div class="teachers-block">
               <div class="teacher-item" v-for="(sub_item, sub_index) in item" :key="sub_index" @click="teacherInfo(sub_item)">
-                <img class="teacher-avatar" :src="sub_item.avatar">
-                <p class="name">{{sub_item.name}}</p>
+                <img class="teacher-avatar" :src="sub_item.imageurl || 'https://avatars0.githubusercontent.com/u/17289716?s=180&v=4'" @error="teacherAvatarError" >
+                <p class="name">{{sub_item.teachername}}</p>
               </div>
             </div>
           </cube-slide-item>
@@ -50,42 +50,7 @@ export default {
       title: '智慧琴童',
       banners: [],
       recommentCourseList: [],
-      teachers: [
-        [
-          {
-            name: 'teacher1',
-            id: 3,
-            avatar: "https://avatars0.githubusercontent.com/u/17289716?s=180&v=4"
-          },
-          {
-            name: 'teacher1',
-            id: 3,
-            avatar: "https://avatars0.githubusercontent.com/u/17289716?s=180&v=4"
-          },
-          {
-            name: 'teacher1',
-            id: 3,
-            avatar: "https://avatars0.githubusercontent.com/u/17289716?s=180&v=4"
-          }
-        ],
-        [
-          {
-            name: 'teacher1',
-            id: 3,
-            avatar: "https://avatars0.githubusercontent.com/u/17289716?s=180&v=4"
-          },
-          {
-            name: 'teacher1',
-            id: 3,
-            avatar: "https://avatars0.githubusercontent.com/u/17289716?s=180&v=4"
-          },
-          {
-            name: 'teacher1',
-            id: 3,
-            avatar: "https://avatars0.githubusercontent.com/u/17289716?s=180&v=4"
-          }
-        ]
-      ]
+      teachers: []
     }
   },
   created() {
@@ -164,12 +129,28 @@ export default {
     },
     getTeacher() {
       getRecommendTeacher({
-        organid: this.id,
+        organid: 2,
         limit: 10
       }).then( res=> {
-        // this.
-        // console.log(res, 'res')
+        if (res.code == 0) {
+          this.teachers = this.arrTrans(3,res.data)
+        }
       })
+    },
+    // 一维数组转换为二维数组
+    arrTrans(num, arr) {
+      const iconsArr = [];
+      arr.forEach((item, index) => {
+        const page = Math.floor(index / num)
+        if (!iconsArr[page]) {
+          iconsArr[page] = []
+        }
+        iconsArr[page].push(item)
+      })
+      return iconsArr
+    },
+    teacherAvatarError(ev) {
+      ev.target.src="https://avatars0.githubusercontent.com/u/17289716?s=180&v=4"
     }
   },
   components: {
