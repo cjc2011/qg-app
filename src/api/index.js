@@ -44,6 +44,8 @@ export const courseCollectList = params => api.post('student/User/courseCollectL
 export const getTeacherDetail = params => api.post('student/Teacherdetail/getTeacherDetail', params)
     // 老师详情 - 课程
 export const getTeacherCourse = params => api.post('/student/Teacherdetail/getTeacherCourse', params)
+    // 老师详情 - 评价
+export const getTeacherComment = params => api.post('student/Teacherdetail/getTeacherComment', params)
     // 收藏老师
 export const teacherCollect = params => api.post('student/User/teacherCollect', params)
     // 取消收藏老师

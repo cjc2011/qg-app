@@ -1,12 +1,21 @@
 <template>
     <div>
         <div class="teacher-summary">
-            <CourseItem></CourseItem>
+            <CourseItem :data="courseinfo"></CourseItem>
         </div>
 
         <div class="teacher-score">
             <p>课程评分</p>
-            <Score></Score>
+            <Score :score="score"></Score>
+            <!-- <Score :score="score" @selectScore="selectScore"></Score> -->
+        </div>
+        <div class="teacher-evaluate">
+
+            <p>课程评分</p>
+            <div v-for="(item,index) in commentData" :key="index">
+                <EvaluateItem :data="item"></EvaluateItem>
+            </div>
+
         </div>
     </div>
 </template>
@@ -14,18 +23,46 @@
 <script>
 import CourseItem from '%/course-item/index.vue'
 import Score from '%/score/index.vue'
+import EvaluateItem from '%/evaluate-item/index.vue'
+import { getTeacherComment } from '@/api'
+import { mapGetters } from 'vuex'
 export default {
     name: '',
 
     data() {
         return {
+            score: 0,
+            commentData: []
         }
     },
     components: {
         CourseItem,
-        Score
+        Score,
+        EvaluateItem
+    }, 
+    computed: {
+        ...mapGetters([
+            'courseinfo'
+        ])
     },
-    methods: {}
+    created() {
+        this.getTeacherComment()
+    },
+    methods: {
+        selectScore(index) {
+            this.score = index
+        },
+        getTeacherComment() {
+            getTeacherComment({
+                'teacherid': this.$route.params.id
+            }).then(res => {
+                if (res.code === 0) {
+                    this.commentData = res.data.data
+                    this.score = this.commentData[0].score
+                }
+            })
+        }
+    }
 }
 </script>
 
@@ -45,6 +82,12 @@ export default {
       font-size: 15px;
       font-family: PingFangSC-Light;
       color: rgba(60, 60, 65, 1);
+    }
+  }
+  &-evaluate {
+    margin-top: 40px;
+    p {
+      text-align: left;
     }
   }
 }

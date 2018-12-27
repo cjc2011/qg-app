@@ -34,12 +34,13 @@
       </div>
       <div class="teacher-summary">
         <div class="summary-title">老师简介</div>
-        <div class="summary-text">{{teacherInfoObj.profile}} </div>
+        <div class="summary-text" v-if="teacherInfoObj.profile">{{teacherInfoObj.profile}}</div>
+        <div class="summary-text" v-else>暂无</div>
       </div>
     </div>
     <div class="teacher-course">
       <div class="title">他的课程</div>
-      <div v-for="(item, index) in courseData" :key="index" @click="toMyEvaluate">
+      <div v-for="(item, index) in courseData" :key="index" @click="toMyEvaluate(item)">
         <CourseItem type="course-show" :data="item" />
       </div>
     </div>
@@ -52,6 +53,7 @@ import ShareIcon from '^/images/share-black.png'
 import BoyIcon from '^/images/boy.png'
 import BirthdayIcon from '^/images/birthday.png'
 import Address from '^/images/address.png'
+import { mapMutations } from 'vuex'
 import { getTeacherDetail, getTeacherCourse, teacherCollect, cancelTeacherCollect } from '@/api'
 export default {
   data() {
@@ -72,7 +74,10 @@ export default {
     this.getTeacherDetail()
     this.getTeacherCourse()
   },
-  methods: {
+  methods: {    
+    ...mapMutations({
+      'setCourseInfo': 'SET_COURSEINFO',
+    }),
     // 老师详情 个人信息
     getTeacherDetail() {
       getTeacherDetail({
@@ -91,19 +96,7 @@ export default {
         teacherid: this.$route.params.id
       }).then(res => {
         if (res.code === 0) {
-          // this.courseData = res.data.data
-          this.courseData = [
-            {
-              "coursename": "课程名称",
-              "imageurl": "课程图片",
-              "price": "课程单价",
-              "totalprice": "课程总价",
-              "curriculumid": "课程id",
-              "coursetype": "课程类型 1录播课2直播课一对一",
-              "teachername": "老师名称"
-            }
-          ]
-
+          this.courseData = res.data.data
         }
       })
     },
@@ -128,7 +121,8 @@ export default {
       })
     },
     // 个人点评
-    toMyEvaluate() {
+    toMyEvaluate(item) {
+      this.setCourseInfo(item)
       this.$router.push({
         path: '/myevaluate/' + this.$route.params.id
       })
