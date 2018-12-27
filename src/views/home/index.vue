@@ -77,11 +77,12 @@ export default {
     },
     recommentMore() {
       let path = null
-      if ( this.$route.name == 'official') {
+      if ( this.id == 1) {
         path = {
           path: '/course',
           query: {
-             organid: this.id
+             organid: this.id,
+             current: '全部'
           }
         }
       } else {
