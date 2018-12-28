@@ -1,6 +1,7 @@
 import axios from 'axios'
 import qs from 'qs';
 import store from '../store'
+import router from '../router'
 import { getStr } from '@/assets/js/util.js'
 import { toast } from '../cube-ui'
 
