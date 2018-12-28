@@ -93,7 +93,7 @@ export default {
     },
     gridClick(course) {
       this.$router.push({
-        path: `/courseinfo/${course.id}`
+        path: `/courseinfo/${course.curriculumid}`
       })
     },
     teacherInfo(teacher) {

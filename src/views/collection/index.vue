@@ -13,7 +13,7 @@
         <cube-slide-item>
           <cube-scroll :options="scrollOptions">
             <div class="list-wrapper">
-              <div class="teacher-item expand border-top-1px" v-for="(item,index) in teacherData" :key="index">
+              <div class="teacher-item expand border-top-1px" v-for="(item,index) in teacherData" :key="index" @click="teacherInfo(item)">
                 <div class="avatar">
                   <img src="https://avatars0.githubusercontent.com/u/17289716?s=180&v=4" />
                 </div>
@@ -98,16 +98,7 @@ export default {
         pagenum: this.pagenum
       }).then(res => {
         if (res.code === 0) {
-          // this.courseData = res.data.data
-          this.courseData = [{
-            "coursename": "课程名称",
-            "imageurl": "课程封面url",
-            "price": "2222",
-            "curriculumid": "课程id",
-            "coursetype": "课程类型 1录播课2直播课",
-            "totalprice": "课程总价",
-            "teachername": "老师名称"
-          }]
+          this.courseData = res.data.data
         }
       })
     },
@@ -116,20 +107,15 @@ export default {
         pagenum: this.pagenum
       }).then(res => {
         if (res.code === 0) {
-          // this.teacherData = res.data.data
-          this.teacherData = [{
-            "imageurl": "课程封面图片",
-            "profile": "老师简介",
-            "teachername": "老师昵称",
-            "teacherid": "老师id",
-            "country": "国家",
-            "province": "省",
-            "city": "市",
-            "age": "年龄"
-          }]
+          this.teacherData = res.data.data
         }
       })
-    }
+    },
+    teacherInfo(teacher) {
+      this.$router.push({
+        path: `/teacherinfo/${teacher.teacherid}`
+      })
+    },
   },
   components: {
     CourseItem

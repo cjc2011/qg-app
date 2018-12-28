@@ -54,7 +54,10 @@ export const cancelTeacherCollect = params => api.post('student/User/cancelTeach
 /**
  * 课程详情
  */
-// 收藏课程
+export const getCurriculumInfo = params => api.post('student/Curriculumdetail/getCurriculumInfo', params)
+    // 课程详情 - 评价
+export const getCurriculumComment = params => api.post('student/Curriculumdetail/getCurriculumComment', params)
+    // 收藏课程
 export const courseCollect = params => api.post('student/User/courseCollect', params)
     // 取消收藏课程
 export const cancelCourseCollect = params => api.post('student/User/cancelCourseCollect', params)

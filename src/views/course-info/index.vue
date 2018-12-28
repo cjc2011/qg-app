@@ -2,34 +2,42 @@
   <div class="course-info">
     <div class="header">
       <div class="top-bar">
-        <span class="back-icon" @click="$router.back()"><img :src="BackIcon" ></span> 
-        <span class="share-icon"><img :src="ShareIcon" ></span>
+        <span class="back-icon" @click="$router.back()"><img :src="BackIcon"></span>
+        <span class="share-icon">
+          <!-- <img :src="ShareIcon"> -->
+          <img :src="ShareIcon" alt="编辑" @click="toCollect" v-if="is_collect == 0">
+          <img :src="TimeIcon" alt="编辑" @click="toCancelCollect" v-if="is_collect == 1">
+        </span>
       </div>
       <div class="bg-image">
         <img :src="Gb" />
       </div>
-      <h1 class="name">小学三年级高级编程</h1>
+      <h1 class="name">{{courseInfoObj.coursename}}</h1>
     </div>
-    <h1 class="course-name">小学三年级高级编程</h1>
+    <h1 class="course-name">{{courseInfoObj.coursename}}</h1>
     <div class="course-box summary">
       <div class="course-box__title">简介</div>
       <div class="course-box__content">
-        <p> 本课程从实际生产环境应用MyCAT入手，讲解MyCAT的基础知识和MyCAT的基本应用操作，本课程的目标就是“看得懂、学得会、做得出”，为后续的学习打下夯实的基础。 本课程从实际生产环境应用MyCAT入手，讲解MyCAT的基础知识和MyCAT的基本应用操作，本课程的目标就是“看得懂、学得会、做得出”，为后续的学习打下夯实的基础。 本课程从实际生产环境应用MyCAT入手，讲解MyCAT的基础知识和MyCAT的基本应用操作，本课程的目标就是“看得懂、学得会、做得出”，为后续的学习打下夯实的基础。 本课程从实际生产环境应用MyCAT入手，讲解MyCAT的基础知识和MyCAT的基本应用操作，本课程的目标就是“看得懂、学得会、做得出”，为后续的学习打下夯实的基础。</p> 
+        <P>{{courseInfoObj.generalize}}</P>
       </div>
     </div>
-    <div class="course-box teacher">
+    <!-- 1 录播 2直播 -->
+    <div class="course-box teacher" v-if="courseInfoObj.coursetype == 2">
       <div class="course-box__title">老师简介</div>
       <div class="course-box__content">
         <div class="teacher-avatar">
-          <img class="avatar" src="https://avatars0.githubusercontent.com/u/17289716?s=180&v=4" >
-          <p class="teacher-name">王大锤</p>
+          <img class="avatar" :src="courseInfoObj.teacher_imageurl">
+          <p class="teacher-name">{{courseInfoObj.teachername}}</p>
         </div>
-        <p class="text">本课程从实际生产环境应用MyCAT入手，讲解MyCAT的基础知识和MyCAT的基本应用操作，本课程的目标就是“看得懂、学得会、做得出”，为后续的学习打下夯实的基础。 本课程从实际生产环境应用MyCAT入手，讲解MyCAT的基础知识和MyCAT的基本应用操作，本课程的目标就是“看得懂、学得会、做得出”，为后续的学习打下夯实的基础。 本课程从实际生产环境应用MyCAT入手，讲解MyCAT的基础知识和MyCAT的基本应用操作，本课程的目标就是“看得懂、学得会、做得出”，为后续的学习打下夯实的基础。 本课程从实际生产环境应用MyCAT入手，讲解MyCAT的基础知识和MyCAT的基本应用操作，本课程的目标就是“看得懂、学得会、做得出”，为后续的学习打下夯实的基础。</p>
+        <p class="text">{{courseInfoObj.teacher_porfile}}</p>
       </div>
     </div>
-    <div class="course-box noborder evaluate">
+    <div class="course-box noborder evaluate" v-if="courseInfoObj.coursetype == 1">
       <div class="course-box__title">老师点评</div>
-      <div class="course-box__content">
+      <div v-for="(item,index) in commentData" :key="index">
+        <EvaluateItem :data="item"></EvaluateItem>
+      </div>
+      <!-- <div class="course-box__content">
         <div class="evaluate-item">
           <div class="evaluate-item__header">
             <div class="evaluate-item__user">
@@ -43,11 +51,11 @@
           </div>
           <div class="evaluate-item__content">学习很努力jixujiayou</div>
         </div>
-      </div>
+      </div> -->
     </div>
     <div class="pay border-top-1px">
       <div class="preice">¥19999</div>
-      <div class="pay-btn">立即支付</div>
+      <div class="pay-btn">立即购买</div>
     </div>
   </div>
 </template>
@@ -57,25 +65,91 @@ import Gb from '^/images/bg.png'
 import ShareIcon from '^/images/share.png'
 import BackIcon from '^/images/back-white.png'
 import TimeIcon from '^/images/time.png'
-
+import { getCurriculumInfo, getCurriculumComment, courseCollect, cancelCourseCollect } from '@/api'
+import EvaluateItem from '%/evaluate-item/index.vue'
 export default {
   data() {
     return {
       Gb: Gb,
       BackIcon: BackIcon,
       ShareIcon: ShareIcon,
-      TimeIcon: TimeIcon
+      TimeIcon: TimeIcon,
+      is_collect: undefined,
+      courseInfoObj: {},
+      commentData: []
     }
+  },
+  components: {
+
+    EvaluateItem
+  },
+  created() {
+    this.getCurriculumInfo()
+    this.getCurriculumComment()
+  },
+  methods: {
+    // 课程详情
+    getCurriculumInfo() {
+      getCurriculumInfo({
+        courseid: this.$route.params.id
+      }).then(res => {
+        if (res.code === 0) {
+          // 是否收藏
+          this.is_collect = res.data.is_collect
+          this.courseInfoObj = res.data
+        }
+      })
+    },
+    getCurriculumComment() {
+      getCurriculumComment({
+        courseid: this.$route.params.id
+      }).then(res => {
+        if (res.code === 0) {
+          // this.commentData = res.data.data
+          this.commentData = [
+            {
+              "imageurl": null,
+              "nickname": "学生头像",
+              "addtime": "评论时间",
+              "score": "评分",
+              "content": "评论内容",
+              "commentid": "评论id"
+            }
+          ]
+        }
+      })
+    },
+    // 收藏
+    toCollect() {
+      courseCollect({
+        courseid: this.$route.params.id
+      }).then(res => {
+        if (res.code === 0) {
+          this.is_collect = 1
+        }
+      })
+    },
+    // 取消收藏
+    toCancelCollect() {
+      cancelCourseCollect({
+        courseid: this.$route.params.id
+      }).then(res => {
+        if (res.code === 0) {
+          this.is_collect = 0
+        }
+      })
+    },
+
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.course-info{
+.course-info {
   margin: -50px -16px 0;
 }
-.header{
-  .top-bar{
+.header {
+  .top-bar {
     position: fixed;
     left: 16px;
     right: 16px;
@@ -83,16 +157,16 @@ export default {
     display: flex;
     justify-content: space-between;
     .back-icon,
-    .share-icon{
+    .share-icon {
       display: inline-block;
       width: 20px;
       padding: 10px 0;
-      .cubeic-back{
+      .cubeic-back {
         color: #ffffff;
       }
     }
   }
-  .name{
+  .name {
     position: absolute;
     top: 100px;
     width: 100%;
@@ -102,79 +176,79 @@ export default {
     text-align: center;
   }
 }
-.course-name{
+.course-name {
   margin: 0;
   padding: 18px 16px;
   font-size: 15px;
-  color: #3C3C41;
+  color: #3c3c41;
   text-align: left;
-  border-bottom: 10px solid #F5F6FA;
+  border-bottom: 10px solid #f5f6fa;
 }
-.course-box{
+.course-box {
   padding: 16px;
   text-align: left;
-  border-bottom: 10px solid #F5F6FA;
-  &.noborder{
+  border-bottom: 10px solid #f5f6fa;
+  &.noborder {
     border-bottom: 0px solid #ffffff;
   }
-  &__title{
+  &__title {
     font-size: 15px;
-    color: #3C3C41;
+    color: #3c3c41;
   }
-  &__content{
+  &__content {
     padding: 10px;
     font-size: 13px;
-    color: #6E6F80;
+    color: #6e6f80;
     line-height: 26px;
   }
 }
-.teacher-avatar{
+.teacher-avatar {
   text-align: center;
-  .avatar{
+  .avatar {
     width: 44px;
     height: 44px;
     border-radius: 22px;
   }
-  .teacher-name{
+  .teacher-name {
     font-size: 14px;
-    color: #3C3C41;
+    color: #3c3c41;
   }
 }
-.evaluate-item{
-  margin-bottom: 10px;
-  &__header{
-    display: flex;
-    justify-content: space-between;
-  }
-  &__avatar{
-    width: 28px;
-    height: 28px;
-    margin-right: 6px;
-    border-radius: 14px;
-  }
-  &__name{
-    font-size: 14px;
-    color: #34363C;
-  }
-  &__icon{
-    height: 14px;
-    width: 14px;
-    margin-right: 6px;
-  }
-  &__timetext{
-    font-size: 12px;
-    color: #999999;
-  }
-  &__content{
-    margin-top: 10px;
-    font-size: 14px;
-    color: #6E6F80; 
-    padding: 12px;
-    background: #F6F6F8;
-    border-radius: 2px;
-  }
-}
-.pay{
+// .evaluate-item {
+//   margin-bottom: 10px;
+//   &__header {
+//     display: flex;
+//     justify-content: space-between;
+//   }
+//   &__avatar {
+//     width: 28px;
+//     height: 28px;
+//     margin-right: 6px;
+//     border-radius: 14px;
+//   }
+//   &__name {
+//     font-size: 14px;
+//     color: #34363c;
+//   }
+//   &__icon {
+//     height: 14px;
+//     width: 14px;
+//     margin-right: 6px;
+//   }
+//   &__timetext {
+//     font-size: 12px;
+//     color: #999999;
+//   }
+//   &__content {
+//     margin-top: 10px;
+//     font-size: 14px;
+//     color: #6e6f80;
+//     padding: 12px;
+//     background: #f6f6f8;
+//     border-radius: 2px;
+//   }
+// }
+.pay {
   position: fixed;
   bottom: 0;
   left: 0;
@@ -184,23 +258,25 @@ export default {
   display: flex;
   align-items: center;
   background: #ffffff;
-  .preice{
-    color: #F20B0B;
+  .preice {
+    color: #f20b0b;
     font-size: 17px;
     font-weight: 600;
     flex: 1;
   }
-  &-btn{
+  &-btn {
     height: 34px;
     width: 80px;
     line-height: 34px;
     font-size: 15px;
     color: #ffffff;
-    background: linear-gradient(90deg,rgba(39,249,180,1),rgba(11,204,150,1));
-    box-shadow: 0px 8px 13px 0px rgba(8,175,128,0.2);
+    background: linear-gradient(
+      90deg,
+      rgba(39, 249, 180, 1),
+      rgba(11, 204, 150, 1)
+    );
+    box-shadow: 0px 8px 13px 0px rgba(8, 175, 128, 0.2);
     border-radius: 4px;
   }
 }
-
-
 </style>

@@ -39,7 +39,7 @@
       </div>
     </div>
     <div class="teacher-course">
-      <div class="title">他的课程</div>
+      <div :class="['title',courseData ? '' :'hide']">他的课程</div>
       <div v-for="(item, index) in courseData" :key="index" @click="toMyEvaluate(item)">
         <CourseItem type="course-show" :data="item" />
       </div>
