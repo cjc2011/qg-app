@@ -9,8 +9,15 @@
         <div class="course-item__teacher">老师：{{data.teachername}}</div>
         <div v-if="type == 'course-show'" class="course-item__price">{{data.price}}</div>
         <div v-if="type == 'curriculum'" class="course-item__footer">
-          <span class="course-item__time">18:00:45-19:45</span>
-          <span class="course-item__status wait">进教室</span>
+          <span class="course-item__time">
+            {{data.starttime && data.starttime.substring(11)}} 11--11 {{data.endtime && data.endtime.substring(11)}}</span>
+          <span class="course-item__status wait">
+            <span v-if="data.buttonstatus == 0">待上课</span>
+            <span v-if="data.buttonstatus == 1" class="intoclassroom">进教室</span>
+            <span v-if="data.buttonstatus == 2">去评价</span>
+            <span v-if="data.buttonstatus == 3">回放</span>
+            <!-- 0 未开始 1去APP上课 2 去评价 回放 3回放 -->
+          </span>
         </div>
       </div>
     </div>
@@ -46,4 +53,20 @@ export default {
 
 <style lang='scss' scoped>
 @import "^/style/course-list.scss";
+.course-item__status {
+  position: relative;
+  .intoclassroom {
+    position: absolute;
+    right: 0;
+    bottom: -12px;
+    display: block;
+    width: 57px;
+    text-align: center;
+    height: 28px;
+    line-height: 28px;
+    background: rgba(55, 210, 151, 1);
+    border-radius: 4px;
+    color: white;
+  }
+}
 </style>

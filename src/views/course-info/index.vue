@@ -67,6 +67,7 @@ import BackIcon from '^/images/back-white.png'
 import TimeIcon from '^/images/time.png'
 import { getCurriculumInfo, getCurriculumComment, courseCollect, cancelCourseCollect } from '@/api'
 import EvaluateItem from '%/evaluate-item/index.vue'
+import { toast } from '../../cube-ui'
 export default {
   data() {
     return {
@@ -97,6 +98,8 @@ export default {
           // 是否收藏
           this.is_collect = res.data.is_collect
           this.courseInfoObj = res.data
+        } else {
+          toast(`${res.info}`)
         }
       })
     },

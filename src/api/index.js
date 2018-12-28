@@ -71,3 +71,9 @@ export const getRecommendCourser = params => api.post('student/HomePage/getRecom
 export const getSlideList = params => api.post('student/Homepage/getSlideList', params)
     // 老师推荐 
 export const getRecommendTeacher = params => api.post('student/Homepage/getRecommendTeacher', params)
+
+/**
+ * 陪练
+ */
+// 我的课表
+export const getLessonsByDate = params => api.post('student/Mycourse/getLessonsByDate', params)
