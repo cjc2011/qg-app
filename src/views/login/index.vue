@@ -36,7 +36,7 @@ import { toast } from '../../cube-ui'
 import { getStr, randomString } from '^/js/util'
 import * as rule from '^/js/verification'
 
-import { mapMutations } from 'vuex'
+import { mapMutations, mapGetters } from 'vuex'
 
 export default {
   data() {
@@ -55,6 +55,11 @@ export default {
     getPublicKey().then( res => {
       this.PublicKey = res.key
     })
+  },
+  computed: {
+    ...mapGetters([
+      'organ'
+    ])
   },
   methods: {
     ...mapMutations({
@@ -81,7 +86,7 @@ export default {
         "password": this.password,
         "type": 3,
         "source": "app",
-        "organid": 74
+        "organid": this.organ.organid
       }
       this.setkey(key)
       let data = this.wrapEncrypt(JSON.stringify(params))

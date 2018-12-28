@@ -15,6 +15,8 @@ export const register = params => api.post('student/Homepage/register.html', par
 export const login = params => api.post('index/Login/login', params)
     // 登出
 export const logout = params => api.post('index/Login/exitLogin', params)
+// 搜索机构
+export const searchDomain = params => api.post('student/Homepage/searchDomain', params)
 
 /**
  * 个人中心

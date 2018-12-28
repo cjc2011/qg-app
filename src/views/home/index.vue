@@ -18,7 +18,7 @@
       </div>
       <CourseItem :data="sub_item" @click="courseClick" v-for="(sub_item, sub_index) in item.data"  :key="sub_index" />
     </div>
-    <div class="teacher-carousel">
+    <div class="teacher-carousel" v-if="teachers.length">
       <div class="title">名师推荐</div>
       <div class="teacher-wrapper">
         <cube-slide :data="teachers" :showDots="false"> 
@@ -55,7 +55,7 @@ export default {
     }
   },
   created() {
-    this.id = this.$route.name == 'official' ? 1 : this.organid
+    this.id = this.$route.name == 'official' ? 1 : this.organ.organid
     this.getSlide()
     this.getRecommentCourse()
     this.getCategoryCorse()
@@ -63,12 +63,14 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'organid'
+      'organ'
     ])
   },
   watch: {
     '$route' (to, from) {
-      this.id = to.name == 'official' ? 1 : this.organid
+      this.id = to.name == 'official' ? 1 : this.organ.organid
+      this.getCategoryCorse()
+      this.getTeacher()
     }
   },
   methods: {
@@ -77,10 +79,15 @@ export default {
         path: `/courseinfo/${item.curriculumid}`
       })
     },
-    courseMore() {
-      if ( this.$route.name == 'official') {
-        // this.$rout
+    courseMore(id) {
+      let query = {
+        organid: this.id,
+        category_id: id
       }
+      this.$router.push({
+        path: '/course',
+        query
+      })
     },
     recommentMore() {
       let path = null
@@ -137,9 +144,11 @@ export default {
         }
       })
     },
+    // 分类课程
     getCategoryCorse() {
+      let organid = this.$route.name == 'official' ? 1 : this.organ.organid
       getRecommendCategory({
-        organid: 1,
+        organid:  organid,
         limit: 4
       }).then( res => {
         if (res.code === 0) {
@@ -148,8 +157,9 @@ export default {
       })
     },
     getTeacher() {
+      let organid = this.$route.name == 'official' ? 1 : this.organ.organid
       getRecommendTeacher({
-        organid: 2,
+        organid: organid,
         limit: 10
       }).then( res=> {
         if (res.code == 0) {

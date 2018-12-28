@@ -24,6 +24,7 @@ import Reservation from '../views/reservation/index.vue'
 import TeacherInfo from '../views/teacher-info/index.vue'
 import UserAgreement from '../views/user-agreement/index.vue'
 import MyEvaluate from '../views/my-evaluate/index.vue'
+import Domain from '../views/domain/index.vue'
 
 Vue.use(Router)
 
@@ -155,6 +156,14 @@ export default new Router({
             path: '/login',
             name: 'login',
             component: Login,
+            meta: {
+                header: 'rewrite'
+            }
+        },
+        {
+            path: '/domain',
+            name: 'domain',
+            component: Domain,
             meta: {
                 header: 'rewrite'
             }
