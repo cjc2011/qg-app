@@ -40,7 +40,11 @@ export default {
           text: '课程',
           icon: Course,
           active: CourseActive,
-          path: '/course'
+          path: '/course',
+          query: {
+            organid: 1,
+            category_id: 0
+          }
         },
         { 
           text: '陪练',

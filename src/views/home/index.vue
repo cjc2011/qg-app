@@ -4,19 +4,19 @@
     <div class="banner-wrapper">
       <cube-slide :data="banners"/>
     </div>
-    <div class="course-box">
+    <div class="course-box" v-if="recommentCourseList.length">
       <div class="course-box__title">
         <div class="course-box__name">智慧琴童</div>
         <div class="course-box__more" @click="recommentMore">更多</div>
       </div>
       <Grid v-if="recommentCourseList.length" :courseData="recommentCourseList" @click="gridClick" />
     </div>
-    <div class="course-box">
+    <div class="course-box expand bottom-slit-line" v-if="CategoryCorse.length" v-for="(item, index) in CategoryCorse" :key="index">
       <div class="course-box__title">
-        <div class="course-box__name">钢琴培训</div>
-        <div class="course-box__more" @click="courseMore">更多</div>
+        <div class="course-box__name">{{item.categoryname}}</div>
+        <div class="course-box__more" @click="courseMore(item.category_id)">更多</div>
       </div>
-      <CourseItem />
+      <CourseItem :data="sub_item" @click="courseClick" v-for="(sub_item, sub_index) in item.data"  :key="sub_index" />
     </div>
     <div class="teacher-carousel">
       <div class="title">名师推荐</div>
@@ -42,7 +42,7 @@ import Grid from '%/grid'
 import CourseItem from '%/course-item'
 
 import { mapGetters } from 'vuex'
-import { getRecommendCourser, getSlideList, getRecommendTeacher } from '@/api'
+import { getRecommendCourser, getSlideList, getRecommendTeacher, getRecommendCategory } from '@/api'
 
 export default {
   data() {
@@ -50,13 +50,15 @@ export default {
       title: '智慧琴童',
       banners: [],
       recommentCourseList: [],
-      teachers: []
+      teachers: [],
+      CategoryCorse: []
     }
   },
   created() {
     this.id = this.$route.name == 'official' ? 1 : this.organid
     this.getSlide()
     this.getRecommentCourse()
+    this.getCategoryCorse()
     this.getTeacher()
   },
   computed: {
@@ -70,6 +72,11 @@ export default {
     }
   },
   methods: {
+    courseClick(item) {
+      this.$router.push({
+        path: `/courseinfo/${item.curriculumid}`
+      })
+    },
     courseMore() {
       if ( this.$route.name == 'official') {
         // this.$rout
@@ -82,7 +89,7 @@ export default {
           path: '/course',
           query: {
              organid: this.id,
-             current: '全部'
+             category_id: '全部'
           }
         }
       } else {
@@ -103,6 +110,7 @@ export default {
         // path: `/teacherinfo/${teacher.id}`
       })
     },
+    // banner图
     getSlide() {
       getSlideList({
         organid: 1
@@ -118,13 +126,25 @@ export default {
         }
       })
     },
+    // 官方推荐课程
     getRecommentCourse() {
       getRecommendCourser({
         organid: 1,
-        limit: 4
+        limit: 4,
+        type: 1
       }).then( res => {
         if (res.code == 0) {
           this.recommentCourseList = res.data
+        }
+      })
+    },
+    getCategoryCorse() {
+      getRecommendCategory({
+        organid: 1,
+        limit: 4
+      }).then( res => {
+        if (res.code === 0) {
+          this.CategoryCorse = res.data
         }
       })
     },

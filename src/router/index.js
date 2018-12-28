@@ -59,7 +59,7 @@ export default new Router({
       component: CourseInfo,
       meta: {
         header: 'rewrite',
-        title: '教师详情'
+        title: '课程详情'
       }
     },
     {
@@ -214,7 +214,7 @@ export default new Router({
       name: 'teacherinfo',
       component: TeacherInfo,
       meta: {
-        title: ' '
+        title: '教师详情'
       }
     }
   ]
