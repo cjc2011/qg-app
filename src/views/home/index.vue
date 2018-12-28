@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <home-bar></home-bar>
+    <home-bar :organid="id"></home-bar>
     <div class="banner-wrapper">
       <cube-slide :data="banners"/>
     </div>
@@ -16,7 +16,7 @@
         <div class="course-box__name">{{item.categoryname}}</div>
         <div class="course-box__more" @click="courseMore(item.category_id)">更多</div>
       </div>
-      <CourseItem :data="sub_item" @click="courseClick" v-for="(sub_item, sub_index) in item.data"  :key="sub_index" />
+      <CourseItem :data="sub_item" :courseorigin="id == 1 ? 'official' : 'organ' " @click="courseClick" v-for="(sub_item, sub_index) in item.data"  :key="sub_index" />
     </div>
     <div class="teacher-carousel" v-if="teachers.length">
       <div class="title">名师推荐</div>

@@ -195,7 +195,7 @@ export default new Router({
             component: SettingInfo
         },
         {
-            path: '/searchresult/:search_key',
+            path: '/searchresult',
             name: 'searchresult',
             component: SearchResult,
             meta: {

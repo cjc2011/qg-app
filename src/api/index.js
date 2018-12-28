@@ -79,6 +79,8 @@ export const getRecommendTeacher = params => api.post('student/Homepage/getRecom
 export const getCategoryList = params => api.post('student/Homepage/getCategoryList', params)
     // 根据分类获取课程
 export const getFilterCourserList = params => api.post('student/Homepage/getFilterCourserList', params)
+// 搜索课程
+export const searchCourseByCname = params => api.post('student/Homepage/searchCourseByCname', params)
 
 /**
  * 陪练
