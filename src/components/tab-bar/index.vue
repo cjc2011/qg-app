@@ -1,11 +1,11 @@
 <template>
   <div class="tab-bar">
-    <router-link tag="div" :to="item.path" class="tab-item" :class="{'active': path == item.path}" v-for="(item,index) in tabs" :key="index" @click="select(index)" replace>
+    <div  @click="jumpLink(item)" class="tab-item" :class="{'active': path == item.path}" v-for="(item,index) in tabs" :key="index" replace>
       <span class="icon">
         <img :src="path == item.path ? item.active : item.icon" :alt="item.text">
       </span>
       <p class="text">{{item.text}}</p>
-    </router-link>
+    </div>
   </div>
 </template>
 
@@ -23,8 +23,11 @@ export default {
     }
   },
   methods: {
-    select(index) {
-      this.active = index
+    jumpLink(item) {
+      this.$router.replace({
+        path: item.path,
+        query: item.query
+      })
     }
   }
 }
