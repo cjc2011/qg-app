@@ -1,5 +1,7 @@
 <template>
+ 
   <div class="login">
+     <div class="select-domain" @click="$router.replace('/domain')">选择域名</div>
     <div class="user-avatar">
       <img :src="UserAvatar" alt="">
     </div>
@@ -200,5 +202,13 @@ export default {
   box-shadow: 0px 10px 26px 0px rgba(8,175,128,0.28);
   border-radius: 22px;
   color: #ffffff;
+}
+.select-domain{
+  position: absolute;
+  right: -20px;
+  top: -40px;
+  padding: 20px;
+  font-size: 14px;
+  color: #07C994;
 }
 </style>

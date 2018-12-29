@@ -5,8 +5,8 @@
         <span class="back-icon" @click="$router.back()"><img :src="BackIcon"></span>
         <span class="share-icon">
           <!-- <img :src="ShareIcon"> -->
-          <img :src="ShareIcon" alt="编辑" @click="toCollect" v-if="is_collect == 0">
-          <img :src="TimeIcon" alt="编辑" @click="toCancelCollect" v-if="is_collect == 1">
+          <img :src="ShareIcon" alt="收藏" @click="toCollect" v-if="is_collect == 0">
+          <img :src="TimeIcon" alt="收藏" @click="toCancelCollect" v-if="is_collect == 1">
         </span>
       </div>
       <div class="bg-image">
@@ -32,29 +32,14 @@
         <p class="text">{{courseInfoObj.teacher_porfile}}</p>
       </div>
     </div>
-    <div class="course-box noborder evaluate" v-if="courseInfoObj.coursetype == 1">
+    <div class="course-box noborder evaluate" v-if="courseInfoObj.coursetype == 2">
       <div class="course-box__title">老师点评</div>
       <div v-for="(item,index) in commentData" :key="index">
         <EvaluateItem :data="item"></EvaluateItem>
       </div>
-      <!-- <div class="course-box__content">
-        <div class="evaluate-item">
-          <div class="evaluate-item__header">
-            <div class="evaluate-item__user">
-              <img src="https://avatars0.githubusercontent.com/u/17289716?s=180&v=4" class="evaluate-item__avatar">
-              <span class="evaluate-item__name">李大美</span>
-            </div>
-            <div class="evaluate-item__time">
-              <img :src="TimeIcon" class="evaluate-item__icon">
-              <span class="evaluate-item__timetext">2018-04-05 18:25:36</span>
-            </div>
-          </div>
-          <div class="evaluate-item__content">学习很努力jixujiayou</div>
-        </div>
-      </div> -->
     </div>
-    <div class="pay border-top-1px">
-      <div class="preice">¥19999</div>
+    <div class="pay border-top-1px" v-if="courseInfoObj.applystatus === 0">
+      <div class="preice">¥{{courseInfoObj.price}}</div>
       <div class="pay-btn">立即购买</div>
     </div>
   </div>
@@ -90,10 +75,31 @@ export default {
   },
   methods: {
     // 课程详情
+    // 直播需要显示 老师详情 评论列表   
+    // 录播显示 课时列表
     getCurriculumInfo() {
       getCurriculumInfo({
         courseid: this.$route.params.id
       }).then(res => {
+        /**
+         * "coursename": "课程名称",
+            "subhead": "课程副标题",
+            "imageurl": "课程封面Url",
+            "price": "课程单价",
+            "curriculumid": "课程id",
+            "coursetype": "课程类型1录播课2直播课",
+            "teachername": "老师名称,录播课没有老师信息,该字段为null",
+            "teacherid": "老师id,录播课没有老师信息,该字段为null",
+            "tacher_profile": "老师简介,录播课没有老师信息,该字段为null",
+            "teacher_imageur": "老师头像,录播课没有老师信息,该字段为null",
+            "generalize": "课程详情概述",
+            "periodnum": "课时数量",
+            "realnum": "实际报名人数",
+            "is_collect": "是否收藏标识 0为收藏 1收藏",
+            "categoryid": "分类id",
+            "categoryname": "分类名称",
+            "applystatus": "是否报名过此课程 0未报名 1已报名"
+         */
         if (res.code === 0) {
           // 是否收藏
           this.is_collect = res.data.is_collect
@@ -217,40 +223,6 @@ export default {
     color: #3c3c41;
   }
 }
-// .evaluate-item {
-//   margin-bottom: 10px;
-//   &__header {
-//     display: flex;
-//     justify-content: space-between;
-//   }
-//   &__avatar {
-//     width: 28px;
-//     height: 28px;
-//     margin-right: 6px;
-//     border-radius: 14px;
-//   }
-//   &__name {
-//     font-size: 14px;
-//     color: #34363c;
-//   }
-//   &__icon {
-//     height: 14px;
-//     width: 14px;
-//     margin-right: 6px;
-//   }
-//   &__timetext {
-//     font-size: 12px;
-//     color: #999999;
-//   }
-//   &__content {
-//     margin-top: 10px;
-//     font-size: 14px;
-//     color: #6e6f80;
-//     padding: 12px;
-//     background: #f6f6f8;
-//     border-radius: 2px;
-//   }
-// }
 .pay {
   position: fixed;
   bottom: 0;

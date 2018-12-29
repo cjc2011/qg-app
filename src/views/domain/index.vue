@@ -29,9 +29,6 @@ export default {
       URL: ''
     }
   },
-  created() {
-    // this.addOrgan()
-  },
   computed: {
     ...mapGetters([
       'organ'
@@ -110,6 +107,7 @@ export default {
     position: absolute;
     right: 0px;
     top: -20px;
+    font-size: 14px;
     color: #16e2ab;
   }
 }
