@@ -15,7 +15,7 @@ export const register = params => api.post('student/Homepage/register.html', par
 export const login = params => api.post('index/Login/login', params)
     // 登出
 export const logout = params => api.post('index/Login/exitLogin', params)
-// 搜索机构
+    // 搜索机构
 export const searchDomain = params => api.post('student/Homepage/searchDomain', params)
 
 /**
@@ -79,7 +79,7 @@ export const getRecommendTeacher = params => api.post('student/Homepage/getRecom
 export const getCategoryList = params => api.post('student/Homepage/getCategoryList', params)
     // 根据分类获取课程
 export const getFilterCourserList = params => api.post('student/Homepage/getFilterCourserList', params)
-// 搜索课程
+    // 搜索课程
 export const searchCourseByCname = params => api.post('student/Homepage/searchCourseByCname', params)
 
 /**
@@ -92,3 +92,7 @@ export const getAppReserveStatus = params => api.post('student/Mycourse/getAppRe
 export const getAppReserveList = params => api.post('student/Mycourse/getAppReserveList', params)
     // 查询待上课或已结束的课时
 export const getAppWaitOrEndLessons = params => api.post('student/Mycourse/getAppWaitOrEndLessons', params)
+    // 去评价
+export const gotoComment = params => api.post('student/Mycourse/gotoComment', params)
+    // 进教室
+export const intoClassroom = params => api.post('student/Mycourse/intoClassroom', params)
