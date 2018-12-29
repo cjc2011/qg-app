@@ -4,3 +4,4 @@ export const encryptionkey = state => state.encryptionkey
 export const userinfo = state => state.userinfo
 export const organid = state => state.organid
 export const courseinfo = state => state.courseinfo
+export const organ = state => state.organ

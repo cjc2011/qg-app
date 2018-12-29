@@ -26,6 +26,7 @@ import UserAgreement from '../views/user-agreement/index.vue'
 import MyEvaluate from '../views/my-evaluate/index.vue'
 import ReservationList from '../views/reservation-list/index.vue'
 import ReservationDetail from '../views/reservation-detail/index.vue'
+import Domain from '../views/domain/index.vue'
 
 Vue.use(Router)
 
@@ -162,6 +163,14 @@ export default new Router({
             }
         },
         {
+            path: '/domain',
+            name: 'domain',
+            component: Domain,
+            meta: {
+                header: 'rewrite'
+            }
+        },
+        {
             path: '/registered',
             name: 'registered',
             component: Registered,
@@ -188,7 +197,7 @@ export default new Router({
             component: SettingInfo
         },
         {
-            path: '/searchresult/:search_key',
+            path: '/searchresult',
             name: 'searchresult',
             component: SearchResult,
             meta: {

@@ -11,6 +11,7 @@ function getItem(key) {
 const state = {
     title: '',
     organid: '74',
+    organ: getItem('organ'),
     publickey: getItem('publickey'),
     userinfo: getItem('userinfo'),
     encryptionkey: getItem('encryptionkey'),

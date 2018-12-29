@@ -3,7 +3,7 @@
     <div class="logo">
       <img class="logo-img" :src="Logo" alt="Logo">
     </div>
-    <div class="search-box-wrapper" @click="$router.push('/search')">
+    <div class="search-box-wrapper" @click="click">
       <SearchBox />
     </div>
   </div>
@@ -15,11 +15,27 @@ import Logo from "^/images/logo.png";
 import SearchBox from '../search-box/index.vue'
 
 export default {
+  props: {
+    organid: {
+      type: Number,
+      default: 1
+    }
+  },
   data() {
     return {
       Logo: Logo,
       SearchIcon: SearchIcon
     };
+  },
+  methods: {
+    click() {
+      this.$router.push({
+        path: '/search',
+        query: {
+          organid: this.organid
+        }
+      })
+    }
   },
   components: {
     SearchBox

@@ -1,7 +1,7 @@
 <template>
   <div class="search-box">
-    <input class="search" placeholder="请输入关键字" type="text">
-    <img class="search-icon" :src="SearchIcon" alt="搜索">
+    <input class="search" v-model="searchKey" placeholder="请输入关键字" type="text">
+    <img class="search-icon" :src="SearchIcon" alt="搜索" @click="search">
   </div>
 </template>
 
@@ -11,7 +11,13 @@ import SearchIcon from "^/images/serach-icon.png";
 export default {
   data() {
     return {
-      SearchIcon: SearchIcon
+      SearchIcon: SearchIcon,
+      searchKey: ''
+    }
+  },
+  methods: {
+    search() {
+      this.$emit('search', this.searchKey)
     }
   }
 }
@@ -31,7 +37,7 @@ export default {
     width: 100%;
     font-size: 14px;
     line-height: 20px; 
-    color: #BDC0C6;
+    color: #333333;
     background: #F1F2F6;
     outline: none;
   }

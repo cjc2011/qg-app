@@ -28,6 +28,11 @@ const mutations = {
         let val = obj === null ? '' : JSON.stringify(obj)
         state.courseinfo = obj
         localStorage.setItem('courseinfo', val)
+    },
+    [types.SETT_ORGAN](state, obj) {
+        let val = obj === null ? '' : JSON.stringify(obj)
+        state.organ = obj
+        localStorage.setItem('organ', val)
     }
 }
 

@@ -2,7 +2,7 @@
   <div class="search">
     <div class="top-bar">
       <div class="search-box-wrapper">
-        <SearchBox />
+        <SearchBox  @search="search"/>
       </div>
       <div class="action-btn" @click="$router.back()">取消</div>
     </div>
@@ -26,8 +26,22 @@ import SearchBox from '%/search-box/index.vue'
 
 
 export default {
+  created() {
+    this.organid = this.$route.query.organid
+  },
   components: {
     SearchBox
+  },
+  methods: {
+    search(val) {
+      this.$router.push({
+        path: `/searchresult`,
+        query: {
+          search_key: val,
+          organid: this.organid
+        }
+      })
+    }
   }
 }
 </script>
