@@ -6,6 +6,7 @@
         <span class="evaluate-item__name">{{data.nickname || '匿名'}}</span>
       </div>
       <div class="evaluate-item__time">
+        <img :src="Time" class="evaluate-item__icon">
         <span class="evaluate-item__timetext">{{data.addtime}}</span>
       </div>
     </div>
