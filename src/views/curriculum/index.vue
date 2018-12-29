@@ -15,7 +15,7 @@
     <div :class="[isShow?'curriculum-list':'']">
       <div class="curriculum-card" v-for="(item, index) in lessonsData" :key="index" @click="toCourse(item)">
         <div class="curriculum-card__title expand">{{date}}&nbsp;&nbsp;{{day}}</div>
-        <CourseItem type="curriculum" border="bottom" :data="item" />
+        <CourseItem type="curriculum" border="bottom" :data="item" @intoclassroom="intoclassroom" @toEvaluate="toEvaluate" @toreplay="toreplay" />
       </div>
     </div>
   </div>
@@ -26,7 +26,7 @@
 import ExclamationIcon from '^/images/exclamation.png'
 import ClockIcon from '^/images/clock.png'
 import CourseItem from '%/course-item'
-import { getLessonsByDate, getAppReserveStatus } from '@/api'
+import { getLessonsByDate, getAppReserveStatus, intoClassroom } from '@/api'
 import { formatDateTime } from '@/assets/js/util.js'
 export default {
   data() {
@@ -94,9 +94,27 @@ export default {
     },
     // 课程详情
     toCourse(course) {
+      //  0 未开始 1去APP上课 2 去评价 回放 3回放
       this.$router.push({
         path: `/courseinfo/${course.curriculumid}`
       })
+    },
+    intoclassroom(course) {
+      intoClassroom({ 'toteachid': course.toteachid }).then(res => {
+        if (res.code === 0) {
+
+        }
+      })
+      console.log('intoclassroom', course)
+    },
+    toEvaluate(course) {
+      console.log('toEvaluate', course)
+      this.$router.push({
+        path: `/evaluatecourse/${course.toteachid}`
+      })
+    },
+    toreplay(course) {
+      console.log('toreplay', course)
     },
     // 我的预约列表
     toReservationList() {

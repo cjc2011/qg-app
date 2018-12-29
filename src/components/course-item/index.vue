@@ -15,9 +15,9 @@
           </span>
           <span class="course-item__status wait">
             <span v-if="data.buttonstatus == 0">待上课</span>
-            <span v-if="data.buttonstatus == 1" class="intoclassroom">进教室</span>
-            <span v-if="data.buttonstatus == 2">去评价</span>
-            <span v-if="data.buttonstatus == 3">回放</span>
+            <span v-if="data.buttonstatus == 1" class="intoclassroom" @click.stop="intoclassroom(data)">进教室</span>
+            <span v-if="data.buttonstatus == 2" @click.stop="toEvaluate(data)">去评价</span>
+            <span v-if="data.buttonstatus == 3" @click.stop="toreplay(data)">回放</span>
             <!-- 0 未开始 1去APP上课 2 去评价 回放 3回放 -->
           </span>
         </div>
@@ -25,7 +25,8 @@
       <!-- 我的预约 -->
       <div class="course-item__reservation" v-if="type == 'reservation'">
         <p class="course-item__all" v-if="data.closingstatus == 0">
-          剩余<span class="course-item__color">{{data.surplusnum}}</span>课时</p>
+          剩余
+          <span class="course-item__color">{{data.surplusnum}}</span>课时</p>
         <p class="course-item__all" v-if="data.closingstatus == 1">已全部预约</p>
         <p class="course-item__btn">
           <span v-if="data.closingstatus == 0">预约</span>
@@ -63,6 +64,15 @@ export default {
   methods: {
     trigger() {
       this.$emit('click', this.data)
+    },
+    intoclassroom(data) {
+      this.$emit('intoclassroom',data)
+    },
+    toEvaluate(data) {
+      this.$emit('toEvaluate',data)
+    },
+    toreplay(data) {
+      this.$emit('toreplay',data)
     }
   },
   data() {

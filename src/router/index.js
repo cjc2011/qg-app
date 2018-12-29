@@ -27,6 +27,7 @@ import MyEvaluate from '../views/my-evaluate/index.vue'
 import ReservationList from '../views/reservation-list/index.vue'
 import ReservationDetail from '../views/reservation-detail/index.vue'
 import Domain from '../views/domain/index.vue'
+import EvaluateCourse from '../views/evaluate-course/index.vue'
 
 Vue.use(Router)
 
@@ -250,6 +251,14 @@ export default new Router({
             component: ReservationDetail,
             meta: {
                 title: '我的预约'
+            }
+        },
+        {
+            path: '/evaluatecourse/:id',
+            name: 'evaluatecourse',
+            component: EvaluateCourse,
+            meta: {
+                title: '评价'
             }
         }
     ]
