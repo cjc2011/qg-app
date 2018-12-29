@@ -3,7 +3,7 @@
         <div class="course-list-wrapper" ref="wrapper" v-show="courseData.length">
             <div class="list-container">
                 <div class="list-content">
-                    <course-item type="reservation" @click="courseClick" :data="item" v-for="(item,index) in courseData" :key="index"></course-item>
+                    <course-item type="reservation" @click="courseClick(item)" :data="item" v-for="(item,index) in courseData" :key="index"></course-item>
                 </div>
             </div>
         </div>
@@ -29,10 +29,9 @@ export default {
         this.getAppReserveList()
     },
     methods: {
-        courseClick() {
+        courseClick(item) {
             this.$router.push({
-                path: '/reservationdetail'
-                // path: '/reservationdetail/' + this.$route.params.id
+                path: '/reservationdetail/' + item.curriculumid
             })
         },
         getAppReserveList() {
@@ -45,7 +44,7 @@ export default {
                             "teachername": "老师昵称",
                             "imageurl": "课程封面url",
                             "closingstatus": "0",
-                            "curriculumid": "课程id",
+                            "curriculumid": "254",
                             "periodnum": "课程数量",
                             "surplusnum": "2"
                         },
@@ -54,7 +53,7 @@ export default {
                             "teachername": "老师昵称",
                             "imageurl": "课程封面url",
                             "closingstatus": "1",
-                            "curriculumid": "课程id",
+                            "curriculumid": "257",
                             "periodnum": "课程数量",
                             "surplusnum": "2"
                         }

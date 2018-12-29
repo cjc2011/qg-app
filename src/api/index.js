@@ -96,3 +96,5 @@ export const getAppWaitOrEndLessons = params => api.post('student/Mycourse/getAp
 export const gotoComment = params => api.post('student/Mycourse/gotoComment', params)
     // 进教室
 export const intoClassroom = params => api.post('student/Mycourse/intoClassroom', params)
+    // 查询老师一周内的时间表
+export const getAppTeacherFreeTime = params => api.post('student/Mycourse/getAppTeacherFreeTime', params)
