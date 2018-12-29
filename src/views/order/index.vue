@@ -18,14 +18,15 @@
       >
         <cube-slide-item>
           <cube-scroll :options="scrollOptions">
-            <ul>
-                <OrderItem v-for="item in [1,2,3,4,5,6,7,8]" :key="item" />
+            <ul v-if="officialData.length">
+              <OrderItem :order="item" order-origin='official' v-for="item in officialData" :key="item.ordernum" />
             </ul>
           </cube-scroll>
         </cube-slide-item>
         <cube-slide-item>
           <cube-scroll :options="scrollOptions">
-            <ul>
+            <ul v-if="organData.length">
+              <OrderItem :order="item" order-origin='organ' v-for="item in organData" :key="item.ordernum" />
             </ul>
           </cube-scroll>
         </cube-slide-item>
@@ -38,18 +39,30 @@
 import { findIndex } from "^/js/util.js";
 import OrderItem from '%/order-item'
 
+import { getMyOrderList } from '@/api'
+
 export default {
   data() {
     return {
-      selectedLabel: "课程",
+      selectedLabel: "直播课程",
       tabLabels: [
         {
-          label: "课程"
+          label: "直播课程"
         },
         {
           label: "智慧琴童"
         }
       ],
+      organParams: {
+        pagenum: 1,
+        ordertype: 1,
+      },
+      officialParams: {
+        pagenum: 1,
+        ordertype: 2
+      },
+      officialData: [],
+      organData: [],
       loop: false,
       autoPlay: false,
       showDots: false,
@@ -63,6 +76,9 @@ export default {
       }
     };
   },
+  created() {
+    this.getOrder()
+  },
   computed: {
     initialIndex() {
       let index = 0;
@@ -71,9 +87,32 @@ export default {
         item => item.label === this.selectedLabel
       );
       return index;
+    },
+    currentParams() {
+      return this.initialIndex === 0 ? this.organParams : this.officialParams
+    }
+  },
+  watch: {
+    currentParams(newVal, oldVal) {
+      this.getOrder()
     }
   },
   methods: {
+    getOrder() {
+      getMyOrderList(this.currentParams).then( res => {
+        if (res.code == 0) {
+          switch(this.initialIndex) {
+            case 0: 
+              this.officialData = res.data.data
+              break; 
+            case 1:
+              console.log(this.organData)
+              this.organData = res.data.data
+              break;  
+          }
+        }
+      })
+    },
     scroll(pos) {
       const x = Math.abs(pos.x);
       const tabItemWidth = this.$refs.tabNav.$el.clientWidth;

@@ -98,3 +98,7 @@ export const gotoComment = params => api.post('student/Mycourse/gotoComment', pa
 export const intoClassroom = params => api.post('student/Mycourse/intoClassroom', params)
     // 查询老师一周内的时间表
 export const getAppTeacherFreeTime = params => api.post('student/Mycourse/getAppTeacherFreeTime', params)
+    // 我的课程
+export const getMyCurriculum = params => api.post('student/Mycourse/getMyCurriculum', params)
+    // 我的订单
+export const getMyOrderList = params => api.post('student/Myorder/getMyOrderList', params)

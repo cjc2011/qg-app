@@ -53,6 +53,8 @@ axios.interceptors.response.use(
         let ResData = response.data
         if (ResData.code === -40666) {
             toast('当前账号在其他设备登录, 请重新登录')
+            store.commit('SET_USERINFO', null)
+            store.commit('SET_ENCRYPTIONKEY', null)
             router.push('/login')
         }
         return Promise.resolve(ResData);

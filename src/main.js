@@ -16,14 +16,11 @@ router.beforeEach((to, from, next) => {
   let userinfo = store.getters.userinfo
   let title = to.meta && to.meta.title
   store.commit('SET_PAGETITLE', title)
+  let isLoginPage = joinPages.indexOf(to.path) > -1
   if (userinfo) {
-    next()
+    isLoginPage ? next('/') : next()
   } else {
-    if (joinPages.indexOf(to.path) > -1) {
-      next()
-    } else {
-      next('/login')
-    }    
+    isLoginPage ? next() : next('/login')  
   }
 })
 
