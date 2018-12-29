@@ -96,9 +96,11 @@ export const getAppWaitOrEndLessons = params => api.post('student/Mycourse/getAp
 export const gotoComment = params => api.post('student/Mycourse/gotoComment', params)
     // 进教室
 export const intoClassroom = params => api.post('student/Mycourse/intoClassroom', params)
+    // 查询老师一周内的时间表
+export const getAppTeacherFreeTime = params => api.post('student/Mycourse/getAppTeacherFreeTime', params)
     // 我的课程
 export const getMyCurriculum = params => api.post('student/Mycourse/getMyCurriculum', params)
     // 我的订单
 export const getMyOrderList = params => api.post('student/Myorder/getMyOrderList', params)  
     // 订单详情
-export const queryOrderInfo = params => api.post('student/Myorder/queryOrderInfo', params)     
+export const queryOrderInfo = params => api.post('student/Myorder/queryOrderInfo', params)

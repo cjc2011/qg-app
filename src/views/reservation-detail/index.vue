@@ -30,7 +30,7 @@
         <div class="lesson-date">
           2018-04-20 18:00:00
         </div>
-        <div class="lesson-update">
+        <div class="lesson-update" @click="toUpdate">
           修改
         </div>
       </div>
@@ -53,7 +53,13 @@ export default {
     }
   },
 
-  methods: {}
+  methods: {
+    toUpdate() {
+      this.$router.push({
+        path: '/reservationtime/' + this.$route.params.id,
+      })
+    }
+  }
 }
 </script>
 
