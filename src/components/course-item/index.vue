@@ -1,8 +1,8 @@
 <template>
   <div class="course-container" :class="border">
-    <div class="course-item column" v-for="item in [1]" :key="item" @click="trigger(item)">
+    <div class="course-item column"  @click="trigger(data)">
       <div class="course-item__cover normal">
-        <img src="http://51menke-1253417915.cosgz.myqcloud.com/logo/official/201811021643337705.jpg" alt="课程图片">
+        <img :src="data.imageurl || 'http://51menke-1253417915.cosgz.myqcloud.com/logo/official/201811021643337705.jpg'" alt="课程图片">
       </div>
       <div class="course-item__content">
         <div class="course-item__name normal">{{data.coursename}}</div>

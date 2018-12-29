@@ -18,9 +18,9 @@
       >
         <cube-slide-item>
           <cube-scroll :options="scrollOptions">
-            <div class="course-list">
-              <div class="course-card" v-for="(item, index) in [2,3,3,4,5]" :key="index">
-                <CourseItem type="course-show"/>
+            <div class="course-list" v-if="officialData.length">
+              <div class="course-card" v-for="(item, index) in officialData" :key="index">
+                <CourseItem :data="item" @click="$router.push(`/courseinfo/${item.curriculumid}`)" type="course-show"/>
               </div>
             </div>
           </cube-scroll>
@@ -28,7 +28,7 @@
         <cube-slide-item>
           <cube-scroll :options="scrollOptions">
             <div class="course-list">
-              <div class="course-card" v-for="(item, index) in [2,3,3,4,5]" :key="index">
+              <div class="course-card" v-for="(item, index) in organData" :key="index">
                 <CourseItem type="course-show"/>
               </div>
             </div>
@@ -43,18 +43,30 @@
 import { findIndex } from "^/js/util.js";
 import CourseItem from '%/course-item'
 
+import { getMyCurriculum } from '@/api'
+
 export default {
   data() {
     return {
-      selectedLabel: '课程',
+      selectedLabel: '智慧琴童',
       tabLabels: [
         {
-          label: '课程'
+          label: '智慧琴童'
         },
         {
-          label: '智慧琴童'
+          label: '机构课'
         }
       ],
+      organParams: {
+        pagenum: 1,
+        coursetype: 1,
+      },
+      officialParams: {
+        pagenum: 1,
+        coursetype: 2
+      },
+      officialData: [],
+      organData: [],
       loop: false,
       autoPlay: false,
       showDots: false,
@@ -68,6 +80,9 @@ export default {
       }
     }
   },
+  created() {
+    this.getdata()
+  },
   computed: {
     initialIndex() {
       let index = 0;
@@ -76,9 +91,32 @@ export default {
         item => item.label === this.selectedLabel
       );
       return index;
+    },
+    currentParams() {
+      return this.initialIndex === 0 ? this.organParams : this.officialParams
+    }
+  },
+  watch: {
+    currentParams(newVal, oldVal) {
+      this.getdata()
     }
   },
   methods: {
+    getdata() {
+      getMyCurriculum(this.currentParams).then( res => {
+        if (res.code == 0) {
+          switch(this.initialIndex) {
+            case 0: 
+              this.officialData = res.data.data
+              console.log(this.officialData[0])
+              break; 
+            case 1:
+              this.organData = res.data.data
+              break;  
+          }
+        }
+      })
+    },
     scroll(pos) {
       const x = Math.abs(pos.x);
       const tabItemWidth = this.$refs.tabNav.$el.clientWidth;
