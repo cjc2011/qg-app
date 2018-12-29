@@ -1,46 +1,93 @@
 <template>
-  <div class="order expand border-top-1px">
-    <div class="order-info">
-      <div class="order-code">订单编号：12345644423</div>
-      <div class="order-status cancel">取消</div>
+  <div class="order expand border-top-1px" v-if="orderInfo">
+    <div class="order-info" >
+      <div class="order-code">订单编号：{{orderInfo.ordernum}}</div>
+      <div class="order-status cancel" :class="orderstatusClass">{{orderstatusText}}</div>
     </div>
     <div class="course">
       <div class="course-image">
-        <img :src="defaultImage" alt="" srcset="">
+        <img :src="orderInfo.imageurl || defaultImage">
       </div>
-      <div class="course-content">
-        <div class="course-name">小学三年级语文习题精讲</div>
-        <div class="course-teacher">老师：王大锤</div>
+      <div class="course-content" >
+        <div class="course-name">{{orderInfo.coursename}}</div>
+        <div class="course-teacher" v-if="orderInfo.teachername">老师：{{orderInfo.teachername}}</div>
+        <div class="course-teacher" v-else>班型：录播</div>
       </div>
     </div>
     <div class="order-time">
       <img :src="Time" >
-      <span class="text">下单时间：2018-04-05 18:25:36</span>
+      <span class="text">下单时间：{{orderInfo.ordertime}}</span>
     </div>
-    <div class="order-price-wrapper expand border-top-split">
+    <div class="order-price-wrapper expand border-top-split" v-if="orderInfo">
       <div class="order-price ">
         <div class="text">订单金额</div>
-        <div class="price">¥1239.00</div>
+        <div class="price">¥{{orderInfo.amount}}</div>
       </div>
     </div>
-    <div class="pay-action-bar border-top-1px">
+    <div class="pay-action-bar border-top-1px" v-if="orderInfo">
       <div class="preice">
         <span>应付金额</span> 
         ¥19999</div>
       <div class="pay-btn">立即支付</div>
-    </div>
+    </div> 
   </div>
 </template>
 
 <script>
 import defaultImage from '^/images/defaultImage.png'
 import Time from '^/images/time.png'
+import { queryOrderInfo } from '@/api'
 
 export default {
   data() {
     return {
       defaultImage: defaultImage,
-      Time: Time
+      Time: Time,
+      orderInfo: null
+    }
+  },
+  created() {
+    this.orderid = this.$route.params.id 
+    queryOrderInfo({
+      ordernum: this.orderid
+    }).then( res => {
+      if (res.code == 0) {
+        this.orderInfo = res.data
+      }     
+    })
+  },
+  computed: {
+    orderstatusClass() {
+      let color = ''
+      switch(this.orderInfo.orderstatus) {
+        case 20:
+          color = 'payed'
+          break;
+        case 10:
+          color = 'cancel'
+          break;
+        case 0: 
+          color = 'wait'  
+      }
+      return color
+    },
+    orderstatusText() {
+      let text = ''
+      switch(this.orderInfo.orderstatus) {
+        case 0: 
+          text = '待支付'
+          break;
+        case 1:
+          text = '待确认'
+          break;  
+        case 20:
+          text = '已支付'
+          break;
+        case 10:
+          text = '已取消'
+          break;
+      }
+      return text 
     }
   }
 }
@@ -53,7 +100,7 @@ export default {
   &-info{
     display: flex;
     justify-content: space-between;
-    padding: 0 16px;
+    padding: 0 6px;
     margin-bottom: 20px;
     font-size: 15px;
     color: #3C3C41;

@@ -99,4 +99,6 @@ export const intoClassroom = params => api.post('student/Mycourse/intoClassroom'
     // 我的课程
 export const getMyCurriculum = params => api.post('student/Mycourse/getMyCurriculum', params)
     // 我的订单
-export const getMyOrderList = params => api.post('student/Myorder/getMyOrderList', params)    
+export const getMyOrderList = params => api.post('student/Myorder/getMyOrderList', params)  
+    // 订单详情
+export const queryOrderInfo = params => api.post('student/Myorder/queryOrderInfo', params)     
