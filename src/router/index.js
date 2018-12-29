@@ -24,6 +24,8 @@ import Reservation from '../views/reservation/index.vue'
 import TeacherInfo from '../views/teacher-info/index.vue'
 import UserAgreement from '../views/user-agreement/index.vue'
 import MyEvaluate from '../views/my-evaluate/index.vue'
+import ReservationList from '../views/reservation-list/index.vue'
+import ReservationDetail from '../views/reservation-detail/index.vue'
 
 Vue.use(Router)
 
@@ -223,6 +225,22 @@ export default new Router({
             component: MyEvaluate,
             meta: {
                 title: '个人点评'
+            }
+        },
+        {
+            path: '/reservationlist',
+            name: 'reservationlist',
+            component: ReservationList,
+            meta: {
+                title: '我的预约'
+            }
+        },
+        {
+            path: '/reservationdetail',
+            name: 'reservationdetail',
+            component: ReservationDetail,
+            meta: {
+                title: '我的预约'
             }
         }
     ]

@@ -8,10 +8,11 @@
         <div class="course-item__name normal">{{data.coursename}}</div>
         <div class="course-item__teacher" v-if="courseorigin == 'official'">班型：录播</div>
         <div class="course-item__teacher" v-else>老师：{{data.teachername || '未传名字'}}</div>
-        <div v-if="type == 'course-show'" class="course-item__price">{{data.price}}</div>
+        <div v-if="type == 'course-show' && data.price" class="course-item__price">{{data.price}}</div>
         <div v-if="type == 'curriculum'" class="course-item__footer">
           <span class="course-item__time">
-            {{data.starttime && data.starttime.substring(11)}} 11--11 {{data.endtime && data.endtime.substring(11)}}</span>
+            {{data.starttime && data.starttime.substring(11)}} -- {{data.endtime && data.endtime.substring(11)}}
+          </span>
           <span class="course-item__status wait">
             <span v-if="data.buttonstatus == 0">待上课</span>
             <span v-if="data.buttonstatus == 1" class="intoclassroom">进教室</span>
@@ -20,6 +21,16 @@
             <!-- 0 未开始 1去APP上课 2 去评价 回放 3回放 -->
           </span>
         </div>
+      </div>
+      <!-- 我的预约 -->
+      <div class="course-item__reservation" v-if="type == 'reservation'">
+        <p class="course-item__all" v-if="data.closingstatus == 0">
+          剩余<span class="course-item__color">{{data.surplusnum}}</span>课时</p>
+        <p class="course-item__all" v-if="data.closingstatus == 1">已全部预约</p>
+        <p class="course-item__btn">
+          <span v-if="data.closingstatus == 0">预约</span>
+          <span v-if="data.closingstatus == 1">查看</span>
+        </p>
       </div>
     </div>
   </div>

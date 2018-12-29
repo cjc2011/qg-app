@@ -1,18 +1,18 @@
 <template>
   <div class="curriculum-container">
     <div class="top-bar-action">
-      <span class="img-wrapper" @click="$router.push('/mycurriculum')">
+      <span class="img-wrapper" @click="$router.push('/mycurriculum?status=0')">
         <img :src="ClockIcon">
       </span>
     </div>
-    <div class="tips">
+    <div class="tips" v-if="isShow" @click="toReservationList">
       <div class="content">
         <img class="important-icon" :src="ExclamationIcon" />
         <span class="text">您还有未预约的课程，立即预约</span>
       </div>
       <i class="cubeic-arrow icon"></i>
     </div>
-    <div class="curriculum-list">
+    <div :class="[isShow?'curriculum-list':'']">
       <div class="curriculum-card" v-for="(item, index) in lessonsData" :key="index" @click="toCourse(item)">
         <div class="curriculum-card__title expand">{{date}}&nbsp;&nbsp;{{day}}</div>
         <CourseItem type="curriculum" border="bottom" :data="item" />
@@ -26,7 +26,7 @@
 import ExclamationIcon from '^/images/exclamation.png'
 import ClockIcon from '^/images/clock.png'
 import CourseItem from '%/course-item'
-import { getLessonsByDate } from '@/api'
+import { getLessonsByDate, getAppReserveStatus } from '@/api'
 import { formatDateTime } from '@/assets/js/util.js'
 export default {
   data() {
@@ -35,7 +35,8 @@ export default {
       ClockIcon: ClockIcon,
       day: '周' + '日一二三四五六'.charAt(new Date().getDay()),  //周几
       date: formatDateTime(new Date()),  //年-月-日
-      lessonsData: []
+      lessonsData: [],
+      isShow: undefined
     }
   },
   components: {
@@ -43,6 +44,8 @@ export default {
   },
   created() {
     this.getLessonsByDate()
+    this.getAppReserveStatus()
+
   },
   methods: {
     // 陪练列表
@@ -80,10 +83,25 @@ export default {
         }
       })
     },
+    // 查询课程状态
+    getAppReserveStatus() {
+      getAppReserveStatus().then(res => {
+        if (res.code === 0) {
+          // this.isShow = res.data.status
+          this.isShow = 1
+        }
+      })
+    },
     // 课程详情
     toCourse(course) {
       this.$router.push({
         path: `/courseinfo/${course.curriculumid}`
+      })
+    },
+    // 我的预约列表
+    toReservationList() {
+      this.$router.push({
+        path: '/reservationlist'
       })
     }
   }

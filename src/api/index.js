@@ -81,5 +81,10 @@ export const getFilterCourserList = params => api.post('student/Homepage/getFilt
 /**
  * 陪练
  */
-// 我的课表
 export const getLessonsByDate = params => api.post('student/Mycourse/getLessonsByDate', params)
+    // 查询课程状态
+export const getAppReserveStatus = params => api.post('student/Mycourse/getAppReserveStatus', params)
+    // 查询我的预约列表
+export const getAppReserveList = params => api.post('student/Mycourse/getAppReserveList', params)
+    // 查询待上课或已结束的课时
+export const getAppWaitOrEndLessons = params => api.post('student/Mycourse/getAppWaitOrEndLessons', params)

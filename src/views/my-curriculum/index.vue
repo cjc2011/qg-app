@@ -1,27 +1,14 @@
 <template>
   <div class="my-curriculum">
-    <cube-tab-bar 
-      v-model="selectedLabel" 
-      show-slider
-      :data="tabLabels"
-      ref="tabNav"></cube-tab-bar>
+    <cube-tab-bar v-model="selectedLabel" show-slider :data="tabLabels" ref="tabNav"></cube-tab-bar>
     <div class="tab-slide-container">
-      <cube-slide
-        ref="slide"
-        :loop="loop"
-        :initial-index="initialIndex"
-        :auto-play="autoPlay"
-        :show-dots="showDots"
-        :options="slideOptions"
-        @scroll="scroll"
-        @change="changePage"
-      >
+      <cube-slide ref="slide" :loop="loop" :initial-index="initialIndex" :auto-play="autoPlay" :show-dots="showDots" :options="slideOptions" @scroll="scroll" @change="changePage">
         <cube-slide-item>
           <cube-scroll :options="scrollOptions">
             <div class="course-list">
-              <div class="course-card" v-for="(item, index) in [2,3,3,4,5]" :key="index">
-                <div class="course-card__title expand">2018-04-18 周三</div>
-                <CourseItem type="curriculum"  border="bottom"/>
+              <div class="course-card" v-for="(item, index) in lessonData" :key="index">
+                <div class="course-card__title expand">{{item.intime}} {{item.week}}</div>
+                <CourseItem type="curriculum" border="bottom" :data="item" />
               </div>
             </div>
           </cube-scroll>
@@ -29,21 +16,22 @@
         <cube-slide-item>
           <cube-scroll :options="scrollOptions">
             <div class="course-list">
-              <div class="course-card" v-for="(item, index) in [2,3,3,4,5]" :key="index">
-                <div class="course-card__title expand">2018-04-18 周三</div>
-                <CourseItem type="course-show" border="bottom"/>
+              <div class="course-card" v-for="(item, index) in lessonData" :key="index">
+                <div class="course-card__title expand">{{item.intime}} {{item.week}}</div>
+                <CourseItem type="course-show" border="bottom" :data="item" />
               </div>
             </div>
           </cube-scroll>
         </cube-slide-item>
       </cube-slide>
-    </div>  
+    </div>
   </div>
 </template>
 
 <script>
 import { findIndex } from "^/js/util.js";
 import CourseItem from '%/course-item'
+import { getAppWaitOrEndLessons } from '@/api'
 
 export default {
   data() {
@@ -67,7 +55,9 @@ export default {
       },
       scrollOptions: {
         directionLockThreshold: 0
-      }
+      },
+      pagenum: 1,
+      lessonData: []
     }
   },
   computed: {
@@ -80,6 +70,9 @@ export default {
       return index;
     }
   },
+  created() {
+    this.getAppWaitOrEndLessons(this.$route.query.status)
+  },
   methods: {
     scroll(pos) {
       const x = Math.abs(pos.x);
@@ -90,6 +83,17 @@ export default {
     },
     changePage(current) {
       this.selectedLabel = this.tabLabels[current].label;
+      this.getAppWaitOrEndLessons(current)
+    },
+    getAppWaitOrEndLessons(status) {
+      getAppWaitOrEndLessons({
+        'status': status,
+        'pagenum': this.pagenum
+      }).then(res => {
+        if (res.code === 0) {
+          this.lessonData = res.data.data
+        }
+      })
     }
   },
   components: {
@@ -99,14 +103,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.course-list{
+.course-list {
   padding: 0 16px;
 }
-.course-card{
-  &__title{
+.course-card {
+  &__title {
     text-align: left;
     font-size: 13px;
-    color: #474A51;
+    color: #474a51;
     line-height: 37px;
   }
 }
