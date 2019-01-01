@@ -33,15 +33,14 @@ export default {
   }, 
   methods: {
     click() {
-      this.$router.push(`/orderinfo/${this.order.orderid}`)
+      this.$router.push(`/orderinfo/${this.order.ordernum}`)
     }
   },
   computed: {
     /**
      * orderstatus
+     * 机构 => 0:待支付  1:待确认 10:已取消 20:已支付
      * 
-     * 机构 => 0:待支付  1:待确认
-     * 官方 => 10:已取消 20:已支付
      */
      orderstatusClass() {
       let color = ''
@@ -52,12 +51,20 @@ export default {
         case 10:
           color = 'cancel'
           break;
+        case 0: 
+          color = 'wait'  
       }
       return color
     },
     orderstatusText() {
       let text = ''
       switch(this.order.orderstatus) {
+        case 0: 
+          text = '待支付'
+          break;
+        case 1:
+          text = '待确认'
+          break;  
         case 20:
           text = '已支付'
           break;

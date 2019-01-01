@@ -23,14 +23,22 @@
                 <CourseItem :data="item" @click="$router.push(`/courseinfo/${item.curriculumid}`)" type="course-show"/>
               </div>
             </div>
+            <div class="no-data" v-else>
+              <img :src="NoDataImage" alt="暂无数据">
+              <p>暂无数据</p>
+            </div>
           </cube-scroll>
         </cube-slide-item>
         <cube-slide-item>
           <cube-scroll :options="scrollOptions">
-            <div class="course-list">
+            <div class="course-list" v-if="organData.length">
               <div class="course-card" v-for="(item, index) in organData" :key="index">
                 <CourseItem type="course-show"/>
               </div>
+            </div>
+            <div class="no-data" v-else>
+              <img :src="NoDataImage" alt="暂无数据">
+              <p>暂无数据</p>
             </div>
           </cube-scroll>
         </cube-slide-item>
@@ -42,12 +50,14 @@
 <script>
 import { findIndex } from "^/js/util.js";
 import CourseItem from '%/course-item'
+import NoDataImage from '^/images/nodata.png'
 
 import { getMyCurriculum } from '@/api'
 
 export default {
   data() {
     return {
+      NoDataImage: NoDataImage,
       selectedLabel: '智慧琴童',
       tabLabels: [
         {

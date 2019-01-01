@@ -90,6 +90,19 @@ input {
     }
 }
 
+.no-data{
+    margin-top: 50px; 
+    text-align: center;
+    img{
+        width: 200px;
+    }
+    p{
+        color: #666666;
+        line-height: 30px;
+    }
+}
+
+
 img {
     max-width: 100%;
     vertical-align: middle;

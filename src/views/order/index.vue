@@ -21,6 +21,10 @@
             <ul v-if="officialData.length">
               <OrderItem :order="item" order-origin='official' v-for="item in officialData" :key="item.ordernum" />
             </ul>
+            <div class="no-data" v-else>
+              <img :src="NoDataImage" alt="暂无数据">
+              <p>暂无订单</p>
+            </div>
           </cube-scroll>
         </cube-slide-item>
         <cube-slide-item>
@@ -28,6 +32,10 @@
             <ul v-if="organData.length">
               <OrderItem :order="item" order-origin='organ' v-for="item in organData" :key="item.ordernum" />
             </ul>
+            <div class="no-data" v-else>
+              <img :src="NoDataImage" alt="暂无数据">
+              <p>暂无订单</p>
+            </div>
           </cube-scroll>
         </cube-slide-item>
       </cube-slide>
@@ -38,19 +46,20 @@
 <script>
 import { findIndex } from "^/js/util.js";
 import OrderItem from '%/order-item'
+import NoDataImage from '^/images/nodata.png'
 
 import { getMyOrderList } from '@/api'
 
 export default {
   data() {
     return {
-      selectedLabel: "直播课程",
+      selectedLabel: "智慧琴童",
       tabLabels: [
         {
-          label: "直播课程"
+          label: "智慧琴童"
         },
         {
-          label: "智慧琴童"
+          label: "直播课程"
         }
       ],
       organParams: {
@@ -61,6 +70,7 @@ export default {
         pagenum: 1,
         ordertype: 2
       },
+      NoDataImage: NoDataImage,
       officialData: [],
       organData: [],
       loop: false,
