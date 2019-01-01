@@ -66,7 +66,7 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-/deep/ .course {
+.course-list-wrapper /deep/ .course {
   &-item {
     &__content {
       justify-content: space-around;

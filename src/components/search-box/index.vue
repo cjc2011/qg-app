@@ -1,6 +1,6 @@
 <template>
   <div class="search-box">
-    <input class="search" v-model="searchKey" placeholder="请输入关键字" type="text">
+    <input class="search"  v-model="searchKey" placeholder="请输入关键字" type="text">
     <img class="search-icon" :src="SearchIcon" alt="搜索" @click="search">
   </div>
 </template>
@@ -9,11 +9,22 @@
 import SearchIcon from "^/images/serach-icon.png";
 
 export default {
+  props: {
+    value: [String, Number]
+  },
   data() {
     return {
       SearchIcon: SearchIcon,
-      searchKey: ''
+      searchKey: this.value
     }
+  },
+  watch: {
+    searchKey(newVal) {
+      this.$emit('update', newVal)
+    }
+  },
+  created() {
+    console.log(this.searchKey, 'search')
   },
   methods: {
     search() {

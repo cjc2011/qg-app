@@ -2,9 +2,10 @@
   <div class="search">
     <div class="top-bar">
       <div class="search-box-wrapper">
-        <SearchBox  @search="search"/>
+        <SearchBox v-model="searchKey" @update="searchKeyUpdate"  @search="search"/>
       </div>
-      <div class="action-btn" @click="$router.back()">取消</div>
+      <div class="action-btn" v-show="searchKey" @click="search">搜索</div>
+      <div class="action-btn" v-show="!searchKey" @click="$router.back()">取消</div>
     </div>
     <div class="search-content">
       <div class="history-bar">
@@ -26,6 +27,11 @@ import SearchBox from '%/search-box/index.vue'
 
 
 export default {
+  data() {
+    return {
+      searchKey:''
+    }
+  },
   created() {
     this.organid = this.$route.query.organid
   },
@@ -33,6 +39,9 @@ export default {
     SearchBox
   },
   methods: {
+    searchKeyUpdate(val) {
+      this.searchKey = val
+    },
     search(val) {
       this.$router.push({
         path: `/searchresult`,

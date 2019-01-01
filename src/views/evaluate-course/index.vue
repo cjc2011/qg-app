@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="course-evaluate">
         <div class="teacher-summary">
             <CourseItem :data="courseinfo"></CourseItem>
         </div>
@@ -91,10 +91,10 @@ export default {
 .sure-btn {
   margin-top: 30px;
 }
-/deep/ .cube-textarea-wrapper {
+.course-evaluate /deep/ .cube-textarea-wrapper {
   height: 153px;
 }
-/deep/ .cube-textarea {
+.course-evaluate /deep/ .cube-textarea {
   background: rgba(246, 246, 248, 1);
 }
 .teacher-summary /deep/ .course-item {

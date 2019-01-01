@@ -1,6 +1,9 @@
 <template>
   <div class="search-result expand border-top-1px">
-    <CourseItem v-if="courseData.length"  :data="item"  v-for="item in courseData" :key="item.id"/>
+    <div class="result-container">
+      <CourseItem v-if="courseData.length"  :data="item"  v-for="item in courseData" :key="item.id"/>
+      <div v-if="!courseData.length" class="no-data"></div>
+    </div>
   </div>
 </template>
 
