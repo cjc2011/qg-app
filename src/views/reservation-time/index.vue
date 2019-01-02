@@ -41,6 +41,11 @@
       </div>
     </div>
     <cube-button class="sure-btn" @click="commit">同步所选时间</cube-button>
+    <cube-popup type="my-popup" :position="position" :mask-closable="true" ref="popup">
+      <div class="checkboxs">
+        <cube-checkbox-group v-model="checkList" :options="options" />
+      </div>
+    </cube-popup>
   </div>
 </template>
 
@@ -52,6 +57,26 @@ export default {
     return {
       ReservationEdit: ReservationEdit,
       activeWeekIndex: 1,
+      position: 'bottom',
+      checkList: [1,4],
+      options: [
+        {
+          label: '1',
+          value: '1'
+        },
+        {
+          label: '2',
+          value: '2'
+        },
+        {
+          label: '3',
+          value: '3'
+        },
+        {
+          label: '4',
+          value: '4'
+        }
+      ],
       weeks: [
         { key: 1, value: '周一' },
         { key: 2, value: '周二' },
@@ -88,6 +113,11 @@ export default {
   },
   created() {
     this.getAppTeacherFreeTime();
+    
+  },
+  mounted() {
+    this.popup = this.$refs[`popup`]
+    this.popup.show() 
   },
   methods: {
     changeTab(key) {

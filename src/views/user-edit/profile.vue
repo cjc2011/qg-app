@@ -35,7 +35,9 @@ export default {
                 profile: this.mottoVal
             }).then(res => {
                 if (res.code === 0) {
-                    this.$router.push('/userinfo')
+                  toast(`${res.info}`).then( res => {
+                    this.$router.replace('/userinfo')
+                  }) 
                 }
             })
         }

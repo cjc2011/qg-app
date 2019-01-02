@@ -23,9 +23,6 @@ export default {
       this.$emit('update', newVal)
     }
   },
-  created() {
-    console.log(this.searchKey, 'search')
-  },
   methods: {
     search() {
       this.$emit('search', this.searchKey)

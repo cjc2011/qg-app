@@ -4,7 +4,12 @@
     <div class="tab-slide-container">
       <cube-slide ref="slide" :loop="loop" :initial-index="initialIndex" :auto-play="autoPlay" :show-dots="showDots" :options="slideOptions" @scroll="scroll" @change="changePage">
         <cube-slide-item>
-          <cube-scroll :options="scrollOptions">
+          <cube-scroll 
+            v-if="courseData.length"
+            :options="scrollOptions"
+            :data="courseData"
+            ref="coursescroll"
+            @pulling-up="onPullingUp">
             <div class="list-wrapper">
               <CourseItem type="course-show" v-for="(item,index) in courseData" :key="index" :data="item" />
             </div>
@@ -38,7 +43,6 @@ import { courseCollectList, teacherCollectList } from '@/api'
 export default {
   data() {
     return {
-      pagenum: 1,
       courseData: [],
       teacherData: [],
       selectedLabel: '课程',
@@ -50,6 +54,18 @@ export default {
           label: '老师'
         }
       ],
+      postParams: {
+        course: {
+          pagenum: 1,
+          nomore: false,
+          loaded: false
+        },
+        teacher: {
+          pagenum: 1,
+          nomore: false,
+          loaded: false
+        }
+      },
       loop: false,
       autoPlay: false,
       showDots: false,
@@ -59,6 +75,11 @@ export default {
         directionLockThreshold: 0
       },
       scrollOptions: {
+        pullUpLoad: {
+          txt: {
+            noMore: '已加载全部'
+          }
+        },
         directionLockThreshold: 0
       }
     }
@@ -71,12 +92,27 @@ export default {
         item => item.label === this.selectedLabel
       );
       return index;
+    },
+    currentType() {
+      let type = this.initialIndex === 0 ? 'course' : 'teacher' 
+      return type
     }
   },
   created() {
-    this.getCourseData()
+    this.getData()
   },
   methods: {
+    // 上拉加载更多
+    onPullingUp() {
+      let type = this.currentType
+      let params = this.postParams[type]
+      if(params.nomore) {
+        this.$refs[`${type}scroll`].forceUpdate()
+        return 
+      }
+      params.pagenum++ 
+      this.getData()
+    },
     scroll(pos) {
       const x = Math.abs(pos.x);
       const tabItemWidth = this.$refs.tabNav.$el.clientWidth;
@@ -86,28 +122,27 @@ export default {
     },
     changePage(current) {
       this.selectedLabel = this.tabLabels[current].label;
-      this.pagenum = 1
-      if (current == 0) {
-        this.getCourseData()
-      } else {
-        this.getTeacherData()
+      let type = this.currentType
+      let params = this.postParams[type]
+      if (!params.loaded) {
+        this.getData()
       }
     },
-    getCourseData() {
-      courseCollectList({
-        pagenum: this.pagenum
-      }).then(res => {
-        if (res.code === 0) {
-          this.courseData = res.data.data
-        }
-      })
-    },
-    getTeacherData() {
-      teacherCollectList({
-        pagenum: this.pagenum
-      }).then(res => {
-        if (res.code === 0) {
-          this.teacherData = res.data.data
+    getData() {
+      let ajax = this.currentType == 'course' ? courseCollectList : teacherCollectList
+      let type = this.currentType
+      let params = this.postParams[type]
+      ajax(params).then( res => {
+        if (res.code == 0 && res.data.data) {
+          // 判断是否为第一次获取数据还是加载更多 直接复制 or concat
+          if (params.pagenum == 1) {
+            this[`${type}Data`] = res.data.data
+            params.loaded = true
+          } else {
+            this[`${type}Data`] =  this[`${type}Data`].concat(res.data.data)
+          }
+          let len = this[`${type}Data`].length 
+          this.postParams[type].nomore = len >= res.data.pageinfo.total ? true : false
         }
       })
     },

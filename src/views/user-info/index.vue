@@ -136,7 +136,6 @@ export default {
             })
           }
           this.setUserInfo(this.userinfo)
-
         } else {
           toast(`${res.info}`)
         }
@@ -179,12 +178,14 @@ export default {
       })
     },
     selectHandle1(selectedVal, selectedIndex, selectedText) {
-      this.UserData[4].value = selectedIndex[0] + '-' + selectedIndex[1] + '-' + selectedIndex[2]
+      this.UserData[3].value = selectedIndex.join('-')
       updateStudentInfo({
-        birth: this.UserData[4].value
+        birth: this.UserData[3].value
       }).then(res => {
         if (res.code === 0) {
-
+          let userinfo = this.userinfo 
+          userinfo.birth = this.UserData[4].value
+          this.setUserInfo(userinfo)
         }
       })
     },
@@ -193,6 +194,8 @@ export default {
         this.datePicker = this.$createDatePicker({
           title: '生日',
           value: this.date,
+          min: new Date(1970, 7, 8),
+          max: new Date(),
           onSelect: this.selectHandle1,
           onCancel: this.cancelHandle
         })
@@ -200,14 +203,21 @@ export default {
       this.datePicker.show()
     },
     filesAdded(file) {
-      console.log(file[0], 'fiel')
       let fromData = new FormData()
       fromData.append('uploadFile', file[0])
       fromData.append('allpathnode', '1,1,6')
       upload(fromData).then(res => {
-        console.log(res, 'res')
+        if ( res.code == 0) {
+          let userinfo = this.userinfo 
+          userinfo.imageurl = res.data.data.source_url
+          this.setUserInfo(userinfo)
+          updateStudentInfo({
+            imageurl: userinfo.imageurl
+          }).then( res => {
+            
+          })
+        }
       })
-      console.log(file[0], 'file')
     }
   }
 }

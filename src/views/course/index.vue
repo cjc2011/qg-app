@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="courses">
     <div class="scroll-nav-bar-wrapper">
       <cube-scroll-nav-bar v-if="categoryids.length" :current="category_id" :txts="categorynames" :labels="categoryids" @change="changeHandler" />
     </div>
@@ -185,7 +185,7 @@ export default {
   }
 }
 
-/deep/ .cube-scroll-nav-bar-item_active{
+.courses /deep/ .cube-scroll-nav-bar-item_active{
   color: #0BCC96;
 }
 

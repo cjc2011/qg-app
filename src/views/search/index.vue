@@ -10,13 +10,10 @@
     <div class="search-content">
       <div class="history-bar">
         <span class="history">搜索历史</span>
-        <span class="history clearn">清除搜索历史</span>
+        <span class="history clearn" @click="clearHistory">清除搜索历史</span>
       </div>
-      <div class="history-list">
-        <span class="history-item" @click="$router.push('/searchresult/ssss')">英语</span>
-        <span class="history-item">计算机</span>
-        <span class="history-item">会计</span>
-        <span class="history-item">数学</span>
+      <div class="history-list" v-if="searchHistory">
+        <span class="history-item" v-for="item in searchHistory" :key="item" @click="$router.push({ path:'/searchresult', query: {search_key: item, organid: organid}})">{{item}}</span>
       </div>
     </div>
   </div>
@@ -29,27 +26,43 @@ import SearchBox from '%/search-box/index.vue'
 export default {
   data() {
     return {
-      searchKey:''
+      searchKey:'',
+      searchHistory: null
     }
   },
   created() {
+    let searchHistory = localStorage.getItem('searchkey')
+    this.searchHistory = searchHistory ? JSON.parse(searchHistory) : null
     this.organid = this.$route.query.organid
   },
   components: {
     SearchBox
   },
   methods: {
+    clearHistory() {
+      localStorage.setItem('searchkey', '')
+      this.searchHistory = null
+    },
     searchKeyUpdate(val) {
       this.searchKey = val
     },
     search(val) {
+      let search = val.type ? this.searchKey : val 
       this.$router.push({
         path: `/searchresult`,
         query: {
-          search_key: val,
+          search_key: search,
           organid: this.organid
         }
       })
+      let searchHistory = localStorage.getItem('searchkey')
+      if (!searchHistory) {
+        searchHistory = [search]
+      } else {
+        searchHistory = JSON.parse(searchHistory)
+        searchHistory.indexOf(search) == -1 && searchHistory.push(search)
+      }
+      localStorage.setItem('searchkey',JSON.stringify(searchHistory))
     }
   }
 }

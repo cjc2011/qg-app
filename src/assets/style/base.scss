@@ -28,6 +28,10 @@
     }
 }
 
+.cube-picker-confirm {
+    color: #04BD8A;
+}
+
 .cube-slide-group {
     white-space: inherit;
 }
@@ -90,18 +94,17 @@ input {
     }
 }
 
-.no-data{
-    margin-top: 50px; 
+.no-data {
+    margin-top: 50px;
     text-align: center;
-    img{
+    img {
         width: 200px;
     }
-    p{
+    p {
         color: #666666;
         line-height: 30px;
     }
 }
-
 
 img {
     max-width: 100%;
