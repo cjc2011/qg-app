@@ -16,7 +16,13 @@
           </cube-scroll>
         </cube-slide-item>
         <cube-slide-item>
-          <cube-scroll :options="scrollOptions">
+          <cube-scroll 
+            v-if="teacherData.length"
+            :options="scrollOptions"
+            :data="teacherData"
+            ref="teacherscroll"
+            @pulling-up="onPullingUp"
+            >
             <div class="list-wrapper">
               <div class="teacher-item expand border-top-1px" v-for="(item,index) in teacherData" :key="index" @click="teacherInfo(item)">
                 <div class="avatar">
@@ -30,6 +36,10 @@
               </div>
             </div>
           </cube-scroll>
+          <div class="no-data" v-else>
+            <img :src="NoDataImage" alt="暂无数据">
+            <p>暂无数据</p>
+          </div>
         </cube-slide-item>
       </cube-slide>
     </div>
@@ -40,6 +50,8 @@
 import { findIndex } from "^/js/util.js";
 import CourseItem from '%/course-item'
 import { courseCollectList, teacherCollectList } from '@/api'
+import NoDataImage from '^/images/nodata.png'
+
 export default {
   data() {
     return {
@@ -54,6 +66,7 @@ export default {
           label: '老师'
         }
       ],
+      NoDataImage: NoDataImage,
       postParams: {
         course: {
           pagenum: 1,

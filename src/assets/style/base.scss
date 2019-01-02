@@ -28,6 +28,10 @@
     }
 }
 
+.cube-textarea_active:after {
+    border-color: #04BD8A;
+}
+
 .cube-picker-confirm {
     color: #04BD8A;
 }
@@ -35,6 +39,13 @@
 .cube-slide-group {
     white-space: inherit;
 }
+
+.cube-pullup-wrapper{
+    border-top: 1px solid #eeeeee;
+    font-size: 14px;
+    color: #666666;
+}
+
 
 // base
 .fr {

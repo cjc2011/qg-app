@@ -3,10 +3,10 @@
     <div class="header">
       <div class="top-bar">
         <span class="back-icon" @click="$router.back()"><img :src="BackIcon"></span>
+        <span class="text">课程详情</span>
         <span class="share-icon">
-          <!-- <img :src="ShareIcon"> -->
-          <img :src="ShareIcon" alt="收藏" @click="toCollect" v-if="is_collect == 0">
-          <img :src="TimeIcon" alt="收藏" @click="toCancelCollect" v-if="is_collect == 1">
+          <img :src="CollectIcon" alt="收藏" @click="toCollect" v-if="is_collect == 0">
+          <img :src="CollectIconActive" alt="收藏" @click="toCancelCollect" v-if="is_collect == 1">
         </span>
       </div>
       <div class="bg-image">
@@ -18,7 +18,7 @@
     <div class="course-box summary">
       <div class="course-box__title">简介</div>
       <div class="course-box__content">
-        <P>{{courseInfoObj.generalize}}</P>
+        <P>{{courseInfoObj.generalize || '暂无简介'}}</P>
       </div>
     </div>
     <!-- 1 录播 2直播 -->
@@ -29,14 +29,15 @@
           <img class="avatar" :src="courseInfoObj.teacher_imageurl">
           <p class="teacher-name">{{courseInfoObj.teachername}}</p>
         </div>
-        <p class="text">{{courseInfoObj.teacher_porfile}}</p>
+        <p class="text">{{courseInfoObj.teacher_porfile || '暂无简介'}}</p>
       </div>
     </div>
     <div class="course-box noborder evaluate" v-if="courseInfoObj.coursetype == 2">
       <div class="course-box__title">老师点评</div>
-      <div v-for="(item,index) in commentData" :key="index">
+      <div v-if="commentData.length" v-for="(item,index) in commentData.length" :key="index">
         <EvaluateItem :data="item"></EvaluateItem>
       </div>
+      <div class="no-comment" v-if="!commentData.length">暂无评论</div>
     </div>
     <div class="pay border-top-1px" v-if="courseInfoObj.applystatus === 0">
       <div class="preice">¥{{courseInfoObj.price}}</div>
@@ -48,6 +49,8 @@
 <script>
 import Gb from '^/images/bg.png'
 import ShareIcon from '^/images/share.png'
+import CollectIcon from '^/images/shoucang.png'
+import CollectIconActive from '^/images/shoucang_acitve.png'
 import BackIcon from '^/images/back-white.png'
 import TimeIcon from '^/images/time.png'
 import { getCurriculumInfo, getCurriculumComment, courseCollect, cancelCourseCollect } from '@/api'
@@ -58,6 +61,8 @@ export default {
     return {
       Gb: Gb,
       BackIcon: BackIcon,
+      CollectIcon: CollectIcon,
+      CollectIconActive: CollectIconActive,
       ShareIcon: ShareIcon,
       TimeIcon: TimeIcon,
       is_collect: undefined,
@@ -114,17 +119,7 @@ export default {
         courseid: this.$route.params.id
       }).then(res => {
         if (res.code === 0) {
-          // this.commentData = res.data.data
-          this.commentData = [
-            {
-              "imageurl": null,
-              "nickname": "学生头像",
-              "addtime": "评论时间",
-              "score": "评分",
-              "content": "评论内容",
-              "commentid": "评论id"
-            }
-          ]
+          this.commentData = res.data.data
         }
       })
     },
@@ -165,6 +160,10 @@ export default {
     top: 0;
     display: flex;
     justify-content: space-between;
+    .text{
+      line-height: 40px;
+      color: #ffffff;
+    }
     .back-icon,
     .share-icon {
       display: inline-block;
@@ -192,6 +191,12 @@ export default {
   color: #3c3c41;
   text-align: left;
   border-bottom: 10px solid #f5f6fa;
+}
+.no-comment{
+  margin-top: 20px;
+  padding: 0 10px;
+  font-size: 13px;
+  color: #6e6f80;
 }
 .course-box {
   padding: 16px;

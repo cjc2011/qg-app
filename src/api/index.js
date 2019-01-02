@@ -39,6 +39,8 @@ export const updateStudentInfo = params => api.post('student/User/updateStudentI
 export const teacherCollectList = params => api.post('student/User/teacherCollectList', params)
     // 课程收藏列表
 export const courseCollectList = params => api.post('student/User/courseCollectList', params)
+    // 我的消息
+export const messageList = params => api.post('/student/User/messageList', params)
 
 /**
  * 老师详情
@@ -100,6 +102,10 @@ export const intoClassroom = params => api.post('student/Mycourse/intoClassroom'
 export const getAppTeacherFreeTime = params => api.post('student/Mycourse/getAppTeacherFreeTime', params)
     // 我的课程
 export const getMyCurriculum = params => api.post('student/Mycourse/getMyCurriculum', params)
+    // 课时安排 
+export const getLiveSchedule = params => api.post('student/Mycourse/getAppLiveSchedule', params)
+    // 约课
+export const batchAddReserveLessons = params => api.post('student/Mycourse/batchAddReserveLessons', params)    
     // 我的订单
 export const getMyOrderList = params => api.post('student/Myorder/getMyOrderList', params)  
     // 订单详情

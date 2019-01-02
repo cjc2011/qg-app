@@ -15,7 +15,7 @@
     <div :class="[isShow?'curriculum-list':'']">
       <div class="curriculum-card" v-for="(item, index) in lessonsData" :key="index" @click="toCourse(item)">
         <div class="curriculum-card__title expand">{{date}}&nbsp;&nbsp;{{day}}</div>
-        <CourseItem type="curriculum" border="bottom" :data="item" @intoclassroom="intoclassroom" @toEvaluate="toEvaluate" @toreplay="toreplay" />
+        <CourseItem type="curriculum" border="bottom" courseorigin="organ" :data="item" @intoclassroom="intoclassroom" @toEvaluate="toEvaluate" @toreplay="toreplay" />
       </div>
     </div>
   </div>
@@ -51,35 +51,10 @@ export default {
     // 陪练列表
     getLessonsByDate() {
       getLessonsByDate({
-        'date': '2018-12-28'
+        'date': '2019-01-02'
       }).then(res => {
         if (res.code === 0) {
-          this.lessonsData = [
-            {
-              "starttime": "课时开始时间",
-              "endtime": "课时结束时间",
-              "coursename": "课程名称",
-              "imageurl": "课程图片",
-              "teachername": "老师名称",
-              "toteachid": "上课的课时id",
-              "curriculumid": "11",
-              "buttonstatus": 2,
-              // "buttonstatus": "定义按钮状态  0 未开始 1去APP上课 2 去评价 回放 3回放",
-              "sort": "1,,课时顺序,当前是第几课时"
-            },
-            {
-              "starttime": "课时开始时间",
-              "endtime": "课时结束时间",
-              "coursename": "课程名称11",
-              "imageurl": "课程图片",
-              "teachername": "老师名称",
-              "toteachid": "上课的课时id",
-              "curriculumid": "22",
-              "buttonstatus": 1,
-              // "buttonstatus": "定义按钮状态  0 未开始 1去APP上课 2 去评价 回放 3回放",
-              "sort": "1,,课时顺序,当前是第几课时"
-            }
-          ]
+          this.lessonsData = res.data
         }
       })
     },

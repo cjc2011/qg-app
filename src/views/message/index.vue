@@ -1,100 +1,137 @@
 <template>
   <div class="my-message">
-    <cube-tab-bar 
-      v-model="selectedLabel" 
-      show-slider
-      :data="tabLabels"
-      ref="tabNav"></cube-tab-bar>
-    <div class="tab-slide-container">
-      <cube-slide
-        ref="slide"
-        :loop="loop"
-        :initial-index="initialIndex"
-        :auto-play="autoPlay"
-        :show-dots="showDots"
-        :options="slideOptions"
-        @scroll="scroll"
-        @change="changePage"
-      >
-        <cube-slide-item>
-          <cube-scroll :options="scrollOptions">
-            <div class="list-wrapper">
-              <div class="message expand border-top-1px border-bottom-1px">
-                <div class="message-img fl">
-                  <img src="https://avatars0.githubusercontent.com/u/17289716?s=180&v=4">
-                </div>
-                <div class="message-content">
-                  <div class="message-head">
-                    <span class="message-name">上课提醒</span>
-                    <span class="message-time">2018-04-05</span>
-                  </div>
-                  <p class="message-text">您报名的课程，将于5分钟后开始,balbalbalblabalblablalbalbalendbalbalbalblabalblablalbalbalend</p>
-                </div>
+    <cube-tab-bar v-model="selectedLabel" show-slider>
+      <cube-tab v-for="(item) in tabs" :icon="item.icon" :label="item.label" :key="item.label">
+      </cube-tab>
+    </cube-tab-bar> 
+    <div class="sys-message message-block" v-show="currentIndex == 0">
+      <cube-scroll
+        v-if="sysData.length"
+        :data="sysData"
+        :options="scrollOptions"
+        ref="sysscroll"
+        @pulling-up="onPullingUp"
+        >
+        <div class="list-wrapper">
+          <div class="message expand border-top-1px border-bottom-1px" v-for="item in sysData" :key="item.addtime">
+            <div class="message-img fl">
+              <img src="https://avatars0.githubusercontent.com/u/17289716?s=180&v=4">
+            </div>
+            <div class="message-content">
+              <div class="message-head">
+                <span class="message-name">{{item.title}}</span>
+                <span class="message-time">{{item.addtime}}</span>
               </div>
+              <p class="message-text">{{item.content}}</p>
             </div>
-          </cube-scroll>
-        </cube-slide-item>
-        <cube-slide-item>
-          <cube-scroll :options="scrollOptions">
-            <div class="list-wrapper">
-              智慧琴童
-            </div>
-          </cube-scroll>
-        </cube-slide-item>
-      </cube-slide>
-    </div>  
+          </div>
+        </div>
+      </cube-scroll>
+    </div>
+    <div class="push-message message-block" v-show="currentIndex == 1">
+      <cube-scroll
+        v-if="pushData.length"
+        :data="pushData"
+        :options="scrollOptions"
+        ref="pushscroll"
+        @pulling-up="onPullingUp"
+        >
+        
+      </cube-scroll>
+    </div>
   </div>
 </template>
 
-<script>
+<script>   
+
 import { findIndex } from "^/js/util.js";
 import CourseItem from '%/course-item'
+import { messageList } from '@/api'
 
 export default {
   data() {
     return {
-      selectedLabel: '课程',
-      tabLabels: [
+      selectedLabel: '系统消息',
+      tabs: [
         {
-          label: '课程'
-        },
+          label: '系统消息'
+        }, 
         {
-          label: '智慧琴童'
+          label: '推送消息'
         }
       ],
-      loop: false,
-      autoPlay: false,
-      showDots: false,
-      slideOptions: {
-        listenScroll: true,
-        probeType: 3,
-        directionLockThreshold: 0
+      sysData: [],
+      pushData: [],
+      sysParams: {
+        pagenum: 1,
+        type: 1,
+        nomore: false,
+        loaded: false
+      },
+      pushParams: {
+        pagenum: 1,
+        type: 2,
+        nomore: false,
+        loaded: false
       },
       scrollOptions: {
+        pullUpLoad: {
+          txt: {
+            noMore: '已加载全部'
+          }
+        },
         directionLockThreshold: 0
       }
     }
   },
-  computed: {
-    initialIndex() {
-      let index = 0;
-      index = findIndex(
-        this.tabLabels,
-        item => item.label === this.selectedLabel
-      );
-      return index;
+  created() {
+    this.getData()
+  },  
+  methods: {
+    onPullingUp() {
+      let type = this.currentType
+      let params = this[`${type}Params`]
+      if(params.nomore) {
+        this.$refs[`${type}scroll`].forceUpdate()
+        return 
+      }
+      params.pagenum++ 
+      this.getData()
+    },
+    getData() {
+      let type = this.currentType
+      let params = this[`${type}Params`]
+      messageList(params).then( res => {
+        if (res.code == 0) {
+          if (params.pagenum == 1) {
+            this[`${type}Data`] = res.data.data
+            params.loaded = true
+          } else {
+            this[`${type}Data`] = this[`${type}Data`].concat(res.data.data)
+          }
+          let len = this[`${type}Data`].length 
+          params.nomore = len >= res.data.pageinfo.total ? true : false
+        }
+      })
     }
   },
-  methods: {
-    scroll(pos) {
-      const x = Math.abs(pos.x);
-      const tabItemWidth = this.$refs.tabNav.$el.clientWidth;
-      const slideScrollerWidth = this.$refs.slide.slide.scrollerWidth;
-      const deltaX = (x / slideScrollerWidth) * tabItemWidth;
-      this.$refs.tabNav.setSliderTransform(deltaX);
+  watch: {
+    currentIndex() {
+
+    }
+  },
+  computed: {
+    currentIndex() {
+      let index = -1
+      index = findIndex(
+        this.tabs,
+        item => item.label === this.selectedLabel
+      );
+      return index
     },
-    changePage(current) {
-      this.selectedLabel = this.tabLabels[current].label;
+    currentType() {
+      let type = this.currentIndex == 0 ? 'sys' : 'push'
+      return type
     }
   },
   components: {
@@ -104,6 +141,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.message-block{
+  position: fixed;
+  top: 80px;
+  bottom: 0;
+  left: 16px;
+  right: 16px;
+  overflow: hidden;
+  z-index: 10;
+}
 .list-wrapper{
   padding: 0 16px;
 }
@@ -138,7 +184,7 @@ export default {
   }
   &-text{
     width: 100%;
-    font-size: 16px;
+    font-size: 13px;
     line-height: 18px;
     color: #999999;
     overflow: hidden;

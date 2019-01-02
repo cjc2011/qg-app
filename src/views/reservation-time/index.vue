@@ -1,82 +1,39 @@
 <template>
   <div>
     <div class="top-bar-action">
-      <div class="img-wrapper"><img :src="ReservationEdit" alt="编辑"></div>
+      <div class="img-wrapper"><img :src="ReservationEdit" alt="编辑" @click="UpdateTime"></div>
     </div>
     <div class="teadcher-info border-top-1px expand">
       <img src="https://avatars0.githubusercontent.com/u/17289716?s=180&v=4" class="avatar">
       <span class="teacher-name">王大锤</span>
     </div>
-    <div class="weeks border-bottom-1px expand">
-      <span v-for="item in weeks" :key="item.key" @click="changeTab(item.key)" :class="['week',activeWeekIndex == item.key ? ( 'active border-bottom-1px') :'']">{{item.value}}</span>
+    <div class="weeks border-bottom-1px expand" v-if="TimeData.length">
+      <span v-for="(item, index) in TimeData" :key="item.week" @click="changeTab(index)" :class="['week',activeWeekIndex == index + 1 ? ( 'active border-bottom-1px') :'']">{{weeks[Number(item.week) - 1].value}}</span>
     </div>
     <div class="reservation-box-wrapper">
-      <div class="reservation-box">
-        <div class="title">上午预约</div>
+      <div class="reservation-box" v-for="(item, index) in TimeGroup" :key="index">
+        <div class="title">{{TimeNames[index]}}预约</div>
         <div class="reservation-times">
-          <div class="box" v-for="(item,index) in timeNum0" :key="index" @click="toSelect(item)">
+          <div class="box" v-for="(sub_item) in item" :key="sub_item.timekey" @click="toSelect(sub_item)">
             <!-- status 1代表该时间不可用,需要禁用0代表可选  选中 selectedNum   不能选 grayBg -->
-            <div v-if="item.status" class="time grayBg">{{item.time}}</div>
-            <div v-else :class="['time',item.active?'selectedNum':'']">{{item.time}}</div>
-          </div>
-        </div>
-      </div>
-      <div class="reservation-box">
-        <div class="title">下午预约</div>
-        <div class="reservation-times">
-          <div class="box" v-for="(item,index) in timeNum1" :key="index" @click="toSelect(item)">
-            <div v-if="item.status" class="time grayBg">{{item.time}}</div>
-            <div v-else :class="['time',item.active?'selectedNum':'']">{{item.time}}</div>
-          </div>
-        </div>
-      </div>
-      <div class="reservation-box">
-        <div class="title">晚上预约</div>
-        <div class="reservation-times">
-          <div class="box" v-for="(item,index) in timeNum2" :key="index" @click="toSelect(item)">
-            <div v-if="item.status" class="time grayBg">{{item.time}}</div>
-            <div v-else :class="['time',item.active?'selectedNum':'']">{{item.time}}</div>
+            <div class="time" :class="[sub_item.status && 'grayBg', sub_item.select && 'selectedNum']">{{sub_item.time}}</div>
           </div>
         </div>
       </div>
     </div>
-    <cube-button class="sure-btn" @click="commit">同步所选时间</cube-button>
-    <cube-popup type="my-popup" :position="position" :mask-closable="true" ref="popup">
-      <div class="checkboxs">
-        <cube-checkbox-group v-model="checkList" :options="options" />
-      </div>
-    </cube-popup>
   </div>
 </template>
 
 <script>
 import ReservationEdit from '^/images/reservation-edit.png';
-import { getAppTeacherFreeTime } from '@/api'
+import { getAppTeacherFreeTime, batchAddReserveLessons } from '@/api'
+
+
 export default {
   data() {
     return {
       ReservationEdit: ReservationEdit,
       activeWeekIndex: 1,
-      position: 'bottom',
-      checkList: [1,4],
-      options: [
-        {
-          label: '1',
-          value: '1'
-        },
-        {
-          label: '2',
-          value: '2'
-        },
-        {
-          label: '3',
-          value: '3'
-        },
-        {
-          label: '4',
-          value: '4'
-        }
-      ],
       weeks: [
         { key: 1, value: '周一' },
         { key: 2, value: '周二' },
@@ -86,82 +43,79 @@ export default {
         { key: 6, value: '周六' },
         { key: 7, value: '周日' },
       ],
-      grayArr: [],//占用的星期数组
-      timeNum0: [
-        // { time: "08:00", active: false, grayBlock: false, key: 16 }, { time: "08:30", active: false, grayBlock: false, key: 17 },
-        // { time: "09:00", active: false, grayBlock: false, key: 18 }, { time: "09:30", active: false, grayBlock: false, key: 19 },
-        // { time: "10:00", active: false, grayBlock: false, key: 20 }, { time: "10:30", active: false, grayBlock: false, key: 21 },
-        // { time: "11:00", active: false, grayBlock: false, key: 22 }, { time: "11:30", active: false, grayBlock: false, key: 23 },
-        // { time: "12:00", active: false, grayBlock: false, key: 24 }, { time: "12:30", active: false, grayBlock: false, key: 25 },
-      ],
-      timeNum1: [
-        // { time: "13:00", active: false, grayBlock: false, key: 26 }, { time: "13:30", active: false, grayBlock: false, key: 27 },
-        // { time: "14:00", active: false, grayBlock: false, key: 28 }, { time: "14:30", active: false, grayBlock: false, key: 29 },
-        // { time: "15:00", active: false, grayBlock: false, key: 30 }, { time: "15:30", active: false, grayBlock: false, key: 31 },
-        // { time: "16:00", active: false, grayBlock: false, key: 32 }, { time: "16:30", active: false, grayBlock: false, key: 33 },
-        // { time: "17:00", active: false, grayBlock: false, key: 34 }, { time: "17:30", active: false, grayBlock: false, key: 35 },
-      ],
-      timeNum2: [
-        // { time: "18:00", active: false, grayBlock: false, key: 36 }, { time: "18:30", active: false, grayBlock: false, key: 37 },
-        // { time: "19:00", active: false, grayBlock: false, key: 38 }, { time: "19:30", active: false, grayBlock: false, key: 39 },
-        // { time: "20:00", active: false, grayBlock: false, key: 40 }, { time: "20:30", active: false, grayBlock: false, key: 41 },
-        // { time: "21:00", active: false, grayBlock: false, key: 42 }, { time: "21:30", active: false, grayBlock: false, key: 43 },
-        // { time: "22:00", active: false, grayBlock: false, key: 44 }, { time: "22:30", active: false, grayBlock: false, key: 45 },
-        // { time: "23:00", active: false, grayBlock: false, key: 46 }, { time: "23:30", active: false, grayBlock: false, key: 47 }
-      ],
+      TimeNames: ['上午', '中午', '下午'],
+      TimeData: [],
+      SelectTime: {}
     }
   },
   created() {
+    this.courseid = this.$route.params.id
     this.getAppTeacherFreeTime();
-    
   },
-  mounted() {
-    this.popup = this.$refs[`popup`]
-    this.popup.show() 
+  computed: {
+    TimeGroup() {
+      if (!this.TimeData.length) return null
+      this.TimeData[this.activeWeekIndex-1].datelist.forEach( item => {
+        item.forEach( sub_item => {
+          let CurrentDate = this.CurrentDate
+          let index = this.SelectTime[CurrentDate].findIndex( el => {
+            return el.timekey == sub_item.timekey
+          })
+          this.$set(sub_item, 'select', index > -1)
+        })
+      });
+      return this.TimeData[this.activeWeekIndex-1].datelist
+    },
+    CurrentDate() {
+      if (!this.TimeData.length) return null
+      return this.TimeData[this.activeWeekIndex-1].date
+    }
   },
   methods: {
-    changeTab(key) {
-      // 给timeNum初始化占用状态
-      let obj = {}
-      this.grayArr.map(e => {
-        if (e.week == key) {
-          obj = e
+    UpdateTime() {
+      let keys = Object.keys(this.SelectTime)
+      let params = []
+      keys.forEach( key => {
+        if (!this.SelectTime[key].length) {
+          delete this.SelectTime[key]
+        } else {
+          this.SelectTime[key].forEach(  time => {
+            let param = {}
+            param.intime = key
+            param.timekey = time.timekey
+            params.push(param)
+          })
         }
       })
-      this.defaultGrayType(obj);
+      batchAddReserveLessons({
+        data: params,
+        courseid: this.courseid
+      }).then( res => {
+        console.log(res, 'res')
+      })
+    },
+    changeTab(index) {
+      this.activeWeekIndex = index + 1
     },
     getAppTeacherFreeTime() {
-      getAppTeacherFreeTime({ 'courseid': 172 }).then(res => {
-        // 占用的星期数组
-        this.grayArr = res.data;
-        // 给timeNum初始化占用状态
-        this.defaultGrayType(res.data[0])
+      getAppTeacherFreeTime({ 'courseid': this.courseid }).then(res => {
+        this.TimeData = res.data;
+        this.inintSeleKeys()
       })
     },
-    defaultGrayType(info) {
-      // 周几
-      this.activeWeekIndex = info.week
-      // 上午预约
-      this.timeNum0 = info.datelist[0]
-      this.timeNum0.map(e => {
-        this.$set(e, 'active', false)
-      })
-      // 下午预约
-      this.timeNum1 = info.datelist[1]
-      this.timeNum1.map(e => {
-        this.$set(e, 'active', false)
-      })
-      // 晚上预约
-      this.timeNum2 = info.datelist[2]
-      this.timeNum2.map(e => {
-        this.$set(e, 'active', false)
+    inintSeleKeys() {
+      this.TimeData.forEach( item => {
+        this.SelectTime[item.date] = []
       })
     },
     toSelect(item) {
-      item.active = !item.active
-    },
-    commit() {
-
+      if (item.status == 1) return
+      item.select = !item.select
+      let CurrentDate = this.CurrentDate
+      let index = this.SelectTime[CurrentDate].findIndex( el => {
+        return el.timekey == item.timekey
+      })
+      index > -1 ? this.SelectTime[CurrentDate].splice(index, 1) : this.SelectTime[CurrentDate].push(item)
     }
   }
 }

@@ -17,7 +17,9 @@
         @change="changePage"
       >
         <cube-slide-item>
-          <cube-scroll :options="scrollOptions">
+          <cube-scroll
+            :options="scrollOptions"
+            :data="officialData">
             <div class="course-list" v-if="officialData.length">
               <div class="course-card" v-for="(item, index) in officialData" :key="index">
                 <CourseItem :data="item" @click="$router.push(`/courseinfo/${item.curriculumid}`)" type="course-show"/>
@@ -30,10 +32,12 @@
           </cube-scroll>
         </cube-slide-item>
         <cube-slide-item>
-          <cube-scroll :options="scrollOptions">
+          <cube-scroll
+            :options="scrollOptions"
+            :data="organData">
             <div class="course-list" v-if="organData.length">
               <div class="course-card" v-for="(item, index) in organData" :key="index">
-                <CourseItem type="course-show"/>
+                <CourseItem :data="item" courseorigin="organ" type="course-show"/>
               </div>
             </div>
             <div class="no-data" v-else>
@@ -68,7 +72,7 @@ export default {
         }
       ],
       organParams: {
-        pagenum: 1,
+        pagenum: 1,                       //1录播 2直播
         coursetype: 1,
       },
       officialParams: {
@@ -118,7 +122,6 @@ export default {
           switch(this.initialIndex) {
             case 0: 
               this.officialData = res.data.data
-              console.log(this.officialData[0])
               break; 
             case 1:
               this.organData = res.data.data

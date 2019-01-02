@@ -82,9 +82,6 @@ export default {
     ...mapGetters([
       'userinfo'
     ])
-  },
-  created() {
-    console.log(this.userinfo)
   }
 }
 </script>

@@ -1,34 +1,35 @@
 <template>
   <div class="reservation-detail">
-    <div class="reservation-info">
-      <div class="title"> 是第三方第三方</div>
+    <div class="reservation-info" v-if="courseInfo">
+      <div class="title"> {{courseInfo.coursename}}</div>
       <div class="teacher">
         <div class="img"><img :src="UserName" alt=""></div>
-        <div class="info"> 老师：六块腹肌的身份</div>
+        <div class="info"> 老师：{{courseInfo.teachername || '匿名'}}</div>
       </div>
+      <div class="reservation-btn" @click="toUpdate">预约时间</div>
       <div class="teacher padding-bottom-20">
         <div class="img"><img :src="Lesson" alt=""></div>
-        <div class="info"> 课时数：565</div>
+        <div class="info"> 课时数：{{courseInfo.periodnum}}</div>
       </div>
 
     </div>
-    <div class="reservation-content">
+    <div class="reservation-content" v-if="LessonData.length">
       <div class="title">
         课程安排
         <div class="residue">
           剩余
-          <span class="color">333</span>课时</p>
+          <span class="color">{{LessonCount}}</span>课时
         </div>
       </div>
-      <div class="lesson">
+      <div class="lesson" v-for="(item, index) in LessonData" :key="item.starttime">
         <div class="lesson-img">
-          <img :src="Lesson1" alt="">
+          <img :src="LessonIcon" alt="icon">
         </div>
         <div class="lesson-index">
-          课时1
+           课时{{index}}
         </div>
         <div class="lesson-date">
-          2018-04-20 18:00:00
+          {{item.starttime}}
         </div>
         <div class="lesson-update" @click="toUpdate">
           修改
@@ -41,22 +42,48 @@
 <script>
 import UserName from '^/images/username@2x.png'
 import Lesson from '^/images/lesson@2x.png'
-import Lesson1 from '^/images/lesson1@2x.png'
-export default {
-  name: '',
+import LessonIcon from '^/images/lesson1@2x.png'
 
+import { getLiveSchedule, getCurriculumInfo } from '@/api'
+
+export default {
   data() {
     return {
+      CourseId: '',
       UserName: UserName,
       Lesson: Lesson,
-      Lesson1: Lesson1
+      LessonIcon: LessonIcon,
+      LessonData: [],
+      courseInfo: null
     }
   },
-
+  created() {
+    this.CourseId = this.$route.params.id
+    this.getCourseInfo()
+    this.getLessionList()
+  },
   methods: {
+    getLessionList() {
+      getLiveSchedule({
+        courseid: this.CourseId
+      }).then( res => {
+        this.LessonData = res.data.data
+        this.LessonCount = res.data.periodnum - res.data.count
+        console.log(this.LessonData, 'LessonData')
+      })
+    },
+    getCourseInfo() {
+      getCurriculumInfo({
+        courseid: this.CourseId
+      }).then( res => {
+        if ( res.code === 0) {
+          this.courseInfo = res.data
+        }
+      })
+    },
     toUpdate() {
       this.$router.push({
-        path: '/reservationtime/' + this.$route.params.id,
+        path: `/reservationtime/${this.$route.params.id}`,
       })
     }
   }
@@ -73,13 +100,20 @@ export default {
     height: 10px;
     background: #f5f6fa;
   }
+  &-btn {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 14px;
+    line-height: 26px;
+    color: #0bcc96;
+  }
   &-info {
     text-align: left;
     .title {
       line-height: 28px;
       padding: 20px 20px 10px;
       font-size: 16px;
-      //   font-weight: bold;
       color: rgba(60, 60, 65, 1);
     }
     .teacher {
@@ -93,7 +127,7 @@ export default {
         display: inline-block;
         vertical-align: middle;
         position: relative;
-        top: -1px;
+        top: -3px;
       }
       .info {
         display: inline-block;
