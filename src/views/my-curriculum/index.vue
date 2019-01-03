@@ -4,21 +4,28 @@
     <div class="tab-slide-container">
       <cube-slide ref="slide" :loop="loop" :initial-index="initialIndex" :auto-play="autoPlay" :show-dots="showDots" :options="slideOptions" @scroll="scroll" @change="changePage">
         <cube-slide-item>
-          <cube-scroll :options="scrollOptions">
+          <cube-scroll 
+            v-if="waitData.length"
+            :options="scrollOptions"
+            :data="waitData"
+            >
             <div class="course-list">
-              <div class="course-card" v-for="(item, index) in lessonData" :key="index">
-                <div class="course-card__title expand">{{item.intime}} {{item.week}}</div>
-                <CourseItem type="curriculum" border="bottom" :data="item" />
+              <div class="course-card" v-for="(item, index) in waitData" :key="index">
+                <div class="course-card__title expand">{{item.intime}} 周{{weekTxt[item.week - 1]}}</div>
+                <CourseItem courseorigin="organ" type="curriculum" border="bottom" :data="item" />
               </div>
             </div>
           </cube-scroll>
         </cube-slide-item>
         <cube-slide-item>
-          <cube-scroll :options="scrollOptions">
+          <cube-scroll
+            v-if="endData.length"
+            :options="scrollOptions"
+            :data="endData">
             <div class="course-list">
-              <div class="course-card" v-for="(item, index) in lessonData" :key="index">
-                <div class="course-card__title expand">{{item.intime}} {{item.week}}</div>
-                <CourseItem type="course-show" border="bottom" :data="item" />
+              <div class="course-card" v-for="(item, index) in endData" :key="index">
+                <div class="course-card__title expand">{{item.intime}} 周{{weekTxt[item.week]}}</div>
+                <CourseItem courseorigin="organ" type="curriculum" border="bottom" :data="item" />
               </div>
             </div>
           </cube-scroll>
@@ -48,6 +55,7 @@ export default {
       loop: false,
       autoPlay: false,
       showDots: false,
+      weekTxt: ['一', '二', '三', '四', '五', '六', '日'],
       slideOptions: {
         listenScroll: true,
         probeType: 3,
@@ -56,8 +64,20 @@ export default {
       scrollOptions: {
         directionLockThreshold: 0
       },
-      pagenum: 1,
-      lessonData: []
+      waitData: [],
+      endData: [],
+      waitParams: {
+        status: 0,
+        pagenum: 1,
+        loaded: false,
+        nomore: false
+      },
+      endParams: {
+        status: 1,
+        pagenum: 1,
+        loaded: false,
+        nomore: false
+      }
     }
   },
   computed: {
@@ -68,12 +88,26 @@ export default {
         item => item.label === this.selectedLabel
       );
       return index;
+    },
+    currentType() {
+      let type = this.initialIndex === 0 ? 'wait' : 'end' 
+      return type
     }
   },
   created() {
-    this.getAppWaitOrEndLessons(this.$route.query.status)
+    this.getdata()
   },
   methods: {
+    onPullingUp() {
+      let type = this.currentType
+      let params = this.postParams[type]
+      if(params.nomore) {
+        this.$refs[`${type}scroll`].forceUpdate()
+        return 
+      }
+      params.pagenum++
+      this.getdata()
+    },
     scroll(pos) {
       const x = Math.abs(pos.x);
       const tabItemWidth = this.$refs.tabNav.$el.clientWidth;
@@ -83,15 +117,25 @@ export default {
     },
     changePage(current) {
       this.selectedLabel = this.tabLabels[current].label;
-      this.getAppWaitOrEndLessons(current)
+      let type = this.currentType
+      let params = this[`${type}Params`]
+      if (!params.loaded) {
+        this.getdata()
+      }
     },
-    getAppWaitOrEndLessons(status) {
-      getAppWaitOrEndLessons({
-        'status': status,
-        'pagenum': this.pagenum
-      }).then(res => {
+    getdata() {
+      let type = this.currentType
+      let params = this[`${type}Params`]
+      getAppWaitOrEndLessons(params).then(res => {
         if (res.code === 0) {
-          this.lessonData = res.data.data
+          if (params.pagenum == 1) {
+            this[`${type}Data`] = res.data.data[0]
+            params.loaded = true
+          } else {
+            this[`${type}Data`] =  this[`${type}Data`].concat(res.data.data[0])
+          }
+          let len = this[`${type}Data`].length 
+          params.nomore = len >= res.data.pageinfo.total ? true : false
         }
       })
     }

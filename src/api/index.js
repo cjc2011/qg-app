@@ -106,6 +106,8 @@ export const getMyCurriculum = params => api.post('student/Mycourse/getMyCurricu
 export const getLiveSchedule = params => api.post('student/Mycourse/getAppLiveSchedule', params)
     // 约课
 export const batchAddReserveLessons = params => api.post('student/Mycourse/batchAddReserveLessons', params)    
+    // 修改约课时间
+export const addEdit = params => api.post('student/Mycourse/addEdit', params)
     // 我的订单
 export const getMyOrderList = params => api.post('student/Myorder/getMyOrderList', params)  
     // 订单详情

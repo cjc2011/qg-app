@@ -32,7 +32,8 @@
     border-color: #04BD8A;
 }
 
-.cube-picker-confirm {
+.cube-picker-confirm,
+.cube-radio-hollow.cube-radio_selected .cube-radio-ui:before {
     color: #04BD8A;
 }
 
@@ -45,6 +46,12 @@
     font-size: 14px;
     color: #666666;
 }
+
+.cube-radio_selected .cube-radio-ui,
+.cube-radio-hollow.cube-radio_selected .cube-radio-ui i:before{
+    background: #04BD8A;
+}
+
 
 
 // base

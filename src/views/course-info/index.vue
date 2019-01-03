@@ -39,10 +39,33 @@
       </div>
       <div class="no-comment" v-if="!commentData.length">暂无评论</div>
     </div>
-    <div class="pay border-top-1px" v-if="courseInfoObj.applystatus === 0">
+    <div class="pay border-top-1px" @click="showPayPop" v-if="courseInfoObj.applystatus === 0">
       <div class="preice">¥{{courseInfoObj.price}}</div>
       <div class="pay-btn">立即购买</div>
     </div>
+    <cube-popup type="my-popup" position="bottom" ref="paypop">
+      <div class="pay-block">
+        <div class="pay-header">
+          icon
+          <span class="text">选择支付方式</span>  
+        </div>
+        <cube-radio-group>
+          <cube-radio
+            position="right"
+            v-for="(option, index) in options"
+            :key="index"
+            :option="option"
+            :value="option.value"
+            :hollow-style="true"
+            v-model="paySelected">
+            <div class="pay-item">
+              <img class="pay-icon" :src="option.src" />
+              <p>{{option.label}}</p>
+            </div>
+          </cube-radio>
+        </cube-radio-group>
+      </div>
+    </cube-popup>
   </div>
 </template>
 
@@ -50,15 +73,19 @@
 import Gb from '^/images/bg.png'
 import ShareIcon from '^/images/share.png'
 import CollectIcon from '^/images/shoucang.png'
-import CollectIconActive from '^/images/shoucang_acitve.png'
+import CollectIconActive from '^/images/shoucang_active.png'
 import BackIcon from '^/images/back-white.png'
 import TimeIcon from '^/images/time.png'
 import { getCurriculumInfo, getCurriculumComment, courseCollect, cancelCourseCollect } from '@/api'
 import EvaluateItem from '%/evaluate-item/index.vue'
+import WeChatIcon from '^/images/weixin.png'
+import aliPayIcon from '^/images/zhifubao.png'
 import { toast } from '../../cube-ui'
+
 export default {
   data() {
     return {
+      paySelected: '',
       Gb: Gb,
       BackIcon: BackIcon,
       CollectIcon: CollectIcon,
@@ -67,11 +94,22 @@ export default {
       TimeIcon: TimeIcon,
       is_collect: undefined,
       courseInfoObj: {},
-      commentData: []
+      commentData: [],
+      options: [
+        {
+          label: '支付宝',
+          value: '1',
+          src: aliPayIcon
+        },
+        {
+          label: '微信',
+          value: '2',
+          src: WeChatIcon
+        }
+      ]
     }
   },
   components: {
-
     EvaluateItem
   },
   created() {
@@ -79,6 +117,10 @@ export default {
     this.getCurriculumComment()
   },
   methods: {
+    showPayPop() {
+      this.payPop = this.$refs.paypop
+      this.payPop.show()
+    },
     // 课程详情
     // 直播需要显示 老师详情 评论列表   
     // 录播显示 课时列表
@@ -142,8 +184,7 @@ export default {
           this.is_collect = 0
         }
       })
-    },
-
+    }
   }
 }
 </script>
@@ -257,6 +298,18 @@ export default {
     );
     box-shadow: 0px 8px 13px 0px rgba(8, 175, 128, 0.2);
     border-radius: 4px;
+  }
+}
+.pay-item{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4B505A;
+  font-size: 17px;
+  .pay-icon{
+    width: 25px;
+    height: 25px;
+    margin-right: 20px;
   }
 }
 </style>

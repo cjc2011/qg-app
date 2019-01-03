@@ -29,11 +29,13 @@ import CourseItem from '%/course-item'
 import { getLessonsByDate, getAppReserveStatus, intoClassroom } from '@/api'
 import { formatDateTime } from '@/assets/js/util.js'
 export default {
+  
   data() {
+    let weekTxt = '周' + '日一二三四五六'.charAt(new Date().getDay())
     return {
       ExclamationIcon: ExclamationIcon,
       ClockIcon: ClockIcon,
-      day: '周' + '日一二三四五六'.charAt(new Date().getDay()),  //周几
+      day: weekTxt,
       date: formatDateTime(new Date()),  //年-月-日
       lessonsData: [],
       isShow: undefined
@@ -45,13 +47,12 @@ export default {
   created() {
     this.getLessonsByDate()
     this.getAppReserveStatus()
-
   },
   methods: {
     // 陪练列表
     getLessonsByDate() {
       getLessonsByDate({
-        'date': '2019-01-02'
+        'date': this.date
       }).then(res => {
         if (res.code === 0) {
           this.lessonsData = res.data

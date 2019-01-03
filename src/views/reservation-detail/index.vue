@@ -1,24 +1,29 @@
 <template>
   <div class="reservation-detail">
+    <div class="top-bar-action" v-if="LessonCount">
+      <div class="img-wrapper">
+        <img :src="updateTime" @click="toUpdate">
+      </div>
+    </div>
     <div class="reservation-info" v-if="courseInfo">
       <div class="title"> {{courseInfo.coursename}}</div>
       <div class="teacher">
         <div class="img"><img :src="UserName" alt=""></div>
         <div class="info"> 老师：{{courseInfo.teachername || '匿名'}}</div>
       </div>
-      <div class="reservation-btn" @click="toUpdate">预约时间</div>
       <div class="teacher padding-bottom-20">
         <div class="img"><img :src="Lesson" alt=""></div>
         <div class="info"> 课时数：{{courseInfo.periodnum}}</div>
       </div>
-
     </div>
     <div class="reservation-content" v-if="LessonData.length">
       <div class="title">
         课程安排
-        <div class="residue">
-          剩余
-          <span class="color">{{LessonCount}}</span>课时
+        <div class="residue" v-if="LessonCount > 0">
+          剩余<span class="color">{{LessonCount}}</span>课时
+        </div>
+        <div class="residue" v-else>
+          已约满
         </div>
       </div>
       <div class="lesson" v-for="(item, index) in LessonData" :key="item.starttime">
@@ -31,8 +36,8 @@
         <div class="lesson-date">
           {{item.starttime}}
         </div>
-        <div class="lesson-update" @click="toUpdate">
-          修改
+        <div class="lesson-update" @click="toUpdate(item)">
+          {{item.overstatus > 0 ? '' : '修改'}}
         </div>
       </div>
     </div>
@@ -43,6 +48,7 @@
 import UserName from '^/images/username@2x.png'
 import Lesson from '^/images/lesson@2x.png'
 import LessonIcon from '^/images/lesson1@2x.png'
+import updateTime from '^/images/updateTime.png'
 
 import { getLiveSchedule, getCurriculumInfo } from '@/api'
 
@@ -50,11 +56,13 @@ export default {
   data() {
     return {
       CourseId: '',
+      updateTime: updateTime,
       UserName: UserName,
       Lesson: Lesson,
       LessonIcon: LessonIcon,
       LessonData: [],
-      courseInfo: null
+      courseInfo: null,
+      LessonCount: 0
     }
   },
   created() {
@@ -69,7 +77,6 @@ export default {
       }).then( res => {
         this.LessonData = res.data.data
         this.LessonCount = res.data.periodnum - res.data.count
-        console.log(this.LessonData, 'LessonData')
       })
     },
     getCourseInfo() {
@@ -81,9 +88,12 @@ export default {
         }
       })
     },
-    toUpdate() {
+    toUpdate(item) {
+      let query = item.type ? {} : {select_time: item.starttime, toteachid: item.toteachid}
+      if (item.overstatus && query.select_time) return
       this.$router.push({
         path: `/reservationtime/${this.$route.params.id}`,
+        query
       })
     }
   }
@@ -196,6 +206,7 @@ export default {
         font-size: 14px;
         color: rgba(11, 204, 150, 1);
         flex-grow: 2;
+        min-width: 40px;
       }
     }
   }

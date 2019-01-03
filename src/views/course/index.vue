@@ -6,7 +6,7 @@
     <div class="course-list-wrapper" ref="wrapper" v-show="courseData.length">
       <div class="list-container">
         <div class="list-content">
-          <course-item @click="courseClick" :data="item" v-for="(item,index) in courseData" :key="index" type="course-show"></course-item> 
+          <course-item @click="courseClick" :data="item" :courseorigin="item.coursetype == 1 ? 'official' : 'organ'" v-for="(item,index) in courseData" :key="index" type="course-show"></course-item> 
         </div>
       </div>
     </div>

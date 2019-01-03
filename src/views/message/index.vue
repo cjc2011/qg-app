@@ -27,6 +27,9 @@
           </div>
         </div>
       </cube-scroll>
+      <div class="no-data" v-if="sysData.length && sysParams.loaded">
+        暂无数据
+      </div>
     </div>
     <div class="push-message message-block" v-show="currentIndex == 1">
       <cube-scroll
@@ -38,6 +41,9 @@
         >
         
       </cube-scroll>
+      <div class="no-data" v-if="pushData.length && pushParams.loaded">
+        暂无数据
+      </div>
     </div>
   </div>
 </template>

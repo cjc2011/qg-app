@@ -195,7 +195,10 @@ export default new Router({
         {
             path: '/setting_info',
             name: 'setting_info',
-            component: SettingInfo
+            component: SettingInfo,
+            meta: {
+                title: '设置'
+            }
         },
         {
             path: '/searchresult',
@@ -226,7 +229,7 @@ export default new Router({
             name: 'teacherinfo',
             component: TeacherInfo,
             meta: {
-                title: ' '
+                title: '老师详情'
             }
         },
         {

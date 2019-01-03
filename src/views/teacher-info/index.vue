@@ -2,8 +2,8 @@
   <div>
     <div class="top-bar-action">
       <div class="img-wrapper">
-        <img :src="ShareIcon" alt="编辑" @click="toCollect" v-if="is_collect == 0">
-        <img :src="BoyIcon" alt="编辑" @click="toCancelCollect" v-if="is_collect == 1">
+        <img :src="ColleIcon" @click="toCollect" v-if="is_collect == 0">
+        <img :src="BoyIcon" @click="toCancelCollect" v-if="is_collect == 1">
       </div>
     </div>
     <div class="teacher">
@@ -53,11 +53,16 @@ import ShareIcon from '^/images/share-black.png'
 import BoyIcon from '^/images/boy.png'
 import BirthdayIcon from '^/images/birthday.png'
 import Address from '^/images/address.png'
+
+import ColleIcon from '^/images/shoucang.png'
+import ColleIconActive from '^/images/shoucang_active.png'
 import { mapMutations } from 'vuex'
 import { getTeacherDetail, getTeacherCourse, teacherCollect, cancelTeacherCollect } from '@/api'
 export default {
   data() {
     return {
+      ColleIcon: ColleIcon,
+      ColleIconActive: ColleIconActive,
       ShareIcon: ShareIcon,
       BirthdayIcon: BirthdayIcon,
       BoyIcon: BoyIcon,

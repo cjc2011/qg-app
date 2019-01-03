@@ -1,11 +1,14 @@
 <template>
   <div>
     <div class="top-bar-action">
-      <div class="img-wrapper"><img :src="ReservationEdit" alt="编辑" @click="UpdateTime"></div>
+      <div class="img-wrapper">
+        <img  v-show="!EditStatus" :src="ReservationEdit" alt="编辑" @click="EditStatus = true">
+        <span v-show="EditStatus" @click="UpdateTime" class="text">保存</span>
+      </div>
     </div>
     <div class="teadcher-info border-top-1px expand">
-      <img src="https://avatars0.githubusercontent.com/u/17289716?s=180&v=4" class="avatar">
-      <span class="teacher-name">王大锤</span>
+      <img :src="teacher.imageurl || 'https://avatars0.githubusercontent.com/u/17289716?s=180&v=4'" class="avatar">
+      <span class="teacher-name">{{teacher.name || '匿名'}}</span>
     </div>
     <div class="weeks border-bottom-1px expand" v-if="TimeData.length">
       <span v-for="(item, index) in TimeData" :key="item.week" @click="changeTab(index)" :class="['week',activeWeekIndex == index + 1 ? ( 'active border-bottom-1px') :'']">{{weeks[Number(item.week) - 1].value}}</span>
@@ -26,12 +29,13 @@
 
 <script>
 import ReservationEdit from '^/images/reservation-edit.png';
-import { getAppTeacherFreeTime, batchAddReserveLessons } from '@/api'
-
+import { getAppTeacherFreeTime, batchAddReserveLessons, getCurriculumInfo, addEdit } from '@/api'
+import { toast } from '../../cube-ui'
 
 export default {
   data() {
     return {
+      EditStatus: false,
       ReservationEdit: ReservationEdit,
       activeWeekIndex: 1,
       weeks: [
@@ -41,15 +45,19 @@ export default {
         { key: 4, value: '周四' },
         { key: 5, value: '周五' },
         { key: 6, value: '周六' },
-        { key: 7, value: '周日' },
+        { key: 7, value: '周日' }
       ],
       TimeNames: ['上午', '中午', '下午'],
       TimeData: [],
-      SelectTime: {}
+      SelectTime: {},
+      teacher: {},
+      type: 'add'                         //add || update 约课或者是修改
     }
   },
   created() {
     this.courseid = this.$route.params.id
+    this.type = this.$route.query.select_time ? 'update' : 'add'
+    this.getCourseInfo()
     this.getAppTeacherFreeTime();
   },
   computed: {
@@ -73,6 +81,7 @@ export default {
   },
   methods: {
     UpdateTime() {
+      console.log('UpdateTime')
       let keys = Object.keys(this.SelectTime)
       let params = []
       keys.forEach( key => {
@@ -87,12 +96,36 @@ export default {
           })
         }
       })
-      batchAddReserveLessons({
-        data: params,
-        courseid: this.courseid
-      }).then( res => {
-        console.log(res, 'res')
-      })
+      // 添加约课
+      if (this.type == 'add') {
+        batchAddReserveLessons({
+          data: params,
+          courseid: this.courseid
+        }).then( res => {
+          if (res.code == 0) {
+            toast('预约成功').then( () => {
+              this.$router.back()
+            })
+          } else {
+            toast(`${res.info}`)
+          }
+        })
+      } else {
+        let lessionId = this.$route.query.toteachid
+        let time = params[0]
+        addEdit({
+          intime: time.intime,
+          timekey: time.timekey,
+          toteachid: lessionId,
+          courseid: this.courseid
+        }).then( res=> {
+          if (res.code == 0) {
+            toast('修改成功').then( () => {
+              this.$router.back()
+            })
+          }
+        })
+      }
     },
     changeTab(index) {
       this.activeWeekIndex = index + 1
@@ -101,6 +134,10 @@ export default {
       getAppTeacherFreeTime({ 'courseid': this.courseid }).then(res => {
         this.TimeData = res.data;
         this.inintSeleKeys()
+        // 修改预约时间 设置默认选中
+        if (this.type == 'update') {
+          this.setSelect()
+        }
       })
     },
     inintSeleKeys() {
@@ -108,14 +145,59 @@ export default {
         this.SelectTime[item.date] = []
       })
     },
-    toSelect(item) {
-      if (item.status == 1) return
-      item.select = !item.select
-      let CurrentDate = this.CurrentDate
-      let index = this.SelectTime[CurrentDate].findIndex( el => {
-        return el.timekey == item.timekey
+    setSelect() {
+      let time  = this.$route.query.select_time.split(' ');
+      let key = time[0]
+      let val = time[1].slice(0, 5)
+      this.TimeData.forEach( item => {
+        item.datelist.forEach( list => {
+          list.forEach( time_item => {
+            if (time_item.time == val && item.date == key) {
+              time_item.status = 0
+              this.SelectTime[key] = [time_item]
+            }
+          })
+        })
       })
-      index > -1 ? this.SelectTime[CurrentDate].splice(index, 1) : this.SelectTime[CurrentDate].push(item)
+    },
+    getCourseInfo() {
+      getCurriculumInfo({
+        courseid: this.courseid
+      }).then( res => {
+        if (res.code == 0) {
+          this.teacher.imageurl = res.data.teacher_imageurl
+          this.teacher.name = res.data.teachername
+        } else {
+          toast(`${res.info}`)
+        }
+      })
+    },  
+    clearSelect() {
+      this.TimeData.forEach( item => {
+        item.datelist.forEach( list => {
+          list.forEach( time_item => {
+            time_item.select = false
+          })
+        })
+      })
+    },
+    toSelect(item) {
+      if (item.status == 1 || !this.EditStatus) return
+      let CurrentDate = this.CurrentDate
+      if (this.type == 'add') {
+        item.select = !item.select
+        let index = this.SelectTime[CurrentDate].findIndex( el => {
+          return el.timekey == item.timekey
+        })
+        index > -1 ? this.SelectTime[CurrentDate].splice(index, 1) : this.SelectTime[CurrentDate].push(item)
+      } else {
+        this.clearSelect()
+        for (var key in this.SelectTime) {
+          this.SelectTime[key] = []
+        }
+        item.select = !item.select
+        this.SelectTime[CurrentDate] = [item]
+      }
     }
   }
 }
