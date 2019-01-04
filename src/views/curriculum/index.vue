@@ -12,10 +12,16 @@
       </div>
       <i class="cubeic-arrow icon"></i>
     </div>
-    <div :class="[isShow?'curriculum-list':'']">
-      <div class="curriculum-card" v-for="(item, index) in lessonsData" :key="index" @click="toCourse(item)">
+    <div :class="[isShow?'curriculum-list':'']" v-if="lessonsData.length">
+      <div class="curriculum-card"  v-for="(item, index) in lessonsData" :key="index" @click="toCourse(item)">
         <div class="curriculum-card__title expand">{{date}}&nbsp;&nbsp;{{day}}</div>
         <CourseItem type="curriculum" border="bottom" courseorigin="organ" :data="item" @intoclassroom="intoclassroom" @toEvaluate="toEvaluate" @toreplay="toreplay" />
+      </div>
+    </div>
+    <div v-else class="curriculum-list">
+      <div class="no-data">
+        <img :src="NoDataImage" alt="暂无数据">
+        <p>今日暂无课程安排</p>
       </div>
     </div>
   </div>
@@ -25,14 +31,16 @@
 <script>
 import ExclamationIcon from '^/images/exclamation.png'
 import ClockIcon from '^/images/clock.png'
+import NoDataImage from '^/images/nodata.png'
 import CourseItem from '%/course-item'
 import { getLessonsByDate, getAppReserveStatus, intoClassroom } from '@/api'
 import { formatDateTime } from '@/assets/js/util.js'
+
 export default {
-  
   data() {
     let weekTxt = '周' + '日一二三四五六'.charAt(new Date().getDay())
     return {
+      NoDataImage: NoDataImage,
       ExclamationIcon: ExclamationIcon,
       ClockIcon: ClockIcon,
       day: weekTxt,

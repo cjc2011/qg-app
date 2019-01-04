@@ -1,19 +1,19 @@
 <template>
   <div class="user-info">
     <div class="content border-top-split">
+      <div class="msg-item border-top-1px">
+        <span class="msg-item__left">头像</span>
+        <cube-upload class="upload" :auto="false" action="/" :simultaneous-uploads="1" @files-added="filesAdded">
+          <div class="clear-fix">
+            <div>
+              <img class="user-avatar" :src="userinfo.imageurl || DefaultAvatar" />
+            </div>
+          </div>
+        </cube-upload>
+      </div>
       <div class="msg-item border-top-1px" @click="jump(item)" v-for="(item, index) in UserData" :key="index">
         <span class="msg-item__left">{{item.name}}</span>
         <div class="msg-item__content">
-          <cube-upload class="upload" v-if="item.image" :auto="false" action="/" :simultaneous-uploads="1" @files-added="filesAdded">
-            <div class="clear-fix">
-              <cube-upload-file v-for="(file, i) in files" :file="file" :key="i"></cube-upload-file>
-              <cube-upload-btn :multiple="false">
-                <div>
-                  <img class="user-avatar" :src="item.imageurl || DefaultAvatar" />
-                </div>
-              </cube-upload-btn>
-            </div>
-          </cube-upload>
           <p v-if="item.value && item.type!= 'profile'" class="msg-item__text">{{item.value}}</p>
           <span class="arrow-icon">
             <img :src="ArrowIcon">
@@ -54,10 +54,6 @@ export default {
       sexIndex: 0, // 性别 下拉框 默认选中
       date: new Date(),// 生日 下拉框 默认选中
       UserData: [
-        {
-          name: '头像',
-          image: 'https://wx.qlogo.cn/mmopen/PiajxSqBRaEK22Q42iaW7KTpTsDvpLfQ6C6jBtDp30qzpEiay4qQygTvBzr88ctv93RONvMofG0egK4MIMvlVqELw/0'
-        },
         {
           name: '昵称',
           value: '',
@@ -233,6 +229,9 @@ export default {
     box-sizing: border-box;
     align-items: center;
     justify-content: space-between;
+    &.reverse{
+      flex-flow: row-reverse;
+    }
     &__left {
       max-width: 80px;
       font-size: 15px;

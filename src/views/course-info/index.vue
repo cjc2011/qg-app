@@ -26,7 +26,7 @@
       <div class="course-box__title">老师简介</div>
       <div class="course-box__content">
         <div class="teacher-avatar">
-          <img class="avatar" :src="courseInfoObj.teacher_imageurl">
+          <img class="avatar" :src="courseInfoObj.teacher_imageurl || defaultAvatar">
           <p class="teacher-name">{{courseInfoObj.teachername}}</p>
         </div>
         <p class="text">{{courseInfoObj.teacher_porfile || '暂无简介'}}</p>
@@ -34,38 +34,15 @@
     </div>
     <div class="course-box noborder evaluate" v-if="courseInfoObj.coursetype == 2">
       <div class="course-box__title">老师点评</div>
-      <div v-if="commentData.length" v-for="(item,index) in commentData.length" :key="index">
+      <div v-for="(item,index) in commentData" :key="index">
         <EvaluateItem :data="item"></EvaluateItem>
       </div>
       <div class="no-comment" v-if="!commentData.length">暂无评论</div>
     </div>
-    <div class="pay border-top-1px" @click="showPayPop" v-if="courseInfoObj.applystatus === 0">
+    <div class="pay border-top-1px" v-if="courseInfoObj.applystatus === 0">
       <div class="preice">¥{{courseInfoObj.price}}</div>
-      <div class="pay-btn">立即购买</div>
+      <div class="pay-btn" @click="pay">立即购买</div>
     </div>
-    <cube-popup type="my-popup" position="bottom" ref="paypop">
-      <div class="pay-block">
-        <div class="pay-header">
-          icon
-          <span class="text">选择支付方式</span>  
-        </div>
-        <cube-radio-group>
-          <cube-radio
-            position="right"
-            v-for="(option, index) in options"
-            :key="index"
-            :option="option"
-            :value="option.value"
-            :hollow-style="true"
-            v-model="paySelected">
-            <div class="pay-item">
-              <img class="pay-icon" :src="option.src" />
-              <p>{{option.label}}</p>
-            </div>
-          </cube-radio>
-        </cube-radio-group>
-      </div>
-    </cube-popup>
   </div>
 </template>
 
@@ -76,17 +53,18 @@ import CollectIcon from '^/images/shoucang.png'
 import CollectIconActive from '^/images/shoucang_active.png'
 import BackIcon from '^/images/back-white.png'
 import TimeIcon from '^/images/time.png'
-import { getCurriculumInfo, getCurriculumComment, courseCollect, cancelCourseCollect } from '@/api'
+import defaultAvatar from '^/images/defaultAvatar.png'
+import { getCurriculumInfo, getCurriculumComment, courseCollect, cancelCourseCollect, gotoOrder, submitApplyPay, getLessonsPlayback } from '@/api'
 import EvaluateItem from '%/evaluate-item/index.vue'
-import WeChatIcon from '^/images/weixin.png'
-import aliPayIcon from '^/images/zhifubao.png'
 import { toast } from '../../cube-ui'
+import { mapGetters } from 'vuex'
 
 export default {
   data() {
     return {
       paySelected: '',
       Gb: Gb,
+      defaultAvatar: defaultAvatar,
       BackIcon: BackIcon,
       CollectIcon: CollectIcon,
       CollectIconActive: CollectIconActive,
@@ -94,19 +72,7 @@ export default {
       TimeIcon: TimeIcon,
       is_collect: undefined,
       courseInfoObj: {},
-      commentData: [],
-      options: [
-        {
-          label: '支付宝',
-          value: '1',
-          src: aliPayIcon
-        },
-        {
-          label: '微信',
-          value: '2',
-          src: WeChatIcon
-        }
-      ]
+      commentData: []
     }
   },
   components: {
@@ -116,10 +82,26 @@ export default {
     this.getCurriculumInfo()
     this.getCurriculumComment()
   },
+  computed: {
+    ...mapGetters([
+      'organ'
+    ])
+  },
   methods: {
-    showPayPop() {
-      this.payPop = this.$refs.paypop
-      this.payPop.show()
+    pay() {
+      gotoOrder({
+        courseid: this.$route.params.id,
+        ordersource: 2,
+        organid: this.organ.organid
+      }).then( res => {
+        if (res.code === 0) {
+          this.$router.push({
+            path: `/orderinfo/${res.data.ordernum}`
+          })
+        } else {
+          toast(`${res.info}`)
+        }
+      })
     },
     // 课程详情
     // 直播需要显示 老师详情 评论列表   
@@ -151,6 +133,12 @@ export default {
           // 是否收藏
           this.is_collect = res.data.is_collect
           this.courseInfoObj = res.data
+          console.log(this.courseInfoObj, 'this.courseInfoObj.toteachid')
+          getLessonsPlayback({
+            toteachid: this.courseInfoObj.toteachid
+          }).then( res => {
+            console.log(res, 'res 回放')
+          })
         } else {
           toast(`${res.info}`)
         }
@@ -300,6 +288,18 @@ export default {
     border-radius: 4px;
   }
 }
+.pay-block{
+  background: #ffffff;
+}
+.pay-header{
+  position: relative;
+  line-height: 44px;
+  padding: 0 10px;
+  .cubeic-close{
+    position: absolute;
+    left: 10px;
+  }
+}
 .pay-item{
   display: flex;
   align-items: center;
@@ -310,6 +310,14 @@ export default {
     width: 25px;
     height: 25px;
     margin-right: 20px;
+  }
+}
+.pay-footer{
+  padding: 32px 16px;
+  .pay-btn {
+    width: 100%;
+    height: 44px;
+    line-height: 44px;
   }
 }
 </style>

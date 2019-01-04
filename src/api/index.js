@@ -31,6 +31,8 @@ export const updateMobile = params => api.post('student/User/updateMobile', para
 export const updateUserPass = params => api.post('student/User/updateUserPass', params)
     // 个人资料 - 编辑资料
 export const updateStudentInfo = params => api.post('student/User/updateStudentInfo', params)
+    // 找回密码
+export const updatePass = params => api.post('student/Homepage/updatePass', params)    
 
 /**
  * 我的收藏
@@ -102,13 +104,20 @@ export const intoClassroom = params => api.post('student/Mycourse/intoClassroom'
 export const getAppTeacherFreeTime = params => api.post('student/Mycourse/getAppTeacherFreeTime', params)
     // 我的课程
 export const getMyCurriculum = params => api.post('student/Mycourse/getMyCurriculum', params)
+    // 回放
+export const getLessonsPlayback = params => api.post('student/Mycourse/getLessonsPlayback', params)    
     // 课时安排 
 export const getLiveSchedule = params => api.post('student/Mycourse/getAppLiveSchedule', params)
     // 约课
 export const batchAddReserveLessons = params => api.post('student/Mycourse/batchAddReserveLessons', params)    
     // 修改约课时间
 export const addEdit = params => api.post('student/Mycourse/addEdit', params)
+
     // 我的订单
 export const getMyOrderList = params => api.post('student/Myorder/getMyOrderList', params)  
     // 订单详情
 export const queryOrderInfo = params => api.post('student/Myorder/queryOrderInfo', params)
+    // 下单
+export const gotoOrder = params => api.post('student/Myorder/gotoOrder', params)
+    // 确认订单
+export const submitApplyPay = params => api.post('student/Myorder/submitApplyPay', params)

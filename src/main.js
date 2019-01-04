@@ -10,7 +10,7 @@ import 'normalize.css'
 
 Vue.config.productionTip = false
 
-let joinPages = ['/login', '/registered', '/domain']
+let joinPages = ['/login', '/registered', '/domain', '/retrievepassword']
 
 router.beforeEach((to, from, next) => {
   let userinfo = store.getters.userinfo

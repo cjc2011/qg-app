@@ -8,10 +8,10 @@
       <div class="course-image">
         <img :src="orderInfo.imageurl || defaultImage">
       </div>
-      <div class="course-content" >
+      <div class="course-content">
         <div class="course-name">{{orderInfo.coursename}}</div>
-        <div class="course-teacher" v-if="orderInfo.teachername">老师：{{orderInfo.teachername}}</div>
-        <div class="course-teacher" v-else>班型：录播</div>
+        <div class="course-teacher" v-if="orderInfo.coursetype == 2">老师：{{orderInfo.teachername || '匿名老师'}}</div>
+        <div class="course-teacher" v-if="orderInfo.coursetype == 1">班型：录播1</div>
       </div>
     </div>
     <div class="order-time">
@@ -24,26 +24,68 @@
         <div class="price">¥{{orderInfo.amount}}</div>
       </div>
     </div>
-    <div class="pay-action-bar border-top-1px" v-if="orderInfo">
+    <div class="pay-action-bar border-top-1px" v-if="orderInfo.orderstatus === 0">
       <div class="preice">
         <span>应付金额</span> 
-        ¥19999</div>
-      <div class="pay-btn">立即支付</div>
+        ¥1</div>
+      <div class="pay-btn" @click="showPayPop">立即支付</div>
     </div> 
+    <cube-popup type="my-popup" position="bottom" ref="paypop" :maskClosable="true">
+      <div class="pay-block">
+        <div class="pay-header">
+          <i class="cubeic-close" @click="hide"></i>
+          <span class="text">选择支付方式</span>  
+        </div>
+        <cube-radio-group>
+          <cube-radio
+            class="radio-expand"
+            position="right"
+            v-model="paySelected"
+            v-for="(option, index) in options"
+            :key="index"
+            :option="option"
+            :value="option.value"
+            :hollow-style="true">
+            <div class="pay-item">
+              <img class="pay-icon" :src="option.src" />
+              <p>{{option.label}}</p>
+            </div>
+          </cube-radio>
+        </cube-radio-group>
+        <div class="pay-footer">
+          <div class="pay-btn" @click="pay">确认支付¥1.00</div>
+        </div>
+      </div>
+    </cube-popup>
   </div>
 </template>
 
 <script>
 import defaultImage from '^/images/defaultImage.png'
+import WeChatIcon from '^/images/weixin.png'
+import aliPayIcon from '^/images/zhifubao.png'
 import Time from '^/images/time.png'
-import { queryOrderInfo } from '@/api'
+import { queryOrderInfo, submitApplyPay } from '@/api'
 
 export default {
   data() {
     return {
       defaultImage: defaultImage,
       Time: Time,
-      orderInfo: null
+      orderInfo: null,
+      paySelected: '3',
+      options: [
+        {
+          label: '支付宝',
+          value: '3',
+          src: aliPayIcon
+        },
+        {
+          label: '微信',
+          value: '2',
+          src: WeChatIcon
+        }
+      ]
     }
   },
   created() {
@@ -53,8 +95,32 @@ export default {
     }).then( res => {
       if (res.code == 0) {
         this.orderInfo = res.data
+        console.log(this.orderInfo.coursetype)
       }     
     })
+  },
+  methods: {
+    pay() {
+      submitApplyPay({
+        ordernum: this.orderid,
+        paytype: this.paySelected,
+        type: 1
+      }).then( res => {
+        if (res.code === 0) {
+          if (res.data.type === 7) {
+            
+          }
+        }
+      })
+    },
+    showPayPop() {
+      let paypop = this.$refs.paypop
+      paypop.show()
+    },
+    hide() {
+      let paypop = this.$refs.paypop
+      paypop.hide()
+    },
   },
   computed: {
     orderstatusClass() {
@@ -189,15 +255,47 @@ export default {
       font-size: 12px;
     }
   }
-  .pay-btn{
-    height: 34px;
-    width: 80px;
-    line-height: 34px;
-    font-size: 15px;
-    color: #ffffff;
-    background: linear-gradient(90deg,rgba(39,249,180,1),rgba(11,204,150,1));
-    box-shadow: 0px 8px 13px 0px rgba(8,175,128,0.2);
-    border-radius: 4px;
+}
+.pay-btn{
+  height: 34px;
+  width: 80px;
+  line-height: 34px;
+  font-size: 15px;
+  color: #ffffff;
+  background: linear-gradient(90deg,rgba(39,249,180,1),rgba(11,204,150,1));
+  box-shadow: 0px 8px 13px 0px rgba(8,175,128,0.2);
+  border-radius: 4px;
+}
+.pay-block{
+  background: #ffffff;
+}
+.pay-header{
+  position: relative;
+  line-height: 44px;
+  padding: 0 10px;
+  .cubeic-close{
+    position: absolute;
+    left: 10px;
+  }
+}
+.pay-item{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4B505A;
+  font-size: 17px;
+  .pay-icon{
+    width: 25px;
+    height: 25px;
+    margin-right: 20px;
+  }
+}
+.pay-footer{
+  padding: 32px 16px;
+  .pay-btn {
+    width: 100%;
+    height: 44px;
+    line-height: 44px;
   }
 }
 </style>

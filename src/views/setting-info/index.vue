@@ -4,7 +4,7 @@
       <div class="setting-item__left">当前版本</div>
       <div class="setting-item__right">1.0.0</div>
     </div>
-    <div class="setting-item expand border-bottom-1px">
+    <div class="setting-item expand border-bottom-1px" @click="$router.push('/useragreement')">
       <div class="setting-item__left">用户协议</div>
       <div class="setting-item__right">
         <i class="cubeic-arrow"></i>

@@ -37,7 +37,7 @@
             :data="organData">
             <div class="course-list" v-if="organData.length">
               <div class="course-card" v-for="(item, index) in organData" :key="index">
-                <CourseItem :data="item" courseorigin="organ" type="course-show"/>
+                <CourseItem :data="item" courseorigin="organ" type="course-show" @click="$router.push(`/courseinfo/${item.curriculumid}`)"/>
               </div>
             </div>
             <div class="no-data" v-else>

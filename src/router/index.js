@@ -32,237 +32,240 @@ import EvaluateCourse from '../views/evaluate-course/index.vue'
 Vue.use(Router)
 
 export default new Router({
-    base: process.env.BASE_URL,
-    routes: [{
-            path: '/',
-            name: 'home',
-            component: Home,
-            meta: {
-                header: 'rewrite'
-            }
-        },
-        {
-            path: '/official',
-            name: 'official',
-            component: Home,
-            meta: {
-                header: 'rewrite'
-            }
-        },
-        {
-            path: '/course',
-            name: 'course',
-            component: Course,
-            meta: {
-                title: '课程列表'
-            }
-        },
-        {
-            path: '/courseinfo/:id',
-            name: 'courseinfo',
-            component: CourseInfo,
-            meta: {
-                header: 'rewrite',
-                title: '教师详情'
-            }
-        },
-        {
-            path: '/search',
-            name: 'search',
-            component: Search,
-            meta: {
-                header: 'rewrite',
-                title: '搜索'
-            }
-        },
-        {
-            path: '/userhome',
-            name: 'userhome',
-            component: UserHome,
-            meta: {
-                title: '我的'
-            }
-        },
-        {
-            path: '/userinfo',
-            name: 'userinfo',
-            component: UserInfo,
-            meta: {
-                title: '个人中心'
-            }
-        },
-        {
-            path: '/useredit/:type',
-            name: 'useredit',
-            component: UserEdit,
-            meta: {
-                title: '个人信息'
-            }
-        },
-        {
-            path: '/order',
-            name: 'order',
-            component: Order,
-            meta: {
-                title: '我的订单'
-            }
-        },
-        {
-            path: '/orderinfo/:id',
-            name: 'orderinfo',
-            component: OrderInfo,
-            meta: {
-                title: '订单详情'
-            }
-        },
-        {
-            path: '/curriculum',
-            name: 'curriculum',
-            component: Curriculum,
-            meta: {
-                title: '陪练'
-            }
-        },
-        {
-            path: '/mycurriculum',
-            name: 'mycurriculum',
-            component: MyCurriculum,
-            meta: {
-                title: '我的陪练'
-            }
-        },
-        {
-            path: '/mycourse',
-            name: 'mycourse',
-            component: MyCourse,
-            meta: {
-                title: '我的课程'
-            }
-        },
-        {
-            path: '/collection',
-            name: 'collection',
-            component: Collection,
-            meta: {
-                title: '我的收藏'
-            }
-        },
-        {
-            path: '/message',
-            name: 'message',
-            component: Message,
-            meta: {
-                title: '我的消息'
-            }
-        },
-        {
-            path: '/login',
-            name: 'login',
-            component: Login,
-            meta: {
-                header: 'rewrite'
-            }
-        },
-        {
-            path: '/domain',
-            name: 'domain',
-            component: Domain,
-            meta: {
-                header: 'rewrite'
-            }
-        },
-        {
-            path: '/registered',
-            name: 'registered',
-            component: Registered,
-            meta: {
-                header: 'rewrite'
-            }
-        },
-        {
-            path: '/retrievepassword',
-            name: 'retrievepassword',
-            component: RetrievePassword
-        },
-        {
-            path: '/organization',
-            name: 'organization',
-            component: Organization,
-            meta: {
-                header: 'rewrite'
-            }
-        },
-        {
-            path: '/setting_info',
-            name: 'setting_info',
-            component: SettingInfo,
-            meta: {
-                title: '设置'
-            }
-        },
-        {
-            path: '/searchresult',
-            name: 'searchresult',
-            component: SearchResult,
-            meta: {
-                title: '搜索结果'
-            }
-        },
-        {
-            path: '/reservationtime/:id',
-            name: 'reservationtime',
-            component: ReservationTime,
-            meta: {
-                title: '选择时间'
-            }
-        },
-        {
-            path: '/useragreement',
-            name: 'useragreement',
-            component: UserAgreement,
-            meta: {
-                title: '用户协议'
-            }
-        },
-        {
-            path: '/teacherinfo/:id',
-            name: 'teacherinfo',
-            component: TeacherInfo,
-            meta: {
-                title: '老师详情'
-            }
-        },
-        {
-            path: '/myevaluate/:id',
-            name: 'myevaluate',
-            component: MyEvaluate,
-            meta: {
-                title: '个人点评'
-            }
-        },
-        {
-            path: '/reservationlist',
-            name: 'reservationlist',
-            component: ReservationList,
-            meta: {
-                title: '我的预约'
-            }
-        },
-        {
-            path: '/reservationdetail/:id',
-            name: 'reservationdetail',
-            component: ReservationDetail,
-            meta: {
-                title: '我的预约'
-            }
-        },
-        {
-            path: '/evaluatecourse/:id',
-            name: 'evaluatecourse',
-            component: EvaluateCourse,
-            meta: {
-                title: '评价'
-            }
-        }
-    ]
+  base: process.env.BASE_URL,
+  routes: [{
+    path: '/',
+    name: 'home',
+    component: Home,
+    meta: {
+      header: 'rewrite'
+    }
+  },
+  {
+    path: '/official',
+    name: 'official',
+    component: Home,
+    meta: {
+      header: 'rewrite'
+    }
+  },
+  {
+    path: '/course',
+    name: 'course',
+    component: Course,
+    meta: {
+      title: '课程列表'
+    }
+  },
+  {
+    path: '/courseinfo/:id',
+    name: 'courseinfo',
+    component: CourseInfo,
+    meta: {
+      header: 'rewrite',
+      title: '教师详情'
+    }
+  },
+  {
+    path: '/search',
+    name: 'search',
+    component: Search,
+    meta: {
+      header: 'rewrite',
+      title: '搜索'
+    }
+  },
+  {
+    path: '/userhome',
+    name: 'userhome',
+    component: UserHome,
+    meta: {
+      title: '我的'
+    }
+  },
+  {
+    path: '/userinfo',
+    name: 'userinfo',
+    component: UserInfo,
+    meta: {
+      title: '个人中心'
+    }
+  },
+  {
+    path: '/useredit/:type',
+    name: 'useredit',
+    component: UserEdit,
+    meta: {
+      title: '个人信息'
+    }
+  },
+  {
+    path: '/order',
+    name: 'order',
+    component: Order,
+    meta: {
+      title: '我的订单'
+    }
+  },
+  {
+    path: '/orderinfo/:id',
+    name: 'orderinfo',
+    component: OrderInfo,
+    meta: {
+      title: '订单详情'
+    }
+  },
+  {
+    path: '/curriculum',
+    name: 'curriculum',
+    component: Curriculum,
+    meta: {
+      title: '陪练'
+    }
+  },
+  {
+    path: '/mycurriculum',
+    name: 'mycurriculum',
+    component: MyCurriculum,
+    meta: {
+      title: '我的陪练'
+    }
+  },
+  {
+    path: '/mycourse',
+    name: 'mycourse',
+    component: MyCourse,
+    meta: {
+      title: '我的课程'
+    }
+  },
+  {
+    path: '/collection',
+    name: 'collection',
+    component: Collection,
+    meta: {
+      title: '我的收藏'
+    }
+  },
+  {
+    path: '/message',
+    name: 'message',
+    component: Message,
+    meta: {
+      title: '我的消息'
+    }
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: Login,
+    meta: {
+      header: 'rewrite'
+    }
+  },
+  {
+    path: '/domain',
+    name: 'domain',
+    component: Domain,
+    meta: {
+      header: 'rewrite'
+    }
+  },
+  {
+    path: '/registered',
+    name: 'registered',
+    component: Registered,
+    meta: {
+      header: 'rewrite'
+    }
+  },
+  {
+    path: '/retrievepassword',
+    name: 'retrievepassword',
+    component: RetrievePassword,
+    meta: {
+      title: '忘记密码'
+    }
+  },
+  {
+    path: '/organization',
+    name: 'organization',
+    component: Organization,
+    meta: {
+      header: 'rewrite'
+    }
+  },
+  {
+    path: '/setting_info',
+    name: 'setting_info',
+    component: SettingInfo,
+    meta: {
+      title: '设置'
+    }
+  },
+  {
+    path: '/searchresult',
+    name: 'searchresult',
+    component: SearchResult,
+    meta: {
+      title: '搜索结果'
+    }
+  },
+  {
+    path: '/reservationtime/:id',
+    name: 'reservationtime',
+    component: ReservationTime,
+    meta: {
+      title: '选择时间'
+    }
+  },
+  {
+    path: '/useragreement',
+    name: 'useragreement',
+    component: UserAgreement,
+    meta: {
+      title: '用户协议'
+    }
+  },
+  {
+    path: '/teacherinfo/:id',
+    name: 'teacherinfo',
+    component: TeacherInfo,
+    meta: {
+      title: '老师详情'
+    }
+  },
+  {
+    path: '/myevaluate/:id',
+    name: 'myevaluate',
+    component: MyEvaluate,
+    meta: {
+      title: '个人点评'
+    }
+  },
+  {
+    path: '/reservationlist',
+    name: 'reservationlist',
+    component: ReservationList,
+    meta: {
+      title: '我的预约'
+    }
+  },
+  {
+    path: '/reservationdetail/:id',
+    name: 'reservationdetail',
+    component: ReservationDetail,
+    meta: {
+      title: '我的预约'
+    }
+  },
+  {
+    path: '/evaluatecourse/:id',
+    name: 'evaluatecourse',
+    component: EvaluateCourse,
+    meta: {
+      title: '评价'
+    }
+  }
+  ]
 })

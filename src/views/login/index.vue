@@ -22,7 +22,7 @@
         <span>立即</span>
         <span class="active" @click="jump">注册</span>
       </div>
-      <div class="forget fr">忘记密码</div>
+      <div class="forget fr" @click="$router.push('/retrievepassword')">忘记密码</div>
     </div>
     <div class="login-btn" @click="login">登录</div>
   </div>

@@ -4,7 +4,7 @@
     <div class="tab-slide-container">
       <cube-slide ref="slide" :loop="loop" :initial-index="initialIndex" :auto-play="autoPlay" :show-dots="showDots" :options="slideOptions" @scroll="scroll" @change="changePage">
         <cube-slide-item>
-          <cube-scroll 
+          <cube-scroll
             v-if="waitData.length"
             :options="scrollOptions"
             :data="waitData"
@@ -16,8 +16,12 @@
               </div>
             </div>
           </cube-scroll>
+          <div class="no-data" v-else>
+            <img :src="NoDataImage" alt="暂无数据">
+            <p>暂无数据</p>
+          </div>
         </cube-slide-item>
-        <cube-slide-item>
+        <cube-slide-item >
           <cube-scroll
             v-if="endData.length"
             :options="scrollOptions"
@@ -29,6 +33,10 @@
               </div>
             </div>
           </cube-scroll>
+          <div class="no-data" v-else>
+            <img :src="NoDataImage" alt="暂无数据">
+            <p>暂无数据</p>
+          </div>
         </cube-slide-item>
       </cube-slide>
     </div>
@@ -39,6 +47,7 @@
 import { findIndex } from "^/js/util.js";
 import CourseItem from '%/course-item'
 import { getAppWaitOrEndLessons } from '@/api'
+import NoDataImage from '^/images/nodata.png'
 
 export default {
   data() {
@@ -66,6 +75,7 @@ export default {
       },
       waitData: [],
       endData: [],
+      NoDataImage: NoDataImage,
       waitParams: {
         status: 0,
         pagenum: 1,
@@ -128,11 +138,12 @@ export default {
       let params = this[`${type}Params`]
       getAppWaitOrEndLessons(params).then(res => {
         if (res.code === 0) {
+          let data = res.data.data[0]
           if (params.pagenum == 1) {
-            this[`${type}Data`] = res.data.data[0]
+            this[`${type}Data`] = data ? data : []
             params.loaded = true
           } else {
-            this[`${type}Data`] =  this[`${type}Data`].concat(res.data.data[0])
+            this[`${type}Data`] =  this[`${type}Data`].concat(data ? data : [])
           }
           let len = this[`${type}Data`].length 
           params.nomore = len >= res.data.pageinfo.total ? true : false

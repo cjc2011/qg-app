@@ -2,7 +2,7 @@
   <div class="course-container" :class="border">
     <div class="course-item column"  @click="trigger(data)">
       <div class="course-item__cover normal">
-        <img :src="data.imageurl || 'http://51menke-1253417915.cosgz.myqcloud.com/logo/official/201811021643337705.jpg'" alt="课程图片">
+        <img :src="data.imageurl || courseDefault" alt="课程图片">
       </div>
       <div class="course-item__content">
         <div class="course-item__name normal">{{data.coursename}}</div>
@@ -38,6 +38,8 @@
 </template>
 
 <script>
+import courseDefault from '^/images/courseDefault.png'
+
 export default {
   props: {
     data: {
@@ -61,6 +63,9 @@ export default {
       default: 'course-show'
     }
   },
+  created() {
+    console.log(this.data)
+  },
   methods: {
     trigger() {
       this.$emit('click', this.data)
@@ -77,7 +82,7 @@ export default {
   },
   data() {
     return {
-
+      courseDefault: courseDefault
     }
   }
 }
