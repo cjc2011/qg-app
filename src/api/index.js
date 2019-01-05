@@ -104,10 +104,12 @@ export const intoClassroom = params => api.post('student/Mycourse/intoClassroom'
 export const getAppTeacherFreeTime = params => api.post('student/Mycourse/getAppTeacherFreeTime', params)
     // 我的课程
 export const getMyCurriculum = params => api.post('student/Mycourse/getMyCurriculum', params)
+    // 直播课课时安排 
+// export const getLiveSchedule = params => api.post('student/Mycourse/getLiveSchedule', params)    
     // 回放
-export const getLessonsPlayback = params => api.post('student/Mycourse/getLessonsPlayback', params)    
-    // 课时安排 
-export const getLiveSchedule = params => api.post('student/Mycourse/getAppLiveSchedule', params)
+export const getAppLivePlayback = params => api.post('student/Mycourse/getAppLivePlayback', params)    
+    // 直播课课时安排 
+export const getAppLiveSchedule = params => api.post('student/Mycourse/getAppLiveSchedule', params)
     // 约课
 export const batchAddReserveLessons = params => api.post('student/Mycourse/batchAddReserveLessons', params)    
     // 修改约课时间

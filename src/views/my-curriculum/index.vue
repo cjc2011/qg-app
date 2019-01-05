@@ -28,8 +28,8 @@
             :data="endData">
             <div class="course-list">
               <div class="course-card" v-for="(item, index) in endData" :key="index">
-                <div class="course-card__title expand">{{item.intime}} 周{{weekTxt[item.week]}}</div>
-                <CourseItem courseorigin="organ" type="curriculum" border="bottom" :data="item" />
+                <div class="course-card__title expand">{{item.intime}} 周{{weekTxt[item.week - 1]}}</div>
+                <CourseItem courseorigin="organ" type="curriculum" border="bottom" :data="item" @toEvaluate="evaluate"/>
               </div>
             </div>
           </cube-scroll>
@@ -71,7 +71,8 @@ export default {
         directionLockThreshold: 0
       },
       scrollOptions: {
-        directionLockThreshold: 0
+        directionLockThreshold: 0,
+        click: false
       },
       waitData: [],
       endData: [],
@@ -108,6 +109,9 @@ export default {
     this.getdata()
   },
   methods: {
+    evaluate(item) {
+      this.$router.push(`/myevaluate/${item.toteachid}`)
+    },
     onPullingUp() {
       let type = this.currentType
       let params = this.postParams[type]
@@ -138,7 +142,7 @@ export default {
       let params = this[`${type}Params`]
       getAppWaitOrEndLessons(params).then(res => {
         if (res.code === 0) {
-          let data = res.data.data[0]
+          let data = [].concat.apply([], res.data.data)
           if (params.pagenum == 1) {
             this[`${type}Data`] = data ? data : []
             params.loaded = true

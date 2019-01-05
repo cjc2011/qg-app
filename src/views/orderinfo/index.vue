@@ -53,7 +53,7 @@
           </cube-radio>
         </cube-radio-group>
         <div class="pay-footer">
-          <div class="pay-btn" @click="pay">确认支付¥1.00</div>
+          <div class="pay-btn" @click="pay">确认支付¥{{orderInfo.amount}}</div>
         </div>
       </div>
     </cube-popup>

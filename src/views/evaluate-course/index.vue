@@ -1,65 +1,57 @@
 <template>
-    <div class="course-evaluate">
-        <div class="teacher-summary">
-            <CourseItem :data="courseinfo"></CourseItem>
-        </div>
-        <div class="teacher-score">
-            <p>课程评分</p>
-            <Score :score="score" @selectScore="selectScore"></Score>
-        </div>
-        <div class="teacher-evaluate">
-            <p>课程评分</p>
-            <cube-textarea v-model="content" placeholder="please edit here..."></cube-textarea>
-        </div>
-        <cube-button class="sure-btn" @click="gotoComment">提交</cube-button>
+  <div class="course-evaluate">
+    <div class="teacher-score">
+      <p>课程评分</p>
+      <Score :score="score" @selectScore="selectScore"></Score>
     </div>
-
+    <div class="teacher-evaluate">
+      <p>课程评分</p>
+      <cube-textarea v-model="content" placeholder="please edit here..."></cube-textarea>
+    </div>
+    <cube-button class="sure-btn" @click="gotoComment">提交</cube-button>
+  </div>
 </template>
 
 <script>
-import CourseItem from '%/course-item/index.vue'
-import Score from '%/score/index.vue'
-import EvaluateItem from '%/evaluate-item/index.vue'
-import { mapGetters } from 'vuex'
-import { gotoComment } from '@/api'
-import { toast } from '../../cube-ui'
+import CourseItem from "%/course-item/index.vue";
+import Score from "%/score/index.vue";
+import EvaluateItem from "%/evaluate-item/index.vue";
+import { mapGetters } from "vuex";
+import { gotoComment } from "@/api";
+import { toast } from "../../cube-ui";
 export default {
-    name: '',
-
-    data() {
-        return {
-            score: 0,
-            commentData: [],
-            content: ''
+  data() {
+    return {
+      score: 0,
+      commentData: [],
+      content: ""
+    };
+  },
+  components: {
+    CourseItem,
+    Score,
+    EvaluateItem
+  },
+  computed: {
+    ...mapGetters(["courseinfo"])
+  },
+  methods: {
+    selectScore(index) {
+      this.score = index;
+    },
+    gotoComment() {
+      gotoComment({
+        toteachid: this.$route.params.id,
+        score: this.score,
+        content: this.content
+      }).then(res => {
+        if (res.code === 0) {
+          toast(`${res.info}`);
         }
-    },
-    components: {
-        CourseItem,
-        Score,
-        EvaluateItem
-    },
-    computed: {
-        ...mapGetters([
-            'courseinfo'
-        ])
-    },
-    methods: {
-        selectScore(index) {
-            this.score = index
-        },
-        gotoComment() {
-            gotoComment({
-                'toteachid': this.$route.params.id,
-                'score': this.score,
-                'content': this.content
-            }).then(res => {
-                if (res.code === 0) {
-                    toast(`${res.info}`)
-                }
-            })
-        }
+      });
     }
-}
+  }
+};
 </script>
 
 <style lang='scss' scoped>

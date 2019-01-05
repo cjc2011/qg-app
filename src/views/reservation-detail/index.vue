@@ -47,10 +47,10 @@
 <script>
 import UserName from '^/images/username@2x.png'
 import Lesson from '^/images/lesson@2x.png'
-import LessonIcon from '^/images/lesson1@2x.png'
+import LessonIcon from '^/images/lession.png'
 import updateTime from '^/images/updateTime.png'
 
-import { getLiveSchedule, getCurriculumInfo } from '@/api'
+import { getAppLiveSchedule, getCurriculumInfo } from '@/api'
 
 export default {
   data() {
@@ -72,11 +72,13 @@ export default {
   },
   methods: {
     getLessionList() {
-      getLiveSchedule({
+      getAppLiveSchedule({
         courseid: this.CourseId
       }).then( res => {
-        this.LessonData = res.data.data
-        this.LessonCount = res.data.periodnum - res.data.count
+        if (res.code == 0) {
+          this.LessonData = res.data.data
+          this.LessonCount = res.data.periodnum - res.data.count
+        }
       })
     },
     getCourseInfo() {

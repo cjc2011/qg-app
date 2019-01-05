@@ -13,11 +13,11 @@
           <span class="course-item__time">
             {{data.starttime && data.starttime.substring(11)}} -- {{data.endtime && data.endtime.substring(11)}}
           </span>
-          <span class="course-item__status wait">
-            <span v-if="data.buttonstatus == 0">待上课</span>
+          <span class="course-item__status">
+            <span v-if="data.buttonstatus == 0" class="wait">待上课</span>
             <span v-if="data.buttonstatus == 1" class="intoclassroom" @click.stop="intoclassroom(data)">进教室</span>
             <span v-if="data.buttonstatus == 2" @click.stop="toEvaluate(data)">去评价</span>
-            <span v-if="data.buttonstatus == 3" @click.stop="toreplay(data)">回放</span>
+            <span v-if="data.buttonstatus == 3 || data.buttonstatus == 2" @click.stop="toreplay(data)">回放</span>
             <!-- 0 未开始 1去APP上课 2 去评价 回放 3回放 -->
           </span>
         </div>
@@ -63,9 +63,6 @@ export default {
       default: 'course-show'
     }
   },
-  created() {
-    console.log(this.data)
-  },
   methods: {
     trigger() {
       this.$emit('click', this.data)
@@ -93,6 +90,9 @@ export default {
 @import "^/style/course-list.scss";
 .course-item__status {
   position: relative;
+  span {
+    margin-left: 4px;
+  }
   .intoclassroom {
     position: absolute;
     right: 0;

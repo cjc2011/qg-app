@@ -18,7 +18,7 @@
     <div class="course-box summary">
       <div class="course-box__title">简介</div>
       <div class="course-box__content">
-        <P>{{courseInfoObj.generalize || '暂无简介'}}</P>
+        <P v-html="courseInfoObj.generalize || '暂无简介'"></P>
       </div>
     </div>
     <!-- 1 录播 2直播 -->
@@ -33,7 +33,10 @@
       </div>
     </div>
     <div class="course-box noborder evaluate" v-if="courseInfoObj.coursetype == 2">
-      <div class="course-box__title">老师点评</div>
+      <div class="course-box__title">
+        <span class="text">课程评论</span>
+        <cube-rate class="rate" v-model="avgscore" :justify="true"></cube-rate>
+      </div>
       <div v-for="(item,index) in commentData" :key="index">
         <EvaluateItem :data="item"></EvaluateItem>
       </div>
@@ -54,7 +57,7 @@ import CollectIconActive from '^/images/shoucang_active.png'
 import BackIcon from '^/images/back-white.png'
 import TimeIcon from '^/images/time.png'
 import defaultAvatar from '^/images/defaultAvatar.png'
-import { getCurriculumInfo, getCurriculumComment, courseCollect, cancelCourseCollect, gotoOrder, submitApplyPay, getLessonsPlayback } from '@/api'
+import { getCurriculumInfo, getCurriculumComment, courseCollect, cancelCourseCollect, gotoOrder, submitApplyPay, getAppLiveSchedule } from '@/api'
 import EvaluateItem from '%/evaluate-item/index.vue'
 import { toast } from '../../cube-ui'
 import { mapGetters } from 'vuex'
@@ -64,6 +67,7 @@ export default {
     return {
       paySelected: '',
       Gb: Gb,
+      score: 3.3,
       defaultAvatar: defaultAvatar,
       BackIcon: BackIcon,
       CollectIcon: CollectIcon,
@@ -72,13 +76,15 @@ export default {
       TimeIcon: TimeIcon,
       is_collect: undefined,
       courseInfoObj: {},
-      commentData: []
+      commentData: [],
+      avgscore: 0
     }
   },
   components: {
     EvaluateItem
   },
   created() {
+    this.courseId = this.$route.params.id
     this.getCurriculumInfo()
     this.getCurriculumComment()
   },
@@ -88,9 +94,18 @@ export default {
     ])
   },
   methods: {
+    getLessionList() {
+      getAppLiveSchedule({
+        courseid: this.courseId
+      }).then( res => {
+        if (res.code == 0) {
+
+        }
+      })
+    },
     pay() {
       gotoOrder({
-        courseid: this.$route.params.id,
+        courseid: this.courseId,
         ordersource: 2,
         organid: this.organ.organid
       }).then( res => {
@@ -108,37 +123,11 @@ export default {
     // 录播显示 课时列表
     getCurriculumInfo() {
       getCurriculumInfo({
-        courseid: this.$route.params.id
+        courseid: this.courseId
       }).then(res => {
-        /**
-         * "coursename": "课程名称",
-            "subhead": "课程副标题",
-            "imageurl": "课程封面Url",
-            "price": "课程单价",
-            "curriculumid": "课程id",
-            "coursetype": "课程类型1录播课2直播课",
-            "teachername": "老师名称,录播课没有老师信息,该字段为null",
-            "teacherid": "老师id,录播课没有老师信息,该字段为null",
-            "tacher_profile": "老师简介,录播课没有老师信息,该字段为null",
-            "teacher_imageur": "老师头像,录播课没有老师信息,该字段为null",
-            "generalize": "课程详情概述",
-            "periodnum": "课时数量",
-            "realnum": "实际报名人数",
-            "is_collect": "是否收藏标识 0为收藏 1收藏",
-            "categoryid": "分类id",
-            "categoryname": "分类名称",
-            "applystatus": "是否报名过此课程 0未报名 1已报名"
-         */
         if (res.code === 0) {
-          // 是否收藏
           this.is_collect = res.data.is_collect
           this.courseInfoObj = res.data
-          console.log(this.courseInfoObj, 'this.courseInfoObj.toteachid')
-          getLessonsPlayback({
-            toteachid: this.courseInfoObj.toteachid
-          }).then( res => {
-            console.log(res, 'res 回放')
-          })
         } else {
           toast(`${res.info}`)
         }
@@ -150,6 +139,7 @@ export default {
       }).then(res => {
         if (res.code === 0) {
           this.commentData = res.data.data
+          this.avgscore = res.data.avgscore && Number(res.data.avgscore)
         }
       })
     },
@@ -235,8 +225,17 @@ export default {
     border-bottom: 0px solid #ffffff;
   }
   &__title {
+    display: flex;
+    margin-bottom: 4px;
+    justify-content: space-between;
     font-size: 15px;
     color: #3c3c41;
+    .text{
+      width: 100px;
+    }
+    .rate{
+      width: 100px;
+    }
   }
   &__content {
     padding: 10px;

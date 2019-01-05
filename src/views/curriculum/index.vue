@@ -92,9 +92,8 @@ export default {
       console.log('intoclassroom', course)
     },
     toEvaluate(course) {
-      console.log('toEvaluate', course)
       this.$router.push({
-        path: `/evaluatecourse/${course.toteachid}`
+        path: `/myevaluate/${course.toteachid}`
       })
     },
     toreplay(course) {
