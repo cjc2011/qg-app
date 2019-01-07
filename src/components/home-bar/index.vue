@@ -34,9 +34,6 @@ export default {
       SearchIcon: SearchIcon
     };
   },
-  created() {
-    console.log(this.organ, 'organ')
-  },
   methods: {
     click() {
       this.$router.push({

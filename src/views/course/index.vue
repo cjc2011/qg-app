@@ -90,6 +90,7 @@ export default {
       })
     },
     getCourse() {
+      this.pagenum = this.CategoryData[this.currentIndex].pagenum
       getFilterCourserList({
         organid: this.organid,
         pagenum: this.pagenum,
@@ -122,7 +123,6 @@ export default {
             y ? this.bscroll.scrollTo(0 ,y, 100) : this.bscroll.scrollTo(0, 0, 100)
           }
         })
-        
       })
     },
     scrollInit(){
@@ -136,7 +136,7 @@ export default {
         let CategoryData = this.CategoryData
         let index = this.currentIndex
         if (CategoryData[index].nodata) return  this.bscroll.finishPullUp() 
-        let pagenum = CategoryData[index].pagenum++
+        let pagenum = this.CategoryData[index].pagenum++
         this.pagenum = pagenum
         this.getCourse()
       })

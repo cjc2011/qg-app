@@ -36,7 +36,7 @@ export default {
           active: HomeActive,
           path: '/'
         },
-        { 
+        {
           text: '课程',
           icon: Course,
           active: CourseActive,
@@ -65,11 +65,13 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'title'
+      'title',
+      'organ'
     ])
   },
   created() {
     this.setTabBar()
+    this.tabs[1].query.organid = this.organ.organid
   },
   watch: {
     $route() {

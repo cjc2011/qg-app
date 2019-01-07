@@ -14,7 +14,7 @@ const state = {
   publickey: getItem('publickey'),
   userinfo: getItem('userinfo'),
   encryptionkey: getItem('encryptionkey'),
-  courseinfo: getItem('courseinfo'),
+  courseinfo: getItem('courseinfo')
 }
 
 
