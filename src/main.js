@@ -20,7 +20,7 @@ router.beforeEach((to, from, next) => {
   if (userinfo) {
     isLoginPage ? next('/') : next()
   } else {
-    isLoginPage ? next() : next('/login')  
+    isLoginPage ? next() : next('/domain')  
   }
 })
 

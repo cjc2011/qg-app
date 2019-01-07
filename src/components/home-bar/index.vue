@@ -1,7 +1,7 @@
 <template>
   <div class="top-bar">
     <div class="logo">
-      <img class="logo-img" :src="Logo" alt="Logo">
+      <img class="logo-img" :src=" organid == 1 ? Logo : organ.imageurl" alt="Logo">
     </div>
     <div class="search-box-wrapper" @click="click">
       <SearchBox />
@@ -14,6 +14,8 @@ import SearchIcon from "^/images/serach-icon.png";
 import Logo from "^/images/logo.png";
 import SearchBox from '../search-box/index.vue'
 
+import { mapGetters } from 'vuex'
+
 export default {
   props: {
     organid: {
@@ -21,11 +23,19 @@ export default {
       default: 1
     }
   },
+  computed: {
+    ...mapGetters([
+      'organ'
+    ])
+  },
   data() {
     return {
       Logo: Logo,
       SearchIcon: SearchIcon
     };
+  },
+  created() {
+    console.log(this.organ, 'organ')
   },
   methods: {
     click() {
@@ -64,6 +74,7 @@ export default {
     line-height: 38px;
     .logo-img{
       width: 100%;
+      height: 100%;
       vertical-align: middle;
     }
   }
