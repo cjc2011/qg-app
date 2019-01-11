@@ -115,12 +115,11 @@ export default {
       register({data}).then( res => {
         if (res.code === 0) {
           toast(`登录成功`).then( () => {
-            this.$router.replace('/login')
+            this.$router.replace('/')
           })
         } else {
           toast(`${res.info}`)
         }
-        console.log(res, 'res')
       })
     },
     wrap_encrypt(content) {

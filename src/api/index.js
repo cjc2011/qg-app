@@ -110,6 +110,8 @@ export const getMyCurriculum = params => api.post('student/Mycourse/getMyCurricu
 export const getAppLivePlayback = params => api.post('student/Mycourse/getAppLivePlayback', params)    
     // 直播课课时安排 
 export const getAppLiveSchedule = params => api.post('student/Mycourse/getAppLiveSchedule', params)
+    // 录播课课时信息和视频url 
+export const getRecordSchedule = params => api.post('student/Mycourse/getRecordSchedule', params)    
     // 约课
 export const batchAddReserveLessons = params => api.post('student/Mycourse/batchAddReserveLessons', params)    
     // 修改约课时间
@@ -123,3 +125,7 @@ export const queryOrderInfo = params => api.post('student/Myorder/queryOrderInfo
 export const gotoOrder = params => api.post('student/Myorder/gotoOrder', params)
     // 确认订单
 export const submitApplyPay = params => api.post('student/Myorder/submitApplyPay', params)
+    // 获取支付二维码
+export const getOrderPayQrcode = params => api.post('student/Myorder/getOrderPayQrcode', params)    
+    // 绑定极光ID
+export const bindingUser = params => api.post('student/User/bindingUser', params)    

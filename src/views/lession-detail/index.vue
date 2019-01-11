@@ -9,12 +9,12 @@
     </div>
     <div class="border-top-split expand"></div>
     <div class="lession-wrapper" v-if="lessionInfo">
-      <div class="title">{{lessionInfo.periodnum}}个课时</div>
+      <div class="title">{{type == 'organ' ? lessionInfo.periodnum : lessionInfo.count}}个课时</div>
       <div class="lession-list">
-        <div class="lession-item expand border-bottom-1px" v-for="(item, index) in lessionInfo.data" :key="item.toteachid">
+        <div class="lession-item expand border-bottom-1px" v-for="(item, index) in  lessionInfo[type == 'organ' ? 'data' : 'lessonarr']" :key="item.toteachid">
           <div class="lession-left">
             <img :src="LessonIcon" class="lession-icon" />
-            <div class="lession-name">课时{{index + 1}}</div>
+            <div class="lession-name">课时{{index + 1}}{{type == 'official' && `——${item.periodname}`}}</div>
           </div>
           <img :src="PlayIcon" class="lession-play" @click="getPlayBack(item)" />
         </div>
@@ -28,7 +28,8 @@ import LessonIcon from '^/images/lession.png'
 import PlayIcon from '^/images/play.png'
 import LuboIcon from '^/images/lubo.png'
 
-import { getAppLiveSchedule, getCurriculumInfo, getAppLivePlayback } from '@/api'
+import { toast } from '../../cube-ui'
+import { getAppLiveSchedule, getCurriculumInfo, getAppLivePlayback, getRecordSchedule} from '@/api'
 
 export default {
   data() {
@@ -41,9 +42,17 @@ export default {
     }
   },
   created() {
-    this.courseId = this.$route.params.id 
+    this.courseId = this.$route.params.id
+    this.type = this.$route.query.type
+    let getLession = this.type == 'official' ? getRecordSchedule : getAppLiveSchedule;
     this.getCourseInfo()
-    this.getLessionList()
+    getLession({
+      courseid: this.courseId
+    }).then( res => {
+      if (res.code == 0) {
+        this.lessionInfo = res.data
+      }
+    })
   },
   methods: {
     getCourseInfo() {
@@ -55,23 +64,31 @@ export default {
         }
       })
     },
-    getLessionList() {
-      getAppLiveSchedule({
-        courseid: this.courseId
-      }).then( res => {
-        if (res.code == 0) {
-          this.lessionInfo = res.data
-        }
-      })
-    },
     // 获取回放
     getPlayBack(item) {
-      console.log(item.toteachid)
-      getAppLivePlayback({
-        toteachid: item.toteachid
-      }).then( res => {
-        console.log(res, 'res')
-      })
+      // 直播回放
+      if (item.toteachid) {
+        getAppLivePlayback({
+          toteachid: item.toteachid
+        }).then( res => {
+          if (res.code == 0) {
+            if (res.data.playbacklist.duration == 0) {
+              toast(`暂无数据`)
+            }
+          } else {
+            toast(`${res.info}`)
+          }
+        })
+      } else {
+      // 录播回放  
+        if(!item.cosurl) return toast('暂无回放')
+        this.$router.push({
+          path: `/playback`,
+          query: {
+            url: item.cosurl
+          }
+        })
+      }
     }
   }
 }

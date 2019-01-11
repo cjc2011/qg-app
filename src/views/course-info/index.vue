@@ -7,6 +7,7 @@
         <span class="share-icon">
           <img :src="CollectIcon" alt="收藏" @click="toCollect" v-if="is_collect == 0">
           <img :src="CollectIconActive" alt="收藏" @click="toCancelCollect" v-if="is_collect == 1">
+          <img :src="ShareIcon" alt="分享" @click="shareShow">
         </span>
       </div>
       <div class="bg-image">
@@ -35,7 +36,7 @@
     <div class="course-box noborder evaluate" v-if="courseInfoObj.coursetype == 2">
       <div class="course-box__title">
         <span class="text">课程评论</span>
-        <cube-rate class="rate" v-model="avgscore" :justify="true"></cube-rate>
+        <cube-rate class="rate" v-model="avgscore" disabled :justify="true"></cube-rate>
       </div>
       <div v-for="(item,index) in commentData" :key="index">
         <EvaluateItem :data="item"></EvaluateItem>
@@ -43,21 +44,49 @@
       <div class="no-comment" v-if="!commentData.length">暂无评论</div>
     </div>
     <div class="pay border-top-1px" v-if="courseInfoObj.applystatus === 0">
-      <div class="preice">¥{{courseInfoObj.price}}</div>
+      <div class="preice">¥{{courseInfoObj.totalprice}}</div>
       <div class="pay-btn" @click="pay">立即购买</div>
     </div>
+    <div class="lession-wrapper" v-if="lessionInfo && courseInfoObj.coursetype == 1">
+      <div class="title">{{lessionInfo.count}}个课时</div>
+      <div class="lession-list">
+        <div class="lession-item border-bottom-1px" v-for="(item, index) in  lessionInfo['lessonarr']" :key="item.toteachid">
+          <div class="lession-left">
+            <img :src="LessonIcon" class="lession-icon" />
+            <div class="lession-name">课时{{index + 1}}{{`——${item.periodname}`}}</div>
+          </div>
+          <img :src="PlayIcon" class="lession-play" />
+        </div>
+      </div>
+    </div>
+    <cube-popup type="my-popup" ref="popup" position="bottom" :maskClosable="true">
+      <div class="share-icons border-bottom-1px">
+        <div class="icon-wrapper">
+          <img :src="ShareWX" alt="微信" @click="share('hy')">
+        </div>
+        <div class="icon-wrapper" @click="share('pyq')">
+          <img :src="SharePyq" alt="朋友圈" >
+        </div>
+      </div>
+      <div class="close" @click="hiden">取消</div>
+    </cube-popup>
   </div>
 </template>
 
 <script>
 import Gb from '^/images/bg.png'
-import ShareIcon from '^/images/share.png'
+import ShareIcon from '^/images/share_2.png'
 import CollectIcon from '^/images/shoucang.png'
 import CollectIconActive from '^/images/shoucang_active.png'
+import ShareWX from '^/images/share_wx.png'
+import SharePyq from '^/images/share_pyq.png'
 import BackIcon from '^/images/back-white.png'
 import TimeIcon from '^/images/time.png'
 import defaultAvatar from '^/images/defaultAvatar.png'
-import { getCurriculumInfo, getCurriculumComment, courseCollect, cancelCourseCollect, gotoOrder, submitApplyPay, getAppLiveSchedule } from '@/api'
+import LessonIcon from '^/images/lession.png'
+import PlayIcon from '^/images/play.png'
+import LuboIcon from '^/images/lubo.png'
+import { getCurriculumInfo, getCurriculumComment, courseCollect, cancelCourseCollect, gotoOrder, submitApplyPay, getAppLiveSchedule, getRecordSchedule } from '@/api'
 import EvaluateItem from '%/evaluate-item/index.vue'
 import { toast } from '../../cube-ui'
 import { mapGetters } from 'vuex'
@@ -67,9 +96,14 @@ export default {
     return {
       paySelected: '',
       Gb: Gb,
-      score: 3.3,
+      score: 0,
+      ShareWX: ShareWX,
+      SharePyq: SharePyq,
+      LessonIcon: LessonIcon,
       defaultAvatar: defaultAvatar,
       BackIcon: BackIcon,
+      PlayIcon: PlayIcon,
+      LuboIcon: LuboIcon,
       CollectIcon: CollectIcon,
       CollectIconActive: CollectIconActive,
       ShareIcon: ShareIcon,
@@ -77,7 +111,8 @@ export default {
       is_collect: undefined,
       courseInfoObj: {},
       commentData: [],
-      avgscore: 0
+      avgscore: 0,
+      lessionInfo: null
     }
   },
   components: {
@@ -94,12 +129,48 @@ export default {
     ])
   },
   methods: {
+    hiden() {
+      this.popup.hide()
+    },
+    share(str) {
+      /**
+       * 分享
+       * @param url 分享链接
+       * @param title 标题
+       * @param desc 描述
+       * @param picpath 图片路径
+       * @param type 0 分享到好友 1 分享到朋友圈
+       */
+      let type = str == 'pyq' ? 1 : 0 ;
+      let desc = this.courseInfoObj.generalize
+      let picpath = this.courseInfoObj.imageurl 
+      let title = this.courseInfoObj.coursename
+      let url = `http://www.zhihuiqintong.com/#/courseinfo/${this.courseInfoObj.curriculumid}`
+      let params = [{
+        url,
+        title,
+        desc,
+        picpath,
+        type
+      }]
+      JoinRoomCall.share(params, () => {
+        // 成功回调
+      }, () => {
+        // 失败回调
+      })
+    },
+    //  分享
+    shareShow(){
+      this.popup = this.$refs.popup 
+      this.popup.show()
+    },
+    // 获取课时列表
     getLessionList() {
-      getAppLiveSchedule({
+      getRecordSchedule({
         courseid: this.courseId
       }).then( res => {
         if (res.code == 0) {
-
+          this.lessionInfo = res.data
         }
       })
     },
@@ -128,11 +199,13 @@ export default {
         if (res.code === 0) {
           this.is_collect = res.data.is_collect
           this.courseInfoObj = res.data
+          this.courseInfoObj.coursetype == 1 && this.getLessionList()
         } else {
           toast(`${res.info}`)
         }
       })
     },
+    // 评论
     getCurriculumComment() {
       getCurriculumComment({
         courseid: this.$route.params.id
@@ -190,6 +263,13 @@ export default {
       padding: 10px 0;
       .cubeic-back {
         color: #ffffff;
+      }
+    }
+    .share-icon{
+      width: 60px;
+      img{
+        width: 20px;
+        margin-left: 10px;
       }
     }
   }
@@ -255,6 +335,64 @@ export default {
     font-size: 14px;
     color: #3c3c41;
   }
+}
+.lession-wrapper{
+  text-align: left;
+  padding: 20px 0;
+  .title{
+    font-size: 16px;
+    padding-left: 16px;
+    line-height: 30px;
+    color: #3C3C41;
+  }
+  .lession{
+    &-item{
+      display: flex;
+      padding: 10px 16px 10px 26px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    &-left{
+      flex: 1;
+      font-size: 14px;
+      color: #61636F;
+    }
+    &-icon{
+      margin-right: 6px;
+      width: 16px;
+    }
+    &-name{
+      display: inline-block;
+      vertical-align: middle;
+    }
+    &-play{
+      width: 23px;
+    }
+  }
+}
+.share-icons{
+  background: #ffffff;
+  padding: 20px 80px;
+  display: flex;
+  justify-content: space-between;
+  .icon-wrapper{
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    border-radius: 30px;
+    text-align: center;
+    background: #17b746;
+    img{
+      width: 40px;
+      height: 40px;
+    }
+  }
+}
+.close{
+  padding: 20px;
+  text-align: center;
+  font-size: 14px;
+  background: #ffffff;
 }
 .pay {
   position: fixed;

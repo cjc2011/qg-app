@@ -33,8 +33,9 @@ import ExclamationIcon from '^/images/exclamation.png'
 import ClockIcon from '^/images/clock.png'
 import NoDataImage from '^/images/nodata.png'
 import CourseItem from '%/course-item'
-import { getLessonsByDate, getAppReserveStatus, intoClassroom } from '@/api'
+import { getLessonsByDate, getAppReserveStatus, intoClassroom, getAppLivePlayback } from '@/api'
 import { formatDateTime } from '@/assets/js/util.js'
+import { toast } from '../../cube-ui';
 
 export default {
   data() {
@@ -78,26 +79,66 @@ export default {
     },
     // 课程详情
     toCourse(course) {
-      //  0 未开始 1去APP上课 2 去评价 回放 3回放
       this.$router.push({
         path: `/courseinfo/${course.curriculumid}`
       })
     },
+    // 底部按钮状态 0 未开始 1去APP上课 2 去评价 回放 3回放
+    // 进教室 
     intoclassroom(course) {
-      intoClassroom({ 'toteachid': course.toteachid }).then(res => {
-        if (res.code === 0) {
-
+      let joinRoom = null
+      let OS = navigator.userAgent
+      let isAndroid = OS.indexOf('Android') > -1 || OS.indexOf('Adr') > -1
+      let err = () => {}
+      let success = err
+      if (isAndroid) {
+        joinRoom = JoinRoomCall.joinroomJs
+      } else {
+        joinRoom = cordova.plugins.JoinRoomCall.joinroomJs
+      }
+      // 判断是否是pad端 
+      JoinRoomCall.isPad( res => {
+        if (res == 'ispad') {
+          intoClassroom({ 'toteachid': course.toteachid }).then(res => {
+            if (res.code === 0) {
+              /**
+               * 进教室
+               * @param classroomno 教室号
+               * @param confuserpwd 学生密码
+               * @param userrole 身份 => 'student'
+               * @param nickname 昵称
+               */
+              let params = [{
+                meeting: res.data.classroomno,
+                nickname: res.data.nickname,
+                userrole: 'student',
+                password: res.data.confuserpwd
+              }]
+              joinRoom(params, success, err)
+            }
+          })
+        } else {
+          toast('请前往pad端进教室观看')
         }
       })
-      console.log('intoclassroom', course)
     },
     toEvaluate(course) {
       this.$router.push({
         path: `/myevaluate/${course.toteachid}`
       })
     },
-    toreplay(course) {
-      console.log('toreplay', course)
+    toreplay(item) {
+      getAppLivePlayback({
+        toteachid: item.toteachid
+      }).then( res => {
+        if (res.code === 0) {
+          if (res.data.playbacklist.duration == 0) {
+              toast(`暂无数据`)
+            }
+        } else {
+          toast(`${res.info}`)
+        }
+      })
     },
     // 我的预约列表
     toReservationList() {

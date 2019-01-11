@@ -22,7 +22,7 @@
             :data="officialData">
             <div class="course-list" v-if="officialData.length">
               <div class="course-card" v-for="(item, index) in officialData" :key="index">
-                <CourseItem :data="item" @click="$router.push(`/lession_detail/${item.curriculumid}`)" type="course-show"/>
+                <CourseItem :data="item" @click="$router.push({path: `/lession_detail/${item.curriculumid}`, query: {type: 'official'}})" type="course-show"/>
               </div>
             </div>
             <div class="no-data" v-else>
@@ -37,7 +37,7 @@
             :data="organData">
             <div class="course-list" v-if="organData.length">
               <div class="course-card" v-for="(item, index) in organData" :key="index">
-                <CourseItem :data="item" courseorigin="organ" type="course-show" @click="$router.push(`/lession_detail/${item.curriculumid}`)"/>
+                <CourseItem :data="item" courseorigin="organ" type="course-show" @click="$router.push({path:`/lession_detail/${item.curriculumid}`, query: {type: 'organ'}})"/>
               </div>
             </div>
             <div class="no-data" v-else>

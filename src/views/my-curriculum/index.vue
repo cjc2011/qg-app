@@ -29,7 +29,7 @@
             <div class="course-list">
               <div class="course-card" v-for="(item, index) in endData" :key="index">
                 <div class="course-card__title expand">{{item.intime}} 周{{weekTxt[item.week - 1]}}</div>
-                <CourseItem courseorigin="organ" type="curriculum" border="bottom" :data="item" @toEvaluate="evaluate"/>
+                <CourseItem courseorigin="organ" type="curriculum" @toreplay="toreplay" border="bottom" :data="item" @toEvaluate="evaluate"/>
               </div>
             </div>
           </cube-scroll>
@@ -46,8 +46,9 @@
 <script>
 import { findIndex } from "^/js/util.js";
 import CourseItem from '%/course-item'
-import { getAppWaitOrEndLessons } from '@/api'
+import { getAppWaitOrEndLessons, getAppLivePlayback } from '@/api'
 import NoDataImage from '^/images/nodata.png'
+import { toast } from '../../cube-ui';
 
 export default {
   data() {
@@ -109,6 +110,21 @@ export default {
     this.getdata()
   },
   methods: {
+    // 回放
+    toreplay(item) {
+      getAppLivePlayback({
+        toteachid: item.toteachid
+      }).then( res => {
+        if (res.code === 0) {
+          if (res.data.playbacklist.duration == 0) {
+              toast(`暂无数据`)
+            }
+        } else {
+          toast(`${res.info}`)
+        }
+      })
+    },
+    // 评价
     evaluate(item) {
       this.$router.push(`/myevaluate/${item.toteachid}`)
     },

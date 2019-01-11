@@ -36,6 +36,7 @@ import {
   SegmentPicker,
   Dialog,
   ActionSheet,
+  Checker,
   Drawer,
   ImagePreview,
   // scroll
@@ -51,6 +52,7 @@ import {
 Vue.use(Button)
 Vue.use(Loading)
 Vue.use(Tip)
+Vue.use(Checker)
 Vue.use(Toolbar)
 Vue.use(TabBar)
 Vue.use(TabPanels)

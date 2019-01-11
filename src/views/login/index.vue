@@ -33,7 +33,7 @@ import UserAvatar from '^/images/user-active.png'
 import VerificationIcon from '^/images/verification.png'
 import PassWordIcon from '^/images/password.png'
 import EyeClose from '^/images/eye-close.png'
-import { getPublicKey, login } from '@/api'
+import { getPublicKey, login, bindingUser } from '@/api'
 import { toast } from '../../cube-ui'
 import { getStr, randomString } from '^/js/util'
 import * as rule from '^/js/verification'
@@ -52,6 +52,7 @@ export default {
       PublicKey: '',
       onoff: true
     }
+    
   },
   beforeCreate() {
     getPublicKey().then( res => {
@@ -82,6 +83,7 @@ export default {
       this.onoff = false
       let key = randomString(10)
       let starttime = Date.parse(new Date());
+      let getRegistrationId = JoinRoomCall.getRegistrationID
       let params = {
         "key": key,
         "username": this.phone,
@@ -98,6 +100,17 @@ export default {
             this.$router.replace('/')
           })
           this.setUserInfo(res.data)
+          // 登录后 绑定极光推送和用户 1s异步 为了确保setUserInfo
+          setTimeout( () => {
+            getRegistrationId([], res => {
+              toast(res)
+              bindingUser({
+                registrationid: res
+              }).then( () => {
+                toast('极光推送绑定成功')
+              })
+            }, () => {})
+          }, 1000)
         } else {
           toast(`${res.info}`)
         }

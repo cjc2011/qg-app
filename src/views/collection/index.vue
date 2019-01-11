@@ -11,7 +11,7 @@
             ref="coursescroll"
             @pulling-up="onPullingUp">
             <div class="list-wrapper">
-              <CourseItem type="course-show" v-for="(item,index) in courseData" :key="index" :data="item" />
+              <CourseItem type="course-show" v-for="(item,index) in courseData" @click="click(item)" :key="index" :data="item" />
             </div>
           </cube-scroll>
         </cube-slide-item>
@@ -26,7 +26,7 @@
             <div class="list-wrapper">
               <div class="teacher-item expand border-top-1px" v-for="(item,index) in teacherData" :key="index" @click="teacherInfo(item)">
                 <div class="avatar">
-                  <img src="https://avatars0.githubusercontent.com/u/17289716?s=180&v=4" />
+                  <img :src="item.imageurl || DefaultAvatar" />
                 </div>
                 <div class="content">
                   <p class="content-name">{{item.teachername}}</p>
@@ -51,10 +51,12 @@ import { findIndex } from "^/js/util.js";
 import CourseItem from '%/course-item'
 import { courseCollectList, teacherCollectList } from '@/api'
 import NoDataImage from '^/images/nodata.png'
+import DefaultAvatar from '^/images/defaultAvatar.png'
 
 export default {
   data() {
     return {
+      DefaultAvatar: DefaultAvatar,
       courseData: [],
       teacherData: [],
       selectedLabel: '课程',
@@ -88,6 +90,7 @@ export default {
         directionLockThreshold: 0
       },
       scrollOptions: {
+        click: false,
         pullUpLoad: {
           txt: {
             noMore: '已加载全部'
@@ -115,6 +118,11 @@ export default {
     this.getData()
   },
   methods: {
+    click(item) {
+      this.$router.push({
+        path: `/courseinfo/${item.curriculumid}`
+      })
+    },
     // 上拉加载更多
     onPullingUp() {
       let type = this.currentType
@@ -186,6 +194,8 @@ export default {
     border-radius: 22px;
     overflow: hidden;
     img {
+      width: 100%;
+      height: 100%;
       max-width: 100%;
     }
   }

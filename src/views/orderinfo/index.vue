@@ -27,10 +27,22 @@
     <div class="pay-action-bar border-top-1px" v-if="orderInfo.orderstatus === 0">
       <div class="preice">
         <span>应付金额</span> 
-        ¥1</div>
+        ¥{{orderInfo.amount}}</div>
       <div class="pay-btn" @click="showPayPop">立即支付</div>
-    </div> 
-    <cube-popup type="my-popup" position="bottom" ref="paypop" :maskClosable="true">
+    </div>
+    <!--机构课并且订单状态为0-->
+    <div class="checker-wrapper" v-if="payCode && orderInfo && orderInfo.coursetype == 2 && orderInfo.orderstatus === 0">
+      <cube-checker
+        v-model="PayCheckerValue"
+        :options="PayCodeOptions"
+        type="radio" >
+      </cube-checker>
+    </div>
+    <div class="pay-code" v-if="payCode && orderInfo && orderInfo.coursetype == 2 && orderInfo.orderstatus === 0">
+      <img v-show="PayCheckerValue == 3" :src="payCode.alipayqrcode" alt="支付宝" />
+      <img v-show="PayCheckerValue == 2" :src="payCode.wxpayqrcode" alt="微信" />
+    </div>
+    <cube-popup v-if="orderInfo" type="my-popup" position="bottom" ref="paypop" :maskClosable="true">
       <div class="pay-block">
         <div class="pay-header">
           <i class="cubeic-close" @click="hide"></i>
@@ -65,7 +77,7 @@ import defaultImage from '^/images/defaultImage.png'
 import WeChatIcon from '^/images/weixin.png'
 import aliPayIcon from '^/images/zhifubao.png'
 import Time from '^/images/time.png'
-import { queryOrderInfo, submitApplyPay } from '@/api'
+import { queryOrderInfo, submitApplyPay, getOrderPayQrcode } from '@/api'
 
 export default {
   data() {
@@ -74,6 +86,18 @@ export default {
       Time: Time,
       orderInfo: null,
       paySelected: '3',
+      PayCheckerValue: '3',
+      payCode: null,
+      PayCodeOptions: [
+        {
+          value: '3',
+          text: '支付宝'
+        },
+        {
+          value: '2',
+          text: '微信'
+        }
+      ],
       options: [
         {
           label: '支付宝',
@@ -95,25 +119,68 @@ export default {
     }).then( res => {
       if (res.code == 0) {
         this.orderInfo = res.data
-        console.log(this.orderInfo.coursetype)
       }     
     })
+    this.getPayCode()
   },
   methods: {
+    getPayCode() {
+      getOrderPayQrcode().then( res => {
+        if (res.code == 0) {
+          this.payCode = res.data
+        }
+      })
+    },
     pay() {
+      let paytype = this.orderInfo.coursetype == 2 ? this.PayCheckerValue : this.paySelected
+      let type = this.orderInfo.coursetype == 2 ? 1 : 2
+      let AliPay = AlipaydevCall.startAlipay
+      let aliSuccess = () => {
+        alert('支付宝支付成功')
+      }
+      let aliFail = () => {
+        alert('支付宝支付失败')
+      }
       submitApplyPay({
         ordernum: this.orderid,
-        paytype: this.paySelected,
-        type: 1
+        paytype: paytype,
+        type: type
       }).then( res => {
         if (res.code === 0) {
+          /**
+           * 支付宝支付 
+           */
+          AliPay(aliSuccess, aliFail, res.data.data)
           if (res.data.type === 7) {
+            this.$router.push({
+              path: '/payresult/ok'
+            })
             
+            /**
+             * 微信支付
+             * @Author qyh
+             * @DateTime 2018-08-09
+             * @version  2.0
+             * @param appid     appid
+             * @param partnerid 商户号
+             * @param prepayid  预支付交易会话ID
+             * @param noncestr  随机字符串
+             * @param signStr   签名
+             * @param timestamp (10位时间戳)
+             */
+            // WeChatpayCall.startWechatpay(onSuccess, onFail, order);
+          } else {
+
           }
+
         }
       })
     },
     showPayPop() {
+      if (this.orderInfo.coursetype == 2) {
+        this.pay()
+        return
+      }
       let paypop = this.$refs.paypop
       paypop.show()
     },
@@ -161,6 +228,16 @@ export default {
 
 
 <style lang="scss" scoped>
+.checker-wrapper{
+  margin-top: 30px;
+  text-align: left;
+}
+.pay-code{
+  margin-top: 20px;
+  img{
+    width: 200px;
+  }
+}
 .order{
   padding-top: 20px;
   &-info{

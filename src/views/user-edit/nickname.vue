@@ -1,47 +1,42 @@
 <template>
-
-    <div class="border-top-split expand">
-        <div class="top-bar-action">
-            <span class="img-wrapper" @click="toSave">保存</span>
-        </div>
-        <cube-input v-model="nickname" :clearable="true" placeholder="昵称"></cube-input>
+  <div class="border-top-split expand">
+    <div class="top-bar-action">
+      <span class="img-wrapper" @click="toSave">保存</span>
     </div>
-
+    <cube-input v-model="nickname" :clearable="true" placeholder="昵称"></cube-input>
+  </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import * as types from '@/store/mutation-type'
-import { updateStudentInfo } from '@/api'
-import { toast } from '../../cube-ui'
+import { mapGetters } from "vuex";
+import * as types from "@/store/mutation-type";
+import { updateStudentInfo } from "@/api";
+import { toast } from "../../cube-ui";
 
 export default {
-    data() {
-        return {
-            nickname: '',
+  data() {
+    return {
+      nickname: ""
+    };
+  },
+  computed: {
+    ...mapGetters(["userinfo"])
+  },
+  created() {
+    this.nickname = this.userinfo.nickname;
+  },
+  methods: {
+    toSave() {
+      updateStudentInfo({
+        nickname: this.nickname
+      }).then(res => {
+        if (res.code === 0) {
+          this.$router.back();
         }
-    },
-    computed: {
-        ...mapGetters([
-            'userinfo'
-        ]),
-    },
-    created() {
-        this.nickname = this.userinfo.nickname
-    },
-    methods: {
-        toSave() {
-            updateStudentInfo({
-                nickname: this.nickname
-            }).then(res => {
-                if (res.code === 0) {
-                    this.$router.push('/userinfo')
-                }
-            })
-        }
-    },
-
-}
+      });
+    }
+  }
+};
 </script>
 
 <style lang="scss" scoped>

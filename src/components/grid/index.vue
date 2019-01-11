@@ -8,7 +8,7 @@
         <span class="course-item__type">{{item.coursetype == 1 ? '录播' : '一对一直播'}}</span>
       </div>
       <div class="course-item__name">{{item.coursename}}</div>
-      <div class="course-item__price">{{item.price}}</div>
+      <div class="course-item__price">{{item.totalprice}}</div>
     </div>
   </div>
 </template>

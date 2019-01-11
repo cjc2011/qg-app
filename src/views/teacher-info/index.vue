@@ -2,20 +2,15 @@
   <div>
     <div class="top-bar-action">
       <div class="img-wrapper">
-        <img :src="ColleIcon" @click="toCollect" v-if="is_collect == 0">
-        <img :src="BoyIcon" @click="toCancelCollect" v-if="is_collect == 1">
+        <img :src="CollectIcon" @click="toCollect" v-if="is_collect == 0">
+        <img :src="CollectIconActive" @click="toCancelCollect" v-if="is_collect == 1">
       </div>
     </div>
     <div class="teacher">
-      <img class="teacher-avatar" src="https://avatars0.githubusercontent.com/u/17289716?s=180&v=4">
+      <img class="teacher-avatar" :src="teacherInfoObj.imageurl || DefaultAvatar">
       <div class="teacher-name">
         <span class="text">{{teacherInfoObj.teachername}}</span>
-        <img class="icon" :src="BoyIcon" />
-        <!-- 
-          <img class="icon" :src="BoyIcon" v-if="teacherInfoObj.sex == 1" />
-          <img class="icon" :src="" v-if="teacherInfoObj.sex == 2" />
-          0 未知
-        -->
+        <img  v-if="teacherInfoObj.sex" class="icon" :src="teacherInfoObj.sex == 1 ? BoyIcon : GrilIcon" />
       </div>
       <div class="teacher-info">
         <div class="birthday">
@@ -41,7 +36,7 @@
     <div class="teacher-course">
       <div :class="['title',courseData ? '' :'hide']">他的课程</div>
       <div v-for="(item, index) in courseData" :key="index" @click="toMyEvaluate(item)">
-        <CourseItem type="course-show" :data="item" />
+        <CourseItem type="course-show" :data="item"  :courseorigin="item.coursetype == 2 ? 'organ' : 'official' "/>
       </div>
     </div>
   </div>
@@ -50,9 +45,13 @@
 <script>
 import CourseItem from '%/course-item/index.vue'
 import ShareIcon from '^/images/share-black.png'
-import BoyIcon from '^/images/boy.png'
+import BoyIcon from '^/images/boy_icon.png'
+import GrilIcon from '^/images/gril_icon.png'
 import BirthdayIcon from '^/images/birthday.png'
 import Address from '^/images/address.png'
+import CollectIcon from '^/images/shoucang.png'
+import CollectIconActive from '^/images/shoucang_active.png'
+import DefaultAvatar from '^/images/defaultAvatar.png'
 
 import ColleIcon from '^/images/shoucang.png'
 import ColleIconActive from '^/images/shoucang_active.png'
@@ -61,11 +60,15 @@ import { getTeacherDetail, getTeacherCourse, teacherCollect, cancelTeacherCollec
 export default {
   data() {
     return {
+      CollectIcon: CollectIcon,
+      CollectIconActive: CollectIconActive,
+      DefaultAvatar: DefaultAvatar,
       ColleIcon: ColleIcon,
       ColleIconActive: ColleIconActive,
       ShareIcon: ShareIcon,
       BirthdayIcon: BirthdayIcon,
       BoyIcon: BoyIcon,
+      GrilIcon: GrilIcon,
       Address: Address,
       is_collect: undefined,
       teacherInfoObj: {},
@@ -127,9 +130,8 @@ export default {
     },
     // 个人点评
     toMyEvaluate(item) {
-      this.setCourseInfo(item)
       this.$router.push({
-        path: '/myevaluate/' + this.$route.params.id
+        path: `/courseinfo/${item.curriculumid}`
       })
     }
   }

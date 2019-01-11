@@ -7,7 +7,7 @@
       </div>
     </div>
     <div class="teadcher-info border-top-1px expand">
-      <img :src="teacher.imageurl || 'https://avatars0.githubusercontent.com/u/17289716?s=180&v=4'" class="avatar">
+      <img :src="teacher.imageurl || DefaultAvatar" class="avatar">
       <span class="teacher-name">{{teacher.name || '匿名'}}</span>
     </div>
     <div class="weeks border-bottom-1px expand" v-if="TimeData.length">
@@ -29,6 +29,7 @@
 
 <script>
 import ReservationEdit from '^/images/reservation-edit.png';
+import DefaultAvatar from '^/images/defaultAvatar.png'
 import { getAppTeacherFreeTime, batchAddReserveLessons, getCurriculumInfo, addEdit } from '@/api'
 import { toast } from '../../cube-ui'
 
@@ -36,6 +37,7 @@ export default {
   data() {
     return {
       EditStatus: false,
+      DefaultAvatar: DefaultAvatar,
       ReservationEdit: ReservationEdit,
       activeWeekIndex: 1,
       weeks: [
@@ -81,7 +83,6 @@ export default {
   },
   methods: {
     UpdateTime() {
-      console.log('UpdateTime')
       let keys = Object.keys(this.SelectTime)
       let params = []
       keys.forEach( key => {

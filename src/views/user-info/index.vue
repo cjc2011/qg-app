@@ -5,9 +5,9 @@
         <span class="msg-item__left">头像</span>
         <cube-upload class="upload" :auto="false" action="/" :simultaneous-uploads="1" @files-added="filesAdded">
           <div class="clear-fix">
-            <div>
+            <cube-upload-btn :multiple="false">
               <img class="user-avatar" :src="userinfo.imageurl || DefaultAvatar" />
-            </div>
+            </cube-upload-btn>
           </div>
         </cube-upload>
       </div>
@@ -164,23 +164,23 @@ export default {
       this.picker.show()
     },
     selectHandle(selectedVal, selectedIndex) {
-      this.UserData[2].value = selectedVal[0]
+      this.UserData[1].value = selectedVal[0]
       updateStudentInfo({
         sex: selectedIndex[0]
       }).then(res => {
         if (res.code === 0) {
-
+          
         }
       })
     },
     selectHandle1(selectedVal, selectedIndex, selectedText) {
-      this.UserData[3].value = selectedIndex.join('-')
+      this.UserData[2].value = selectedIndex.join('-')
       updateStudentInfo({
-        birth: this.UserData[3].value
+        birth: this.UserData[2].value
       }).then(res => {
         if (res.code === 0) {
           let userinfo = this.userinfo 
-          userinfo.birth = this.UserData[4].value
+          userinfo.birth = this.UserData[2].value
           this.setUserInfo(userinfo)
         }
       })

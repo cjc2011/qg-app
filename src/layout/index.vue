@@ -71,11 +71,14 @@ export default {
   },
   created() {
     this.setTabBar()
-    this.tabs[1].query.organid = this.organ.organid
+    this.tabs[1].query.organid = this.organ ? this.organ.organid : 1
   },
   watch: {
     $route() {
       this.setTabBar()
+    },
+    organ(newVla) {
+      this.tabs[1].query.organid = newVla.organid
     }
   },
   methods: {
@@ -115,6 +118,7 @@ export default {
   left: 0;
   right: 0;
   height: 50px;
+  z-index: 100;
   background: #ffffff;
 }
 </style>

@@ -11,13 +11,15 @@
       </div>
       <Grid v-if="recommentCourseList.length" :courseData="recommentCourseList" @click="gridClick" />
     </div>
-    <div class="course-box expand bottom-slit-line" v-if="CategoryCorse.length" v-for="(item, index) in CategoryCorse" :key="index">
-      <div class="course-box__title">
-        <div class="course-box__name">{{item.categoryname}}</div>
-        <div class="course-box__more" @click="courseMore(item.category_id)">更多</div>
+    <template v-if="CategoryCorse.length">
+      <div class="course-box expand bottom-slit-line" v-for="(item, index) in CategoryCorse" :key="index">
+        <div class="course-box__title">
+          <div class="course-box__name">{{item.categoryname}}</div>
+          <div class="course-box__more" @click="courseMore(item.category_id)">更多</div>
+        </div>
+        <CourseItem :data="sub_item" :courseorigin="id == 1 ? 'official' : 'organ' " @click="courseClick" v-for="(sub_item, sub_index) in item.data"  :key="sub_index" />
       </div>
-      <CourseItem :data="sub_item" :courseorigin="id == 1 ? 'official' : 'organ' " @click="courseClick" v-for="(sub_item, sub_index) in item.data"  :key="sub_index" />
-    </div>
+    </template>
     <div class="teacher-carousel" v-if="teachers.length">
       <div class="title">名师推荐</div>
       <div class="teacher-wrapper">
@@ -25,8 +27,8 @@
           <cube-slide-item v-for="(item, index) in teachers" :key="index">
             <div class="teachers-block">
               <div class="teacher-item" v-for="(sub_item, sub_index) in item" :key="sub_index" @click="teacherInfo(sub_item)">
-                <img class="teacher-avatar" :src="sub_item.imageurl || 'https://avatars0.githubusercontent.com/u/17289716?s=180&v=4'" @error="teacherAvatarError" >
-                <p class="name">{{sub_item.teachername}}</p>
+                <img class="teacher-avatar" :src="sub_item.imageurl || DefaultAvatar" @error="teacherAvatarError" >
+                <p class="name">{{sub_item.teachername || '匿名'}}</p>
               </div>
             </div>
           </cube-slide-item>
@@ -40,6 +42,7 @@
 import HomeBar from "%/home-bar"
 import Grid from '%/grid'
 import CourseItem from '%/course-item'
+import DefaultAvatar from '^/images/defaultAvatar.png'
 
 import { mapGetters } from 'vuex'
 import { getRecommendCourser, getSlideList, getRecommendTeacher, getRecommendCategory } from '@/api'
@@ -47,6 +50,7 @@ import { getRecommendCourser, getSlideList, getRecommendTeacher, getRecommendCat
 export default {
   data() {
     return {
+      DefaultAvatar: DefaultAvatar,
       title: '智慧琴童',
       banners: [],
       recommentCourseList: [],

@@ -116,7 +116,6 @@ export default {
               this.officialData = res.data.data
               break; 
             case 1:
-              console.log(this.organData)
               this.organData = res.data.data
               break;  
           }

@@ -47,6 +47,13 @@
     color: #666666;
 }
 
+.cube-picker-confirm:active,
+.cube-checker-item_active{
+    color: #04BD8A;
+}
+.cube-checker-item_active:after{
+    border: 1px solid #04BD8A;
+}
 .cube-radio_selected .cube-radio-ui,
 .cube-radio-hollow.cube-radio_selected .cube-radio-ui i:before{
     background: #04BD8A;
