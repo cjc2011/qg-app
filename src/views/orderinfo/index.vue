@@ -77,6 +77,7 @@ import defaultImage from '^/images/defaultImage.png'
 import WeChatIcon from '^/images/weixin.png'
 import aliPayIcon from '^/images/zhifubao.png'
 import Time from '^/images/time.png'
+import { toast } from '../../cube-ui';
 import { queryOrderInfo, submitApplyPay, getOrderPayQrcode } from '@/api'
 
 export default {
@@ -135,11 +136,18 @@ export default {
       let paytype = this.orderInfo.coursetype == 2 ? this.PayCheckerValue : this.paySelected
       let type = this.orderInfo.coursetype == 2 ? 1 : 2
       let AliPay = AlipaydevCall.startAlipay
+      let WxPay = WeChatpayCall.startWechatpay
       let aliSuccess = () => {
-        alert('支付宝支付成功')
+        toast('支付宝支付成功')
       }
       let aliFail = () => {
-        alert('支付宝支付失败')
+        toast('支付宝支付失败')
+      }
+      let wxSuccess = () => {
+        toast('微信支付成功')
+      }
+      let wxFail = () => {
+        toast('微信支付失败')
       }
       submitApplyPay({
         ordernum: this.orderid,
@@ -147,32 +155,45 @@ export default {
         type: type
       }).then( res => {
         if (res.code === 0) {
-          /**
-           * 支付宝支付 
-           */
-          AliPay(aliSuccess, aliFail, res.data.data)
-          if (res.data.type === 7) {
-            this.$router.push({
-              path: '/payresult/ok'
-            })
-            
-            /**
-             * 微信支付
-             * @Author qyh
-             * @DateTime 2018-08-09
-             * @version  2.0
-             * @param appid     appid
-             * @param partnerid 商户号
-             * @param prepayid  预支付交易会话ID
-             * @param noncestr  随机字符串
-             * @param signStr   签名
-             * @param timestamp (10位时间戳)
-             */
-            // WeChatpayCall.startWechatpay(onSuccess, onFail, order);
-          } else {
-
+          switch (res.data.type) {
+            case 7: 
+              this.$router.push({
+                path: '/payresult/ok'
+              })
+              break;
+            case 4:
+              toast('微信支付')
+              /**
+               * 微信支付
+               * @Author qyh
+               * @DateTime 2018-08-09
+               * @version  2.0
+               * @param appid     appid
+               * @param partnerid 商户号
+               * @param prepayid  预支付交易会话ID
+               * @param noncestr  随机字符串
+               * @param signStr   签名
+               * @param timestamp (10位时间戳)
+               */
+              let params = {
+                appid: res.data.data.appid,
+                partnerid: res.data.data.partnerid,
+                prepayid: res.data.data.prepayid,
+                noncestr: res.data.data.noncestr,
+                signStr: res.data.data.sign,
+                timestamp: res.data.data.timestamp
+              }
+              WxPay(wxSuccess, wxFail, params)
+              break;
+            case 5:
+              toast('支付宝支付')
+              /**
+               * 支付宝支付 
+               * @param 订单号
+               */
+              AliPay(aliSuccess, aliFail, res.data.data)
+              break;
           }
-
         }
       })
     },

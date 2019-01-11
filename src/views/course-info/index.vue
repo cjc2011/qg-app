@@ -27,7 +27,7 @@
       <div class="course-box__title">老师简介</div>
       <div class="course-box__content">
         <div class="teacher-avatar">
-          <img class="avatar" :src="courseInfoObj.teacher_imageurl || defaultAvatar">
+          <img class="avatar" :src="courseInfoObj.teacher_imageurl || defaultAvatar" @click="$router.push({path: `/teacherinfo/${courseInfoObj.teacherid}`}) ">
           <p class="teacher-name">{{courseInfoObj.teachername}}</p>
         </div>
         <p class="text">{{courseInfoObj.teacher_porfile || '暂无简介'}}</p>
@@ -154,6 +154,7 @@ export default {
         type
       }]
       JoinRoomCall.share(params, () => {
+        toast('分享成功')
         // 成功回调
       }, () => {
         // 失败回调

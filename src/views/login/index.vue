@@ -83,7 +83,7 @@ export default {
       this.onoff = false
       let key = randomString(10)
       let starttime = Date.parse(new Date());
-      let getRegistrationId = JoinRoomCall.getRegistrationID
+      // let getRegistrationId = JoinRoomCall.getRegistrationID
       let params = {
         "key": key,
         "username": this.phone,
@@ -96,21 +96,20 @@ export default {
       let data = this.wrapEncrypt(JSON.stringify(params))
       login({data}).then( res => {
         if (res.code == 0) {
-          toast('登录成功', 'txt', 1000).then( ()=> {
-            this.$router.replace('/')
+          toast('登录成功', 'txt', 500).then( ()=> {
+            this.$router.push('/')
           })
           this.setUserInfo(res.data)
-          // 登录后 绑定极光推送和用户 1s异步 为了确保setUserInfo
-          setTimeout( () => {
-            getRegistrationId([], res => {
-              toast(res)
-              bindingUser({
-                registrationid: res
-              }).then( () => {
-                toast('极光推送绑定成功')
-              })
-            }, () => {})
-          }, 1000)
+          // 登录后 绑定极光推送和用户
+          getRegistrationId( [], res => {
+            bindingUser({
+              registrationid: res
+            }).then( () => {
+
+            })
+          }, () => {
+
+          })
         } else {
           toast(`${res.info}`)
         }
