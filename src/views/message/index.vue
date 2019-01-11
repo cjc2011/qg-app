@@ -12,19 +12,22 @@
         ref="sysscroll"
         @pulling-up="onPullingUp"
         >
-        <div class="list-wrapper">
-          <div class="message expand border-top-1px border-bottom-1px" v-for="item in sysData" :key="item.addtime">
-            <div class="message-img fl">
-              <img src="https://avatars0.githubusercontent.com/u/17289716?s=180&v=4">
-            </div>
-            <div class="message-content">
-              <div class="message-head">
-                <span class="message-name">{{item.title}}</span>
-                <span class="message-time">{{item.addtime}}</span>
+        <div class="list-wrapper" >
+          <van-swipe-cell :right-width="65" v-for="item in sysData" :key="item.addtime">
+            <div class="message border-bottom-1px">
+              <div class="message-img fl">
+                <img src="https://avatars0.githubusercontent.com/u/17289716?s=180&v=4">
               </div>
-              <p class="message-text">{{item.content}}</p>
+              <div class="message-content">
+                <div class="message-head">
+                  <span class="message-name">{{item.title}}</span>
+                  <span class="message-time">{{item.addtime}}</span>
+                </div>
+                <p class="message-text">{{item.content}}</p>
+              </div>
             </div>
-          </div>
+            <span slot="right">删除</span>
+          </van-swipe-cell>
         </div>
       </cube-scroll>
       <div class="no-data" v-if="sysData.length && sysParams.loaded">
@@ -39,7 +42,7 @@
         ref="pushscroll"
         @pulling-up="onPullingUp"
         >
-        
+        <div>暂无数据</div>
       </cube-scroll>
       <div class="no-data" v-if="pushData.length && pushParams.loaded">
         暂无数据
@@ -151,13 +154,10 @@ export default {
   position: fixed;
   top: 80px;
   bottom: 0;
-  left: 16px;
-  right: 16px;
+  left: 0;
+  right: 0;
   overflow: hidden;
   z-index: 10;
-}
-.list-wrapper{
-  padding: 0 16px;
 }
 .message{
   padding: 14px 16px;

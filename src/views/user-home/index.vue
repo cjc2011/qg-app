@@ -97,6 +97,8 @@ export default {
     border-radius: 25px;
     overflow: hidden;
     img{
+      height: 100%;
+      width: 100%;
       max-width: 100%;
     }
   }

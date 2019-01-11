@@ -88,7 +88,7 @@ Vue.use(ScrollNav)
 Vue.use(ScrollNavBar)
 
 
-export const toast = (txt = '', type = 'txt', time = 3000,) => {
+export const toast = (txt = '', type = 'txt', time = 1000,) => {
   return new Promise( (resolve) => {
     Toast.$create({
       txt: txt,

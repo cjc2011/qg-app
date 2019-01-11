@@ -14,6 +14,10 @@
               <CourseItem type="course-show" v-for="(item,index) in courseData" @click="click(item)" :key="index" :data="item" />
             </div>
           </cube-scroll>
+          <div class="no-data" v-else>
+            <img :src="NoDataImage" alt="暂无数据">
+            <p>暂无数据</p>
+          </div>
         </cube-slide-item>
         <cube-slide-item>
           <cube-scroll 

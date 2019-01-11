@@ -58,7 +58,16 @@
 .cube-radio-hollow.cube-radio_selected .cube-radio-ui i:before{
     background: #04BD8A;
 }
-
+.van-swipe-cell__right{
+  font-size: 15px;
+  width: 65px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #ffffff;
+  background: #f44;
+}
 
 
 // base

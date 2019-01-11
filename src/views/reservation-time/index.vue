@@ -104,7 +104,7 @@ export default {
           courseid: this.courseid
         }).then( res => {
           if (res.code == 0) {
-            toast('预约成功').then( () => {
+            toast('预约成功', 'txt', 500).then( () => {
               this.$router.back()
             })
           } else {
@@ -121,7 +121,7 @@ export default {
           courseid: this.courseid
         }).then( res=> {
           if (res.code == 0) {
-            toast('修改成功').then( () => {
+            toast('修改成功', 'txt', 500).then( () => {
               this.$router.back()
             })
           }

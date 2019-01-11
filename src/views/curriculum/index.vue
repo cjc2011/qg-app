@@ -118,7 +118,7 @@ export default {
             }
           })
         } else {
-          toast('请前往pad端进教室观看')
+          toast('请前往pad端进教室')
         }
       })
     },
