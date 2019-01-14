@@ -202,7 +202,10 @@ export default {
       let fromData = new FormData()
       fromData.append('uploadFile', file[0])
       fromData.append('allpathnode', '1,1,6')
+      console.log(file[0], 'file')
+      console.log(file[0].toString(), 'file')
       upload(fromData).then(res => {
+        console.log(res, 'res')
         if ( res.code == 0) {
           let userinfo = this.userinfo 
           userinfo.imageurl = res.data.data.source_url
@@ -212,6 +215,8 @@ export default {
           }).then( res => {
             
           })
+        } else {
+          toast(`${res.info}`)
         }
       })
     }

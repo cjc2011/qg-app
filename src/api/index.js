@@ -129,3 +129,5 @@ export const submitApplyPay = params => api.post('student/Myorder/submitApplyPay
 export const getOrderPayQrcode = params => api.post('student/Myorder/getOrderPayQrcode', params)    
     // 绑定极光ID
 export const bindingUser = params => api.post('student/User/bindingUser', params)    
+    // 删除消息
+export const deleteMsg = params => api.post('student/User/deleteMsg', params)    

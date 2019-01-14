@@ -13,7 +13,7 @@
         @pulling-up="onPullingUp"
         >
         <div class="list-wrapper" >
-          <van-swipe-cell :right-width="65" v-for="item in sysData" :key="item.addtime">
+          <van-swipe-cell :right-width="65" v-for="(item, index) in sysData" :key="index">
             <div class="message border-bottom-1px">
               <div class="message-img fl">
                 <img :src="MessageIcon">
@@ -26,7 +26,7 @@
                 <p class="message-text">{{item.content}}</p>
               </div>
             </div>
-            <span slot="right">删除</span>
+            <span slot="right" @click="delte(item, index)">删除</span>
           </van-swipe-cell>
         </div>
       </cube-scroll>
@@ -42,7 +42,23 @@
         ref="pushscroll"
         @pulling-up="onPullingUp"
         >
-        <div>暂无数据</div>
+        <div class="list-wrapper" >
+          <van-swipe-cell :right-width="65" v-for="(item, index) in pushData" :key="index">
+            <div class="message border-bottom-1px">
+              <div class="message-img fl">
+                <img :src="MessageIcon">
+              </div>
+              <div class="message-content">
+                <div class="message-head">
+                  <span class="message-name">{{item.title}}</span>
+                  <span class="message-time">{{item.addtime}}</span>
+                </div>
+                <p class="message-text">{{item.content}}</p>
+              </div>
+            </div>
+            <span slot="right" @click="delte(item, index)">删除</span>
+          </van-swipe-cell>
+        </div>
       </cube-scroll>
       <div class="no-data" v-if="!pushData.length && pushParams.loaded">
         暂无数据
@@ -55,9 +71,10 @@
 
 import { findIndex } from "^/js/util.js";
 import CourseItem from '%/course-item'
-import { messageList } from '@/api'
+import { messageList, deleteMsg } from '@/api'
 
 import MessageIcon from '^/images/message.png'
+import { toast } from '../../cube-ui';
 
 export default {
   data() {
@@ -87,7 +104,10 @@ export default {
         loaded: false
       },
       scrollOptions: {
-        directionLockThreshold: 0
+        directionLockThreshold: 0,
+        pullUpLoad: {
+          threshold: 10
+        }
       }
     }
   },
@@ -95,6 +115,26 @@ export default {
     this.getData()
   },  
   methods: {
+    delte(item, index) {
+      let type = this.currentType 
+      this.$createDialog({
+        type: 'confirm',
+        title: '温馨提示',
+        content: '确认删除该条消息吗？',
+        onConfirm: () => {
+          deleteMsg({
+            messageids: [item.id]
+          }).then( res => {
+            if ( res.code == 0) {
+              toast('删除成功')
+              this[`${type}Data`].splice(index, 1)
+            } else {
+              toast(`${res.info}`)
+            }
+          })
+        }
+      }).show()
+    },
     onPullingUp() {
       let type = this.currentType
       let params = this[`${type}Params`]
@@ -102,7 +142,7 @@ export default {
         this.$refs[`${type}scroll`].forceUpdate()
         return 
       }
-      params.pagenum++ 
+      params.pagenum++
       this.getData()
     },
     getData() {
@@ -126,7 +166,7 @@ export default {
     currentIndex() {
       let type = this.currentType
       let params = this[`${type}Params`]
-      if(params.nomore) {
+      if(params.loaded) {
         this.$refs[`${type}scroll`] && this.$refs[`${type}scroll`].forceUpdate()
         return 
       }
@@ -171,6 +211,8 @@ export default {
     border-radius: 26px;
     overflow: hidden;
     img {
+      width: 40px;
+      height: 40px;
       max-width: 100%;
     }
   }
