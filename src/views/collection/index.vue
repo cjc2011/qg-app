@@ -95,11 +95,6 @@ export default {
       },
       scrollOptions: {
         click: false,
-        pullUpLoad: {
-          txt: {
-            noMore: '已加载全部'
-          }
-        },
         directionLockThreshold: 0
       }
     }

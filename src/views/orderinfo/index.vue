@@ -135,8 +135,8 @@ export default {
     pay() {
       let paytype = this.orderInfo.coursetype == 2 ? this.PayCheckerValue : this.paySelected
       let type = this.orderInfo.coursetype == 2 ? 1 : 2
-      let AliPay = AlipaydevCall.startAlipay
-      let WxPay = WeChatpayCall.startWechatpay
+      // let AliPay = AlipaydevCall.startAlipay
+      // let WxPay = WeChatpayCall.startWechatpay
       let aliSuccess = () => {
         toast('支付宝支付成功')
       }

@@ -6,7 +6,7 @@
     </div>
     <div class="course-box" v-if="recommentCourseList.length">
       <div class="course-box__title">
-        <div class="course-box__name">智慧琴童</div>
+        <div class="course-box__name">热门推荐</div>
         <div class="course-box__more" @click="recommentMore">更多</div>
       </div>
       <Grid v-if="recommentCourseList.length" :courseData="recommentCourseList" @click="gridClick" />
@@ -75,6 +75,7 @@ export default {
       this.id = to.name == 'official' ? 1 : this.organ.organid
       this.getCategoryCorse()
       this.getTeacher()
+      this.getSlide()
     }
   },
   methods: {
@@ -123,7 +124,7 @@ export default {
     // banner图
     getSlide() {
       getSlideList({
-        organid: 1
+        organid: this.id
       }).then( res => {
         if (res.code == 0) {
           this.banners = res.data.map(item => {

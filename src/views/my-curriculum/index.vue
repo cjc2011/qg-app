@@ -16,7 +16,7 @@
               </div>
             </div>
           </cube-scroll>
-          <div class="no-data" v-else>
+          <div class="no-data" v-if="!waitData.length && waitParams.loaded">
             <img :src="NoDataImage" alt="暂无数据">
             <p>暂无数据</p>
           </div>
@@ -33,7 +33,7 @@
               </div>
             </div>
           </cube-scroll>
-          <div class="no-data" v-else>
+          <div class="no-data" v-if="!endData.length && endParams.loaded">
             <img :src="NoDataImage" alt="暂无数据">
             <p>暂无数据</p>
           </div>

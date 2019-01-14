@@ -16,7 +16,7 @@ Vue.use(Cell)
 
 Vue.config.productionTip = false
 
-let joinPages = ['/login', '/registered', '/domain', '/retrievepassword']
+let joinPages = ['/login', '/registered', '/domain', '/retrievepassword', '/useragreement']
 
 router.beforeEach((to, from, next) => {
   let userinfo = store.getters.userinfo

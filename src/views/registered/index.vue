@@ -7,7 +7,7 @@
     <div class="form">
       <div class="form-item">
         <span class="pre-text">+86</span>
-        <input v-model.trim="Phone" type="text">
+        <input class="input" v-model.trim="Phone" placeholder="请输入手机号" type="text">
       </div>
       <div class="form-item">
         <img class="input-icon" :src="VerificationIcon" >
@@ -17,7 +17,7 @@
       </div>
       <div class="form-item">
         <img class="input-icon" :src="PassWordIcon" >
-        <input class="input" v-model.trim="PassWord" type="text" placeholder="设置登录密码">
+        <input class="input" v-model.trim="PassWord" :type="EyeClose ? 'password' : 'text'" placeholder="设置登录密码">
         <i @click="EyeClose = !EyeClose" :class="EyeClose ? 'cubeic-eye-invisible' : 'cubeic-eye-visible'"></i>
       </div>
     </div>
@@ -39,6 +39,7 @@ import PassWordIcon from '^/images/password.png'
 import countdown from '%/countdown'
 import { getStr, randomString } from '^/js/util'
 import { JSEncrypt } from 'jsencrypt'
+import { mapGetters } from 'vuex'
 
 import * as rule from '^/js/verification'
 import { toast } from '../../cube-ui'
@@ -64,6 +65,11 @@ export default {
     getPublicKey().then( res => {
       this.PublicKey = res.key
     })
+  },
+  computed: {
+    ...mapGetters([
+      'organ'
+    ])
   },
   methods: {
     // 获取验证码
@@ -108,14 +114,14 @@ export default {
         "code": this.VerificationCode,
         "password": this.PassWord,
         "prphone": "86",
-        "organid": 74,
+        "organid": this.organ.organid,
         "key": key
       }
       let data = this.wrap_encrypt(JSON.stringify(params))
       register({data}).then( res => {
         if (res.code === 0) {
           toast(`登录成功`).then( () => {
-            this.$router.replace('/')
+            this.$router.replace('/login')
           })
         } else {
           toast(`${res.info}`)
@@ -196,7 +202,9 @@ export default {
       }
     }
     .getverification{
-      font-size: 13px;
+      width: 90px;
+      text-align: right;
+      font-size: 12px;
       color: #07C994;
     }
   }

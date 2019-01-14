@@ -43,7 +43,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'userinfo'
+      'userinfo',
+      'organ'
     ])
   },
   methods: {
@@ -55,13 +56,13 @@ export default {
         return toast('字母 数字 下划线')
       }
       if (this.VerificationStatus == 1 || !this.VerificationCode) {
-        return toast('获取验证码')
+        return toast('请先获取验证码')
       }
       updatePass({
         mobile: this.Phone,
         code: this.VerificationCode,
         newpass: this.PassWord,
-        organid: this.userinfo.organid
+        organid: this.organ.organid
       }).then( res => {
         if (res.code == 0) {
           toast('修改成功').then( ()=>{

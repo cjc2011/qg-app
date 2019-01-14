@@ -16,7 +16,7 @@
           <van-swipe-cell :right-width="65" v-for="item in sysData" :key="item.addtime">
             <div class="message border-bottom-1px">
               <div class="message-img fl">
-                <img src="https://avatars0.githubusercontent.com/u/17289716?s=180&v=4">
+                <img :src="MessageIcon">
               </div>
               <div class="message-content">
                 <div class="message-head">
@@ -30,7 +30,7 @@
           </van-swipe-cell>
         </div>
       </cube-scroll>
-      <div class="no-data" v-if="sysData.length && sysParams.loaded">
+      <div class="no-data" v-if="!sysData.length && sysParams.loaded">
         暂无数据
       </div>
     </div>
@@ -44,7 +44,7 @@
         >
         <div>暂无数据</div>
       </cube-scroll>
-      <div class="no-data" v-if="pushData.length && pushParams.loaded">
+      <div class="no-data" v-if="!pushData.length && pushParams.loaded">
         暂无数据
       </div>
     </div>
@@ -56,6 +56,8 @@
 import { findIndex } from "^/js/util.js";
 import CourseItem from '%/course-item'
 import { messageList } from '@/api'
+
+import MessageIcon from '^/images/message.png'
 
 export default {
   data() {
@@ -69,6 +71,7 @@ export default {
           label: '推送消息'
         }
       ],
+      MessageIcon: MessageIcon,
       sysData: [],
       pushData: [],
       sysParams: {
@@ -84,11 +87,6 @@ export default {
         loaded: false
       },
       scrollOptions: {
-        pullUpLoad: {
-          txt: {
-            noMore: '已加载全部'
-          }
-        },
         directionLockThreshold: 0
       }
     }
@@ -126,7 +124,13 @@ export default {
   },
   watch: {
     currentIndex() {
-
+      let type = this.currentType
+      let params = this[`${type}Params`]
+      if(params.nomore) {
+        this.$refs[`${type}scroll`] && this.$refs[`${type}scroll`].forceUpdate()
+        return 
+      }
+      this.getData()
     }
   },
   computed: {

@@ -73,7 +73,7 @@ export default {
       getAppReserveStatus().then(res => {
         if (res.code === 0) {
           // this.isShow = res.data.status
-          this.isShow = 1
+          this.isShow = res.data.status
         }
       })
     },
@@ -91,14 +91,15 @@ export default {
       let isAndroid = OS.indexOf('Android') > -1 || OS.indexOf('Adr') > -1
       let err = () => {}
       let success = err
-      if (isAndroid) {
-        joinRoom = JoinRoomCall.joinroomJs
-      } else {
-        joinRoom = cordova.plugins.JoinRoomCall.joinroomJs
-      }
+      // if (isAndroid) {
+      //   joinRoom = JoinRoomCall.joinroomJs
+      // } else {
+      //   joinRoom = cordova.plugins.JoinRoomCall.joinroomJs
+      // }
+      joinRoom = JoinRoomCall.joinroomJs
       // 判断是否是pad端 
       JoinRoomCall.isPad( res => {
-        if (res == 'ispad') {
+        if (res == 'ipad') {
           intoClassroom({ 'toteachid': course.toteachid }).then(res => {
             if (res.code === 0) {
               /**

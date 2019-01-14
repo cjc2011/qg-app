@@ -155,6 +155,7 @@ export default {
       }]
       JoinRoomCall.share(params, () => {
         toast('分享成功')
+        this.popup.hide()
         // 成功回调
       }, () => {
         // 失败回调
@@ -175,10 +176,31 @@ export default {
         }
       })
     },
+    os() {
+      var isWeixin = function () { 
+        //判断是否是微信
+        var ua = navigator.userAgent.toLowerCase();
+        return ua.match(/MicroMessenger/i) == "micromessenger";
+      };
+      if (isWeixin) {
+        return 4
+      }
+      //判断是否是iOS
+      if (navigator.userAgent.match(/(iPhone|iPod|iPad);?/i)) {
+        return 5
+      }
+
+      if (navigator.userAgent.match(/android/i)) { //判断是否是Android
+        return 2
+      }
+
+    },
     pay() {
+      // ordersource 下单渠道1pc 2安卓 3后台报名 4微信 5ios
+      let ordersource = this.os() || 5
       gotoOrder({
         courseid: this.courseId,
-        ordersource: 2,
+        ordersource: ordersource,
         organid: this.organ.organid
       }).then( res => {
         if (res.code === 0) {

@@ -17,22 +17,33 @@
         @change="changePage"
       >
         <cube-slide-item>
-          <cube-scroll :options="scrollOptions">
-            <ul v-if="officialData.length">
+          <cube-scroll 
+            v-if="officialData.length"
+            @pulling-up="onPullingUp"
+            ref="officialscroll"
+            :data="officialData"
+            :options="scrollOptions">
+            <ul>
               <OrderItem :order="item" order-origin='official' v-for="item in officialData" :key="item.ordernum" />
             </ul>
-            <div class="no-data" v-else>
+            <div class="no-data" v-if="!officialData.length && officialParams.loaded">
               <img :src="NoDataImage" alt="暂无数据">
               <p>暂无订单</p>
             </div>
           </cube-scroll>
         </cube-slide-item>
         <cube-slide-item>
-          <cube-scroll :options="scrollOptions">
-            <ul v-if="organData.length">
+          <cube-scroll 
+            :options="scrollOptions"
+            :data="organData"
+            @pulling-up="onPullingUp"
+            ref="organscroll"
+            v-if="organData.length"
+            >
+            <ul>
               <OrderItem :order="item" order-origin='organ' v-for="item in organData" :key="item.ordernum" />
             </ul>
-            <div class="no-data" v-else>
+            <div class="no-data" v-if="!organData.length && organParams.loaded">
               <img :src="NoDataImage" alt="暂无数据">
               <p>暂无订单</p>
             </div>
@@ -64,11 +75,15 @@ export default {
       ],
       organParams: {
         pagenum: 1,
-        ordertype: 1,
+        ordertype: 2,
+        loaded: false,
+        nomore: false
       },
       officialParams: {
         pagenum: 1,
-        ordertype: 2
+        ordertype: 1,
+        loaded: false,
+        nomore: false
       },
       NoDataImage: NoDataImage,
       officialData: [],
@@ -82,6 +97,9 @@ export default {
         directionLockThreshold: 0
       },
       scrollOptions: {
+        pullUpLoad: {
+          threshold: 10
+        },
         directionLockThreshold: 0
       }
     };
@@ -98,27 +116,35 @@ export default {
       );
       return index;
     },
-    currentParams() {
-      return this.initialIndex === 0 ? this.organParams : this.officialParams
-    }
-  },
-  watch: {
-    currentParams(newVal, oldVal) {
-      this.getOrder()
+    currentType() {
+      return this.initialIndex === 1 ? 'organ' : 'official'
     }
   },
   methods: {
+    onPullingUp() {
+      let type = this.currentType
+      let params = this[`${type}Params`]
+      if(params.nomore) {
+        this.$refs[`${type}scroll`].forceUpdate()
+        return 
+      }
+      params.pagenum++ 
+      this.getOrder()
+    },
     getOrder() {
-      getMyOrderList(this.currentParams).then( res => {
+      let type = this.currentType 
+      let params = this[`${type}Params`]
+      getMyOrderList(params).then( res => {
         if (res.code == 0) {
-          switch(this.initialIndex) {
-            case 0: 
-              this.officialData = res.data.data
-              break; 
-            case 1:
-              this.organData = res.data.data
-              break;  
+          let data = res.data.data 
+          if (params.pagenum == 1) {
+            this[`${type}Data`] = data ? data : []
+            params.loaded = true
+          } else {
+            this[`${type}Data`] = this[`${type}Data`].concat(data ? data : [])
           }
+          let len = this[`${type}Data`].length
+          params.nomore = len >= res.data.pageinfo.total ? true : false
         }
       })
     },
@@ -130,7 +156,14 @@ export default {
       this.$refs.tabNav.setSliderTransform(deltaX);
     },
     changePage(current) {
-      this.selectedLabel = this.tabLabels[current].label;
+      this.selectedLabel = this.tabLabels[current].label
+      let type = this.currentType
+      let params = this[`${type}Params`]
+      if(params.nomore) {
+        this.$refs[`${type}scroll`].forceUpdate()
+        return 
+      }
+      this.getOrder()
     }
   },
   components: {

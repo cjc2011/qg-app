@@ -18,14 +18,17 @@
       >
         <cube-slide-item>
           <cube-scroll
+            @pulling-up="onPullingUp"
+            v-if="officialData.length"
+            ref="officialscroll"
             :options="scrollOptions"
             :data="officialData">
-            <div class="course-list" v-if="officialData.length">
+            <div class="course-list">
               <div class="course-card" v-for="(item, index) in officialData" :key="index">
                 <CourseItem :data="item" @click="$router.push({path: `/lession_detail/${item.curriculumid}`, query: {type: 'official'}})" type="course-show"/>
               </div>
             </div>
-            <div class="no-data" v-else>
+            <div class="no-data" v-if="!officialData.length && officialParams.loaded">
               <img :src="NoDataImage" alt="暂无数据">
               <p>暂无数据</p>
             </div>
@@ -33,14 +36,17 @@
         </cube-slide-item>
         <cube-slide-item>
           <cube-scroll
+            v-if="organData.length"
+            @pulling-up="onPullingUp"
+            ref="organscroll"
             :options="scrollOptions"
             :data="organData">
-            <div class="course-list" v-if="organData.length">
+            <div class="course-list">
               <div class="course-card" v-for="(item, index) in organData" :key="index">
                 <CourseItem :data="item" courseorigin="organ" type="course-show" @click="$router.push({path:`/lession_detail/${item.curriculumid}`, query: {type: 'organ'}})"/>
               </div>
             </div>
-            <div class="no-data" v-else>
+            <div class="no-data" v-if="!organData.length && organParams.loaded">
               <img :src="NoDataImage" alt="暂无数据">
               <p>暂无数据</p>
             </div>
@@ -74,10 +80,14 @@ export default {
       organParams: {
         pagenum: 1,                       //1录播 2直播
         coursetype: 1,
+        loaded: false,
+        nomore: false
       },
       officialParams: {
         pagenum: 1,
-        coursetype: 2
+        coursetype: 2,
+        loaded: false,
+        nomore: false
       },
       officialData: [],
       organData: [],
@@ -90,6 +100,9 @@ export default {
         directionLockThreshold: 0
       },
       scrollOptions: {
+        pullUpLoad: {
+          threshold: 10
+        },
         directionLockThreshold: 0
       }
     }
@@ -106,27 +119,35 @@ export default {
       );
       return index;
     },
-    currentParams() {
-      return this.initialIndex === 0 ? this.organParams : this.officialParams
-    }
-  },
-  watch: {
-    currentParams(newVal, oldVal) {
-      this.getdata()
+    currentType() {
+      return this.initialIndex === 1 ? 'organ' : 'official'
     }
   },
   methods: {
+    onPullingUp() {
+      let type = this.currentType
+      let params = this[`${type}Params`]
+      if(params.nomore) {
+        this.$refs[`${type}scroll`].forceUpdate()
+        return 
+      }
+      params.pagenum++ 
+      this.getdata()
+    },
     getdata() {
-      getMyCurriculum(this.currentParams).then( res => {
+      let type = this.currentType 
+      let params = this[`${type}Params`]
+      getMyCurriculum(params).then( res => {
         if (res.code == 0) {
-          switch(this.initialIndex) {
-            case 0: 
-              this.officialData = res.data.data
-              break; 
-            case 1:
-              this.organData = res.data.data
-              break;  
+          let data = res.data.data 
+          if (params.pagenum == 1) {
+            this[`${type}Data`] = data ? data : []
+            params.loaded = true
+          } else {
+            this[`${type}Data`] = this[`${type}Data`].concat(data ? data : [])
           }
+          let len = this[`${type}Data`].length
+          params.nomore = len >= res.data.pageinfo.total ? true : false
         }
       })
     },
@@ -139,6 +160,13 @@ export default {
     },
     changePage(current) {
       this.selectedLabel = this.tabLabels[current].label;
+      let type = this.currentType
+      let params = this[`${type}Params`]
+      if(params.nomore) {
+        this.$refs[`${type}scroll`].forceUpdate()
+        return 
+      }
+      this.getdata()
     }
   },
   components: {
