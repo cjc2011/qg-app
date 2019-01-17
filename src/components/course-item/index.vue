@@ -8,7 +8,7 @@
         <div class="course-item__name normal">{{data.coursename}}</div>
         <div class="course-item__teacher" v-if="courseorigin == 'official'">班型：录播</div>
         <div class="course-item__teacher" v-else>老师：{{data.teachername || '未传名字'}}</div>
-        <div v-if="type == 'course-show' && data.price" class="course-item__price">{{data.price}}</div>
+        <div v-if="type == 'course-show' && data.price" class="course-item__price">{{data.totalprice || data.price}}</div>
         <div v-if="type == 'curriculum'" class="course-item__footer">
           <span class="course-item__time">
             {{data.starttime && data.starttime.substring(11)}} -- {{data.endtime && data.endtime.substring(11)}}
@@ -16,8 +16,8 @@
           <span class="course-item__status">
             <span v-if="data.buttonstatus == 0" class="wait">待上课</span>
             <span v-if="data.buttonstatus == 1" class="intoclassroom" @click.stop="intoclassroom(data)">进教室</span>
-            <span v-if="data.buttonstatus == 2" @click.stop="toEvaluate(data)">去评价</span>
-            <span v-if="data.buttonstatus == 3 || data.buttonstatus == 2" @click.stop="toreplay(data)">回放</span>
+            <span v-if="data.buttonstatus == 2" @click.stop="toEvaluate(data)" class="comment">评价</span>
+            <span v-if="data.buttonstatus == 3 || data.buttonstatus == 2" @click.stop="toreplay(data)" class="playback">回放</span>
             <!-- 0 未开始 1去APP上课 2 去评价 回放 3回放 -->
           </span>
         </div>
@@ -92,6 +92,20 @@ export default {
   position: relative;
   span {
     margin-left: 4px;
+  }
+  .comment,
+  .playback{
+    height: 28px;
+    line-height: 28px;
+    display: inline-block;
+    border-radius: 4px;
+    color: #fff;
+    background: #FBA540;
+    width: 40px;
+    text-align: center;
+  }
+  .playback{
+    background: #01BFFF;
   }
   .intoclassroom {
     position: absolute;

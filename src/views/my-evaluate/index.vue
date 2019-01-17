@@ -9,7 +9,7 @@
     <div class="teacher-evaluate">
       <p>评价</p>
       <div class="textarea-wrapper">
-        <cube-textarea v-model="evaluate" :maxlength=100></cube-textarea>
+        <cube-textarea v-model="evaluate" :maxlength=100 placeholder="请输入评价"></cube-textarea>
       </div>
     </div>
     <div class="submit-btn" @click="post">提交</div>

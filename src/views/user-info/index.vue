@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import compress from '^/js/image.js'
 import ArrowIcon from '^/images/arrow.png'
 import DefaultAvatar from '^/images/defaultAvatar.png'
 import { mapGetters, mapMutations } from 'vuex'

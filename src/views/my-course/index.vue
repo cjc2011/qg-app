@@ -28,11 +28,11 @@
                 <CourseItem :data="item" @click="$router.push({path: `/lession_detail/${item.curriculumid}`, query: {type: 'official'}})" type="course-show"/>
               </div>
             </div>
-            <div class="no-data" v-if="!officialData.length && officialParams.loaded">
-              <img :src="NoDataImage" alt="暂无数据">
-              <p>暂无数据</p>
-            </div>
           </cube-scroll>
+          <div class="no-data" v-if="!officialData.length && officialParams.loaded">
+            <img :src="NoDataImage" alt="暂无数据">
+            <p>暂无数据</p>
+          </div>
         </cube-slide-item>
         <cube-slide-item>
           <cube-scroll
@@ -46,11 +46,11 @@
                 <CourseItem :data="item" courseorigin="organ" type="course-show" @click="$router.push({path:`/lession_detail/${item.curriculumid}`, query: {type: 'organ'}})"/>
               </div>
             </div>
-            <div class="no-data" v-if="!organData.length && organParams.loaded">
-              <img :src="NoDataImage" alt="暂无数据">
-              <p>暂无数据</p>
-            </div>
           </cube-scroll>
+          <div class="no-data" v-if="!organData.length && organParams.loaded">
+            <img :src="NoDataImage" alt="暂无数据">
+            <p>暂无数据</p>
+          </div>
         </cube-slide-item>
       </cube-slide>
     </div>  
@@ -79,13 +79,13 @@ export default {
       ],
       organParams: {
         pagenum: 1,                       //1录播 2直播
-        coursetype: 1,
+        coursetype: 2,
         loaded: false,
         nomore: false
       },
       officialParams: {
         pagenum: 1,
-        coursetype: 2,
+        coursetype: 1,
         loaded: false,
         nomore: false
       },
@@ -108,6 +108,7 @@ export default {
     }
   },
   created() {
+    this.selectedLabel = this.$route.query.status == 0 ? '智慧琴童' : '机构课' ;
     this.getdata()
   },
   computed: {
@@ -128,7 +129,7 @@ export default {
       let type = this.currentType
       let params = this[`${type}Params`]
       if(params.nomore) {
-        this.$refs[`${type}scroll`].forceUpdate()
+        this.$refs[`${type}scroll`] && this.$refs[`${type}scroll`].forceUpdate()
         return 
       }
       params.pagenum++ 
@@ -159,11 +160,16 @@ export default {
       this.$refs.tabNav.setSliderTransform(deltaX);
     },
     changePage(current) {
+      this.$router.replace({
+        query: {
+          status: current
+        }
+      })
       this.selectedLabel = this.tabLabels[current].label;
       let type = this.currentType
       let params = this[`${type}Params`]
       if(params.nomore) {
-        this.$refs[`${type}scroll`].forceUpdate()
+        this.$refs[`${type}scroll`] && this.$refs[`${type}scroll`].forceUpdate()
         return 
       }
       this.getdata()

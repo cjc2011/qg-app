@@ -19,6 +19,10 @@
           <img :src="PlayIcon" class="lession-play" @click="getPlayBack(item)" />
         </div>
       </div>
+      <div class="no-data" v-if="!nodata">
+        <img :src="NoDataImage" >
+        <p>暂无数据</p>
+      </div>
     </div>
   </div>
 </template>
@@ -27,6 +31,7 @@
 import LessonIcon from '^/images/lession.png'
 import PlayIcon from '^/images/play.png'
 import LuboIcon from '^/images/lubo.png'
+import NoDataImage from '^/images/nodata.png'
 
 import { toast } from '../../cube-ui'
 import { getAppLiveSchedule, getCurriculumInfo, getAppLivePlayback, getRecordSchedule} from '@/api'
@@ -34,11 +39,13 @@ import { getAppLiveSchedule, getCurriculumInfo, getAppLivePlayback, getRecordSch
 export default {
   data() {
     return {
+      NoDataImage: NoDataImage,
       PlayIcon: PlayIcon,
       LessonIcon: LessonIcon,
       LuboIcon: LuboIcon,
       lessionInfo: null,
-      courseInfo: null
+      courseInfo: null,
+      nodata: false
     }
   },
   created() {
@@ -51,6 +58,7 @@ export default {
     }).then( res => {
       if (res.code == 0) {
         this.lessionInfo = res.data
+        this.nodata = this.type == 'official' ? this.lessionInfo['lessonarr'].length : this.lessionInfo['data'].length
       }
     })
   },
@@ -68,22 +76,28 @@ export default {
     getPlayBack(item) {
       // 直播回放
       if (item.toteachid) {
+        this.$router.push({
+          path: '/playback',
+          query: {
+            toteachid: item.toteachid
+          }
+        })
+        return
         getAppLivePlayback({
           toteachid: item.toteachid
         }).then( res => {
           if (res.code == 0) {
             if (res.data.playbacklist.duration == 0) {
-              toast(`暂无数据`)
+              toast(`暂无回放数据`)
             }
           } else {
             toast(`${res.info}`)
           }
         })
       } else {
-      // 录播回放  
-        if(!item.cosurl) return toast('暂无回放')
+      // 录播回放
         this.$router.push({
-          path: `/playback`,
+          path: `/playbackofficial`,
           query: {
             url: item.cosurl
           }

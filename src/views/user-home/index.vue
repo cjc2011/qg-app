@@ -53,17 +53,17 @@ export default {
         {
           icon: OrderIcon,
           text: '我的订单',
-          path: '/order'
+          path: '/order?status=0'
         },
         {
           icon: CourseIcon,
           text: '我的课程',
-          path: '/mycourse'
+          path: '/mycourse?status=0'
         },
         {
           icon: SaveIcon,
           text: '我的收藏',
-          path: '/collection'
+          path: '/collection?status=0'
         },
         {
           icon: MessageIcon,

@@ -47,7 +47,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["userinfo"]),
+    ...mapGetters(["userinfo", "organ"]),
     disabled() {
       if (this.NewPhone != "" && this.verification != "") {
         return !this.NewPhone && !this.verification;
@@ -61,6 +61,10 @@ export default {
     countdown
   },
   methods: {
+    ...mapMutations({
+      'setUserInfo': 'SET_USERINFO',
+      'setkey': 'SET_ENCRYPTIONKEY'
+    }),
     // 获取验证码
     getverification() {
       if (!rule.mobile(this.NewPhone)) {
@@ -69,7 +73,8 @@ export default {
       this.VerificationStatus = 2;
       sendMobileMsg({
         mobile: this.NewPhone,
-        type: 2
+        type: 4,
+        organid: this.organ.organid
       }).then(res => {
         if (res.code == 0) {
           toast("验证码已发送");
@@ -93,9 +98,12 @@ export default {
           code: this.verification
         }).then(res => {
           if (res.code === 0) {
-            return toast("修改成功");
+            toast("修改成功");
+            let userinfo = this.userinfo 
+            this.setUserInfo(userinfo)
+            this.$router.back()
           } else {
-              
+            toast(`${res.info}`);
           }
         });
       }

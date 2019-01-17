@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <home-bar :organid="id"></home-bar>
-    <div class="banner-wrapper">
+    <div class="banner-wrapper" v-if="banners.length">
       <cube-slide :data="banners"/>
     </div>
     <div class="course-box" v-if="recommentCourseList.length">
@@ -128,9 +128,21 @@ export default {
       }).then( res => {
         if (res.code == 0) {
           this.banners = res.data.map(item => {
+            let url = ''
+            switch (item.urltype) {
+              case 1:
+                url = `#/courseinfo/${item.curriculumid}`
+                break;
+              case 2: 
+                url = `#/teacherinfo/${item.teacherid}`
+                break;
+              case 3:
+                url = item.url 
+                break;    
+            }
             return {
               image: item.imagepath,
-              url: item.url,
+              url: url,
               id: item.id
             }
           });
@@ -154,7 +166,7 @@ export default {
       let organid = this.$route.name == 'official' ? 1 : this.organ.organid
       getRecommendCategory({
         organid:  organid,
-        limit: 4
+        limit: 5
       }).then( res => {
         if (res.code === 0) {
           this.CategoryCorse = res.data

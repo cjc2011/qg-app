@@ -3,7 +3,7 @@
     <div class="top-bar-action">
       <span class="img-wrapper" @click="toSave">保存</span>
     </div>
-    <cube-textarea v-model="mottoVal" placeholder="please edit here..."></cube-textarea>
+    <cube-textarea :maxlength=100 v-model="mottoVal" placeholder="在此编辑个性签名"></cube-textarea>
   </div>
 </template>
 

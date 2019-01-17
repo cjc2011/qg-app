@@ -31,15 +31,19 @@
           <img :src="LessonIcon" alt="icon">
         </div>
         <div class="lesson-index">
-           课时{{index}}
+           课时{{index+1}}
         </div>
         <div class="lesson-date">
           {{item.starttime}}
         </div>
-        <div class="lesson-update" @click="toUpdate(item)">
+        <div class="lesson-update" :class="{'color': item.overstatus == 0}" @click="toUpdate(item)">
           {{item.overstatus > 0 ? '' : '修改'}}
         </div>
       </div>
+    </div>
+    <div class="no-data" v-else>
+      <img :src="NoDataImage" alt="" srcset="">
+      <p>暂无预约课程</p>
     </div>
   </div>
 </template>
@@ -49,6 +53,7 @@ import UserName from '^/images/username@2x.png'
 import Lesson from '^/images/lesson@2x.png'
 import LessonIcon from '^/images/lession.png'
 import updateTime from '^/images/updateTime.png'
+import NoDataImage from '^/images/nodata.png'
 
 import { getAppLiveSchedule, getCurriculumInfo } from '@/api'
 
@@ -62,7 +67,8 @@ export default {
       LessonIcon: LessonIcon,
       LessonData: [],
       courseInfo: null,
-      LessonCount: 0
+      LessonCount: 0,
+      NoDataImage: NoDataImage
     }
   },
   created() {
@@ -172,6 +178,7 @@ export default {
     .lesson {
       display: flex;
       padding-left: 36px;
+      align-items: center;
       height: 43px;
       line-height: 43px;
       position: relative;
@@ -205,10 +212,17 @@ export default {
         flex-grow: 2;
       }
       &-update {
+        height: 28px;
+        line-height: 28px;
         font-size: 14px;
-        color: rgba(11, 204, 150, 1);
+        color: #ffffff;
         flex-grow: 2;
+        border-radius: 4px;
         min-width: 40px;
+        background: #ffffff;
+        &.color{
+          background: #04bd8a;
+        }
       }
     }
   }

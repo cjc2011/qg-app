@@ -26,11 +26,11 @@
             <ul>
               <OrderItem :order="item" order-origin='official' v-for="item in officialData" :key="item.ordernum" />
             </ul>
-            <div class="no-data" v-if="!officialData.length && officialParams.loaded">
-              <img :src="NoDataImage" alt="暂无数据">
-              <p>暂无订单</p>
-            </div>
           </cube-scroll>
+          <div class="no-data" v-if="!officialData.length && officialParams.loaded">
+            <img :src="NoDataImage" alt="暂无数据">
+            <p>暂无订单</p>
+          </div>
         </cube-slide-item>
         <cube-slide-item>
           <cube-scroll 
@@ -43,11 +43,11 @@
             <ul>
               <OrderItem :order="item" order-origin='organ' v-for="item in organData" :key="item.ordernum" />
             </ul>
-            <div class="no-data" v-if="!organData.length && organParams.loaded">
+          </cube-scroll>
+          <div class="no-data" v-if="!organData.length && organParams.loaded">
               <img :src="NoDataImage" alt="暂无数据">
               <p>暂无订单</p>
             </div>
-          </cube-scroll>
         </cube-slide-item>
       </cube-slide>
     </div>
@@ -105,6 +105,7 @@ export default {
     };
   },
   created() {
+    this.selectedLabel = this.$route.query.status == 0 ? '智慧琴童' : '直播课程' ;
     this.getOrder()
   },
   computed: {
@@ -125,7 +126,7 @@ export default {
       let type = this.currentType
       let params = this[`${type}Params`]
       if(params.nomore) {
-        this.$refs[`${type}scroll`].forceUpdate()
+        this.$refs[`${type}scroll`] && this.$refs[`${type}scroll`].forceUpdate()
         return 
       }
       params.pagenum++ 
@@ -156,11 +157,16 @@ export default {
       this.$refs.tabNav.setSliderTransform(deltaX);
     },
     changePage(current) {
+      this.$router.replace({
+        query: {
+          status: current
+        }
+      })
       this.selectedLabel = this.tabLabels[current].label
       let type = this.currentType
       let params = this[`${type}Params`]
       if(params.nomore) {
-        this.$refs[`${type}scroll`].forceUpdate()
+        this.$refs[`${type}scroll`] && this.$refs[`${type}scroll`].forceUpdate()
         return 
       }
       this.getOrder()

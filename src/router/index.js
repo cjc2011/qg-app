@@ -31,6 +31,7 @@ import LessionDetail from '../views/lession-detail/index.vue'
 import EvaluateCourse from '../views/evaluate-course/index.vue'
 import PlayBack from '../views/playback/index.vue'
 import PayResult from '../views/pay-result/index.vue'
+import PlayBackOfficial from '../views/playback/offical.vue'
 
 Vue.use(Router)
 
@@ -157,6 +158,14 @@ export default new Router({
     path: '/playback',
     name: 'playback',
     component: PlayBack,
+    meta: {
+      title: '回放'
+    }
+  },
+  {
+    path: '/playbackofficial',
+    name: 'playbackofficial',
+    component: PlayBackOfficial,
     meta: {
       title: '回放'
     }

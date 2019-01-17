@@ -83,7 +83,7 @@ export default {
         path: `/courseinfo/${course.curriculumid}`
       })
     },
-    // 底部按钮状态 0 未开始 1去APP上课 2 去评价 回放 3回放
+    // 底部按钮状态 0 未开始 1去APP上课 2 评价 回放 3回放
     // 进教室 
     intoclassroom(course) {
       let joinRoom = null
@@ -129,15 +129,10 @@ export default {
       })
     },
     toreplay(item) {
-      getAppLivePlayback({
-        toteachid: item.toteachid
-      }).then( res => {
-        if (res.code === 0) {
-          if (res.data.playbacklist.duration == 0) {
-              toast(`暂无数据`)
-            }
-        } else {
-          toast(`${res.info}`)
+      this.$router.push({
+        path: '/playback',
+        query: {
+          toteachid: item.toteachid
         }
       })
     },

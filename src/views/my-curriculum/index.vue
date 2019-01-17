@@ -107,20 +107,16 @@ export default {
     }
   },
   created() {
+    this.selectedLabel = this.$route.query.status == 0 ? '待上课' : '已结束' ;
     this.getdata()
   },
   methods: {
     // 回放
     toreplay(item) {
-      getAppLivePlayback({
-        toteachid: item.toteachid
-      }).then( res => {
-        if (res.code === 0) {
-          if (res.data.playbacklist.duration == 0) {
-              toast(`暂无数据`)
-            }
-        } else {
-          toast(`${res.info}`)
+      this.$router.push({
+        path: '/playback',
+        query: {
+          toteachid: item.toteachid
         }
       })
     },
@@ -146,6 +142,11 @@ export default {
       this.$refs.tabNav.setSliderTransform(deltaX);
     },
     changePage(current) {
+      this.$router.replace({
+        query: {
+          status: current
+        }
+      })
       this.selectedLabel = this.tabLabels[current].label;
       let type = this.currentType
       let params = this[`${type}Params`]

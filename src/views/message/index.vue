@@ -13,7 +13,7 @@
         @pulling-up="onPullingUp"
         >
         <div class="list-wrapper" >
-          <van-swipe-cell :right-width="65" v-for="(item, index) in sysData" :key="index">
+          <van-swipe-cell :right-width="65" v-for="(item, index) in sysData" :key="index" @click.native="jump(item)">
             <div class="message border-bottom-1px">
               <div class="message-img fl">
                 <img :src="MessageIcon">
@@ -31,7 +31,8 @@
         </div>
       </cube-scroll>
       <div class="no-data" v-if="!sysData.length && sysParams.loaded">
-        暂无数据
+        <img :src="NoDataImage" alt="暂无数据">
+        <p>暂无数据</p>
       </div>
     </div>
     <div class="push-message message-block" v-show="currentIndex == 1">
@@ -61,7 +62,8 @@
         </div>
       </cube-scroll>
       <div class="no-data" v-if="!pushData.length && pushParams.loaded">
-        暂无数据
+        <img :src="NoDataImage" alt="暂无数据">
+        <p>暂无数据</p>
       </div>
     </div>
   </div>
@@ -74,6 +76,7 @@ import CourseItem from '%/course-item'
 import { messageList, deleteMsg } from '@/api'
 
 import MessageIcon from '^/images/message.png'
+import NoDataImage from '^/images/nodata.png'
 import { toast } from '../../cube-ui';
 
 export default {
@@ -88,6 +91,7 @@ export default {
           label: '推送消息'
         }
       ],
+      NoDataImage: NoDataImage,
       MessageIcon: MessageIcon,
       sysData: [],
       pushData: [],
@@ -115,6 +119,39 @@ export default {
     this.getData()
   },  
   methods: {
+    jump(item) {
+      /**
+       * type = 1 订单提醒 => 订单详情 @param ordernum 订单好
+       * type = 2 上课提醒 => 我的陪练 @param 
+       * type = 3 评论提醒 => 课时回放 @param toteachid 课时id
+       * type = 4 预约提醒 => 课时详情 @param curriculumid 课程id
+       */
+      switch (item.type) {
+        case 1: 
+          this.$router.push({
+            path: `/orderinfo/${item.externalid}`
+          })
+          break;
+        case 2: 
+          this.$router.push({
+            path: '/curriculum'
+          })
+          break;
+        case 3: 
+          this.$router.push({
+            path: '/playback',
+            query: {
+              toteachid: item.externalid
+            }
+          })
+          break;
+        case 4: 
+          this.$router.push({
+            path: `/reservationdetail/${item.externalid}`
+          })
+          break;    
+      }
+    },
     delte(item, index) {
       let type = this.currentType 
       this.$createDialog({
@@ -170,6 +207,7 @@ export default {
         this.$refs[`${type}scroll`] && this.$refs[`${type}scroll`].forceUpdate()
         return 
       }
+      console.log('watch currentIndex')
       this.getData()
     }
   },

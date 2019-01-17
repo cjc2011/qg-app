@@ -1,9 +1,11 @@
 <template>
-  <div class="border-top-split expand">
+  <div class="fix border-top-split expand">
     <div class="top-bar-action">
       <span class="img-wrapper" @click="toSave">保存</span>
     </div>
-    <cube-input v-model="nickname" :clearable="true" placeholder="昵称"></cube-input>
+    <div class="content-fixed">
+      <cube-input v-model="nickname" :clearable="true" placeholder="昵称"></cube-input>
+    </div>
   </div>
 </template>
 
@@ -40,6 +42,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.content-fixed{
+  position: fixed;
+  top: 70px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #F5F6FA;
+}
 .cube-textarea_active:after {
   border-color: #f5f6fa;
 }

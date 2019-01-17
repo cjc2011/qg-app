@@ -10,13 +10,6 @@
         <i class="cubeic-arrow"></i>
       </div>
     </div>
-    <div class="setting-item expand border-bottom-1px">
-      <div class="setting-item__left">清除缓存</div>
-      <div class="setting-item__right">
-        <span class="text">1.3M</span>
-        <i class="cubeic-arrow"></i>
-      </div>
-    </div>
     <div class="login-out" @click="out">退出</div>
   </div>
 </template>

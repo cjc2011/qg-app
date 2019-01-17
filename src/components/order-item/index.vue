@@ -10,7 +10,7 @@
         <div class="order-teacher" v-if="orderOrigin == 'organ'">老师：{{order.teachername || '匿名老师'}}</div>
         <div class="order-teacher" v-else>班型：录播</div>
         <div class="order-footer">
-          <div class="order-price">总价：{{order.amount}}</div>
+          <div class="order-price">{{orderOrigin == 'organ' ? '价格' : '总价'}}：{{order.amount}}</div>
           <div class="order-status" :class="orderstatusClass">{{orderstatusText}}</div>
         </div>
       </div>

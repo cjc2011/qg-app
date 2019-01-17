@@ -127,7 +127,11 @@ export const gotoOrder = params => api.post('student/Myorder/gotoOrder', params)
 export const submitApplyPay = params => api.post('student/Myorder/submitApplyPay', params)
     // 获取支付二维码
 export const getOrderPayQrcode = params => api.post('student/Myorder/getOrderPayQrcode', params)    
+    // apple原生支付
+export const appleNotify = params => api.post('student/Myorder/appleNotify', params)    
     // 绑定极光ID
 export const bindingUser = params => api.post('student/User/bindingUser', params)    
     // 删除消息
 export const deleteMsg = params => api.post('student/User/deleteMsg', params)    
+    // getPayPriceList 
+export const getPayPriceList = params => api.post('student/Myorder/getPayPriceList', params)

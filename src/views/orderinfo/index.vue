@@ -31,14 +31,14 @@
       <div class="pay-btn" @click="showPayPop">立即支付</div>
     </div>
     <!--机构课并且订单状态为0-->
-    <div class="checker-wrapper" v-if="payCode && orderInfo && orderInfo.coursetype == 2 && orderInfo.orderstatus === 0">
+    <div class="checker-wrapper" v-if="payCode && orderInfo && orderInfo.coursetype == 2 && orderInfo.orderstatus === 0 && orderInfo.amount !== 0">
       <cube-checker
         v-model="PayCheckerValue"
         :options="PayCodeOptions"
         type="radio" >
       </cube-checker>
     </div>
-    <div class="pay-code" v-if="payCode && orderInfo && orderInfo.coursetype == 2 && orderInfo.orderstatus === 0">
+    <div class="pay-code" v-if="payCode && orderInfo && orderInfo.coursetype == 2 && orderInfo.orderstatus === 0 && orderInfo.amount !== 0">
       <img v-show="PayCheckerValue == 3" :src="payCode.alipayqrcode" alt="支付宝" />
       <img v-show="PayCheckerValue == 2" :src="payCode.wxpayqrcode" alt="微信" />
     </div>
@@ -78,7 +78,7 @@ import WeChatIcon from '^/images/weixin.png'
 import aliPayIcon from '^/images/zhifubao.png'
 import Time from '^/images/time.png'
 import { toast } from '../../cube-ui';
-import { queryOrderInfo, submitApplyPay, getOrderPayQrcode } from '@/api'
+import { queryOrderInfo, submitApplyPay, getOrderPayQrcode, getPayPriceList, appleNotify } from '@/api'
 
 export default {
   data() {
@@ -114,17 +114,37 @@ export default {
     }
   },
   created() {
-    this.orderid = this.$route.params.id 
-    queryOrderInfo({
-      ordernum: this.orderid
-    }).then( res => {
-      if (res.code == 0) {
-        this.orderInfo = res.data
-      }     
-    })
+    let u = navigator.userAgent
+    this.isIos = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)
+    this.orderid = this.$route.params.id           
+    this.getOrderInfo()
     this.getPayCode()
   },
   methods: {
+    getPriceList() {
+      getPayPriceList().then(res=>{
+        if (res.code == 0) {
+          this.priceList = res.data
+          let selectPayPrice = this.priceList.filter( item => {
+            return Number(item.price) === this.orderInfo.amount
+          })
+          this.selectPayId = selectPayPrice[0].goodssn
+        }
+      })
+    },
+    getOrderInfo() {
+      queryOrderInfo({
+        ordernum: this.orderid
+      }).then( res => {
+        if (res.code == 0) {
+          this.orderInfo = res.data
+          this.orderInfo.amount = Number(this.orderInfo.amount)
+          if (this.isIos && this.orderInfo.coursetype == 1) {
+            this.getPriceList()
+          }
+        }
+      })
+    },
     getPayCode() {
       getOrderPayQrcode().then( res => {
         if (res.code == 0) {
@@ -135,70 +155,118 @@ export default {
     pay() {
       let paytype = this.orderInfo.coursetype == 2 ? this.PayCheckerValue : this.paySelected
       let type = this.orderInfo.coursetype == 2 ? 1 : 2
-      let AliPay = AlipaydevCall.startAlipay
-      let WxPay = WeChatpayCall.startWechatpay
-      let aliSuccess = () => {
-        toast('支付宝支付成功')
+      let AliPay = null
+      let WxPay = null
+      if (!this.isIos) {
+        AliPay = AlipaydevCall.startAlipay
+        WxPay = WeChatpayCall.startWechatpay
       }
-      let aliFail = () => {
-        toast('支付宝支付失败')
-      }
-      let wxSuccess = () => {
-        toast('微信支付成功')
-      }
-      let wxFail = () => {
-        toast('微信支付失败')
-      }
-      submitApplyPay({
-        ordernum: this.orderid,
-        paytype: paytype,
-        type: type
-      }).then( res => {
-        if (res.code === 0) {
-          switch (res.data.type) {
-            case 7: 
+      if (this.isIos && type == 2) {
+        this.loading.hide()
+        plugins.IAPPay.startIapPay((res)=> {
+          // 成功的回调
+          appleNotify({
+            'receipt': res.sendString,
+            'ordernum': this.orderid
+          }).then( res => {
+            if (res.code == 0) {
+              toast('支付成功')
               this.$router.push({
                 path: '/payresult/ok'
               })
-              break;
-            case 4:
-              toast('微信支付')
-              /**
-               * 微信支付
-               * @Author qyh
-               * @DateTime 2018-08-09
-               * @version  2.0
-               * @param appid     appid
-               * @param partnerid 商户号
-               * @param prepayid  预支付交易会话ID
-               * @param noncestr  随机字符串
-               * @param signStr   签名
-               * @param timestamp (10位时间戳)
-               */
-              let params = {
-                appid: res.data.data.appid,
-                partnerid: res.data.data.partnerid,
-                prepayid: res.data.data.prepayid,
-                noncestr: res.data.data.noncestr,
-                signStr: res.data.data.sign,
-                timestamp: res.data.data.timestamp
-              }
-              WxPay(wxSuccess, wxFail, params)
-              break;
-            case 5:
-              toast('支付宝支付')
-              /**
-               * 支付宝支付 
-               * @param 订单号
-               */
-              AliPay(aliSuccess, aliFail, res.data.data)
-              break;
-          }
+            } else {
+              toast(`${res.info}`)
+            }
+          })
+        }, () => {
+          // 失败的回调
+          toast('支付失败')
+        }, {
+          product_id: this.selectPayId,
+          order_num: this.orderid
+        })
+      } else {
+        let aliSuccess = () => {
+          toast('支付宝支付成功')
+          this.$router.push({
+            path: '/payresult/ok'
+          })
         }
-      })
+        let aliFail = () => {
+          toast('支付宝支付失败')
+          this.$router.push({
+            path: '/payresult/fail'
+          })
+        }
+        let wxSuccess = () => {
+          toast('微信支付成功')
+          this.$router.push({
+            path: '/payresult/ok'
+          })
+        }
+        let wxFail = () => {
+          toast('微信支付失败')
+          this.$router.push({
+            path: '/payresult/fail'
+          })
+        }
+        // 0元课特殊处理
+        if (this.orderInfo.amount === 0) {
+          paytype = 0
+        }
+        submitApplyPay({
+          ordernum: this.orderid,
+          paytype: paytype,
+          type: type
+        }).then( res => {
+          if (res.code === 0) {
+            switch (res.data.type) {
+              case 7: 
+                this.$router.push({
+                  path: '/payresult/ok'
+                })
+                break;
+              case 4:
+                /**
+                 * 微信支付
+                 * @Author qyh
+                 * @DateTime 2018-08-09
+                 * @version  2.0
+                 * @param appid     appid
+                 * @param partnerid 商户号
+                 * @param prepayid  预支付交易会话ID
+                 * @param noncestr  随机字符串
+                 * @param signStr   签名
+                 * @param timestamp (10位时间戳)
+                 */
+                let params = {
+                  appid: res.data.data.appid,
+                  partnerid: res.data.data.partnerid,
+                  prepayid: res.data.data.prepayid,
+                  noncestr: res.data.data.noncestr,
+                  signStr: res.data.data.sign,
+                  timestamp: res.data.data.timestamp
+                }
+                WxPay(wxSuccess, wxFail, params)
+                break;
+              case 5:
+                /**
+                 * 支付宝支付 
+                 * @param 订单号
+                 */
+                AliPay(aliSuccess, aliFail, res.data.data)
+                break;
+            }
+          }
+        })
+      }
     },
     showPayPop() {
-      if (this.orderInfo.coursetype == 2) {
+      if (this.orderInfo.coursetype == 2 || this.isIos) {
+        this.loading = this.$createToast({
+          time: 1000
+        })
+        this.loading.show()
         this.pay()
         return
       }

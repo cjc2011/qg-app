@@ -2,7 +2,7 @@
   <div class="organization">
     <div class="login-btn" v-if="organ" @click="$router.replace('/login')">登录</div>
     <div class="log-wrapper">
-      <img :src="Logo" alt="拓课云">
+      
     </div>
     <div class="search-wrapper">
       <input type="text" v-model.trim="URL" placeholder="输入机构域名">

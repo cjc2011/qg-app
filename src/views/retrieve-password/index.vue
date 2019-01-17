@@ -80,7 +80,9 @@ export default {
       this.VerificationStatus = 2 
       sendMobileMsg({
         'mobile': this.Phone,
-        'type': 2
+        'type': 1,
+        'organid': this.organ.organid,
+        'prphone': 86
       }).then( res => {
         if (res.code == 0) {
           toast('验证码已发送')

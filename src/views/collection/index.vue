@@ -114,6 +114,7 @@ export default {
     }
   },
   created() {
+    this.selectedLabel = this.$route.query.status == 0 ? '课程' : '老师' ;
     this.getData()
   },
   methods: {
@@ -141,6 +142,11 @@ export default {
       this.$refs.tabNav.setSliderTransform(deltaX);
     },
     changePage(current) {
+      this.$router.replace({
+        query: {
+          status: current
+        }
+      })
       this.selectedLabel = this.tabLabels[current].label;
       let type = this.currentType
       let params = this.postParams[type]

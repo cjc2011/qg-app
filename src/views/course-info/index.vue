@@ -154,11 +154,11 @@ export default {
         type
       }]
       JoinRoomCall.share(params, () => {
-        toast('分享成功')
         this.popup.hide()
         // 成功回调
       }, () => {
         // 失败回调
+        this.popup.hide()
       })
     },
     //  分享
@@ -182,26 +182,25 @@ export default {
         var ua = navigator.userAgent.toLowerCase();
         return ua.match(/MicroMessenger/i) == "micromessenger";
       };
-      if (isWeixin) {
+      if (isWeixin()) {
         return 4
       }
       //判断是否是iOS
       if (navigator.userAgent.match(/(iPhone|iPod|iPad);?/i)) {
         return 5
       }
-
       if (navigator.userAgent.match(/android/i)) { //判断是否是Android
         return 2
       }
-
     },
     pay() {
       // ordersource 下单渠道1pc 2安卓 3后台报名 4微信 5ios
+      let organid = this.courseInfoObj.coursetype == 2 ? this.organ.organid : 1
       let ordersource = this.os() || 5
       gotoOrder({
         courseid: this.courseId,
         ordersource: ordersource,
-        organid: this.organ.organid
+        organid: organid
       }).then( res => {
         if (res.code === 0) {
           this.$router.push({
